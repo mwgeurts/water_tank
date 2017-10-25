@@ -1,0 +1,16 @@
+REFERENCE_PATH      =   ./reference
+DEFAULT_PATH        =   userpath
+DEFAULT_RCAV        =   3.0
+DEFAULT_EPOM        =   1
+DEFAULT_PDI         =   2
+DEFAULT_NORMALIZE   =   2
+DEFAULT_SMOOTH      =   1
+DEFAULT_CENTER      =   1
+DEFAULT_GAMMA       =   2%/1mm
+DEFAULT_GAMMALOCAL  =   0
+SGOLAY_DEGREE       =   5
+REFERENCE_ISOX      =   0
+REFERENCE_ISOY      =   0
+REFERENCE_ISOZ      =   0
+ASK_REFERENCE_ISO   =   0
+ASK_RCAV            =   0
