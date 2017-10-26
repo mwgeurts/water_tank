@@ -58,9 +58,25 @@ if strcmpi(config.DEFAULT_PATH, 'userpath')
 end
 Event(['Default file path set to ', config.DEFAULT_PATH]);
 
+% Parse default UI options
+config.DEFAULT_EPOM = str2double(config.DEFAULT_EPOM);
+config.DEFAULT_PDI = str2double(config.DEFAULT_PDI);
+config.DEFAULT_NORMALIZE = str2double(config.DEFAULT_NORMALIZE);
+config.DEFAULT_SMOOTH = str2double(config.DEFAULT_SMOOTH);
+config.DEFAULT_CENTER = str2double(config.DEFAULT_CENTER);
+config.DEFAULT_CONVOLVE = str2double(config.DEFAULT_CONVOLVE);
+config.DEFAULT_GAMMALOCAL = str2double(config.DEFAULT_GAMMALOCAL);
+
 % Parse isocenter values as doubles
 config.REFERENCE_ISOX = str2double(config.REFERENCE_ISOX);
 config.REFERENCE_ISOY = str2double(config.REFERENCE_ISOY);
 config.REFERENCE_ISOZ = str2double(config.REFERENCE_ISOZ);
 config.ASK_REFERENCE_ISO = str2double(config.ASK_REFERENCE_ISO);
 
+% Parse Detector Rcav options
+config.ASK_RCAV = str2double(config.ASK_RCAV);
+config.DEFAULT_DETECTOR = str2double(config.DEFAULT_DETECTOR);
+
+% Parse smoothing options
+config.SMOOTH_SPAN = str2double(config.SMOOTH_SPAN);
+config.SGOLAY_DEGREE = str2double(config.SGOLAY_DEGREE);

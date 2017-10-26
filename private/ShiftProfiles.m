@@ -3,7 +3,7 @@ function profile = ShiftProfiles(varargin)
 % If called with no inputs, it will return a list of available EPOMs 
 % that can be used. If called with inputs, the first must be the
 % name of the file while the second is an integer corresponding to the
-% EPOM.
+% option, and the third is the cavity radius.
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
 % Copyright (C) 2017 University of Wisconsin Board of Regents
@@ -24,6 +24,7 @@ function profile = ShiftProfiles(varargin)
 % Specify options and order
 options = {
     'None'
+    'Manual'
     '0.6 rcav'
     '0.5 rcav'
 };
@@ -38,6 +39,12 @@ if nargin == 0
     return;
 end
 
+% If no cavity is provided, return unshifted data
+if varargin{2} > 2 && nargin < 3
+    Event('EPOM shift could not be applied because Rcav is not provided');
+    varargin{2} = 1;
+end
+
 % Execute code block based on format provided in varargin{2}
 switch varargin{2}
     
@@ -46,5 +53,62 @@ switch varargin{2}
         
         % Return raw profile
         profile = varargin{1};
+       
+    % Manual
+    case 2
         
+        % Start raw profile
+        profile = varargin{1};
+        
+        % Ask user for shift
+        shift = str2double(inputdlg('Enter EPOM shift (mm):', ...
+            'EPOM Adjustment', 1, {'0.0'}));
+        
+        % If the user provided a valid value
+        if ~isempty(shift) && ~isnan(shift)
+            
+            % Log action 
+            Event(sprintf('Shifting profiles by %0.1f mm', shift));
+
+            % Loop through each profile
+            for i = 1:length(profile)
+
+                % Shift depth
+                profile{i}(:,3) = profile{i}(:,3) + shift;
+            end
+        end
+
+    % 0.6 rcav
+    case 3
+        
+        % Start raw profile
+        profile = varargin{1};
+        
+        % Log action 
+        Event(sprintf('Shifting profiles by 0.6 rcav = %0.1f mm', 0.6 * ...
+            varargin{3}));
+
+        % Loop through each profile
+        for i = 1:length(profile)
+            
+            % Shift depth
+            profile{i}(:,3) = profile{i}(:,3) + 0.6 * varargin{3};
+        end
+        
+    % 0.5 rcav
+    case 4
+        
+        % Start raw profile
+        profile = varargin{1};
+        
+        % Log action 
+        Event(sprintf('Shifting profiles by 0.5 rcav = %0.1f mm', 0.6 * ...
+            varargin{3}));
+
+        % Loop through each profile
+        for i = 1:length(profile)
+            
+            % Shift depth
+            profile{i}(:,3) = profile{i}(:,3) + 0.6 * varargin{3};
+        end
 end

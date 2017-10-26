@@ -92,8 +92,8 @@ for i = 1:length(profile)
             fwhm = sprintf('%0.1f mm', sum(abs([l u])));
             offset = sprintf('%0.2f mm', (l+u)/2);
         catch
-            Event(sprintf(['Profile %i FWHM could not be computed, ', ...
-                'assuming zero shift'], i), 'WARN');
+            Event(sprintf('Profile %i FWHM could not be computed', i),... 
+                'WARN');
 
             % Set full range
             lI = 1;
@@ -154,8 +154,8 @@ for i = 1:length(profile)
                     sum(abs([l u])));
             end
         catch
-            Event(sprintf(['Profile %i Reference FWHM could not be computed, ', ...
-                'assuming zero shift'], i), 'WARN');
+            Event(sprintf('Profile %i Reference FWHM could not be computed', ...
+                i), 'WARN');
 
             % Set FWHM as undefined
             data{7,c} = 'N/A';

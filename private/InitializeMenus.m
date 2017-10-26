@@ -30,6 +30,9 @@ set(handles.machine, 'String', str);
 handles = SelectMachine(handles, 1);
 clear i str;
 
+% Set detectors menu
+set(handles.detector, 'String', handles.detectors(:,1));
+
 % Set centering menu
 set(handles.center, 'String', CenterProfiles());
 
@@ -44,4 +47,8 @@ set(handles.normalize, 'String', ScaleProfiles());
 
 % Set pdi menu
 set(handles.pdi, 'String', ConvertDepthDose());
+
+% Set convolve menu
+set(handles.convolve, 'String', ConvolveProfiles());
+
 

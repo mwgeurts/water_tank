@@ -19,33 +19,65 @@ function profile = ExtractRefProfile(profile, file, iso)
 % You should have received a copy of the GNU General Public License along 
 % with this program. If not, see http://www.gnu.org/licenses/.
 
-% Log start of reference file read
-Event(['Parsing reference dose file ', file]);
+% Persistently store DICOM data
+persistent storedfile info ref  meshx meshy meshz;
+
+% Check if MATLAB can find dicominfo (Image Processing Toolbox)
+if exist('dicominfo', 'file') ~= 2
     
-% Load in the reference dose header
-info = dicominfo(file);
+    % If not, throw an error
+    if exist('Event', 'file') == 2
+        Event(['The Image Processing Toolbox cannot be found and is ', ...
+            'required by ExtractRefProfile().'], 'ERROR');
+    else
+        error(['The Image Processing Toolbox cannot be found and is ', ...
+            'required by ExtractRefProfile().']);
+    end
+end
 
-% Read in DICOM dose  
-ref = permute(single(squeeze(dicomread(file))), [2 1 3]) * ...
-    info.DoseGridScaling;
+% Log start of reference file read and start timer
+if exist('Event', 'file') == 2
+    t = tic;
+    Event(['Parsing reference dose file ', file]);
+end
 
-% Generate meshgrid from DICOM header
-[meshx, meshy, meshz] = meshgrid(...
-    info.ImagePositionPatient(2) + (0:single(info.Rows)-1) * ...
-    info.PixelSpacing(2) + iso(3), ...
-    info.ImagePositionPatient(1) + (0:single(info.Columns)-1) * ...
-    info.PixelSpacing(1) - iso(1), ...
-    info.ImagePositionPatient(3) + ...
-    single(info.GridFrameOffsetVector) - iso(2));
+% If storedfile is not set, or differs from the current file
+if exist('storedfile', 'var') == 0 || ~strcmp(storedfile, file)
+
+    % Load in the reference dose header
+    info = dicominfo(file);
+
+    % Read in DICOM dose  
+    ref = permute(single(squeeze(dicomread(file))), [2 1 3]) * ...
+        info.DoseGridScaling;
+
+    % Generate meshgrid from DICOM header
+    [meshx, meshy, meshz] = meshgrid(...
+        info.ImagePositionPatient(2) + (0:single(info.Rows)-1) * ...
+        info.PixelSpacing(2) + iso(3), ...
+        info.ImagePositionPatient(1) + (0:single(info.Columns)-1) * ...
+        info.PixelSpacing(1) - iso(1), ...
+        info.ImagePositionPatient(3) + ...
+        single(info.GridFrameOffsetVector) - iso(2));
+
+    % Persistently store name of current file
+    storedfile = file;
+end
 
 % Loop through each profile
 for i = 1:length(profile)
     
     % Interpolate reference profile to same coordinates as profile
     profile{i} = horzcat(profile{i}, interp3(meshx, meshy, meshz, ref, ...
-        profile{i}(:,3), profile{i}(:,1), profile{i}(:,2), 'linear', 0) / ...
+        profile{i}(:,3), profile{i}(:,1), profile{i}(:,2), '*linear', 0) / ...
         max(max(max(ref))));
 end
 
+% Log completion
+if exist('Event', 'file') == 2
+    Event(sprintf(['%i reference profiles extracted successfully in ', ...
+        '%0.3f seconds'], i, toc(t)));
+end
+
 % Clear temporary variables
-clear i info ref meshx meshy meshz;
+clear i t;

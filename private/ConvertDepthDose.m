@@ -3,8 +3,7 @@ function profile = ConvertDepthDose(varargin)
 % cell array of profiles by a specified algorithm. If called with no 
 % inputs, it will return a list of available algorithms that can be used. 
 % If called with inputs, the first must be the name of the file, the 
-% second is an integer corresponding to the algorithm, and the third is the 
-% selected beam energy.
+% second is an integer corresponding to the algorithm.
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
 % Copyright (C) 2017 University of Wisconsin Board of Regents
@@ -52,13 +51,6 @@ switch varargin{2}
         
         % Start with raw profile
         profile = varargin{1};
-        
-        % If this is not an electron energy, return PDD
-        if isempty(regexpi(varargin{3}, 'e'))
-            Event(['Selected beam energy is photon, so no PDI ', ...
-                'conversion was applied']);
-            return;
-        end
         
         % Log action
         Event(['Converting electron beam ionization to dose ', ...

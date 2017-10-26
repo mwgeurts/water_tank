@@ -87,10 +87,10 @@ xlabel('IEC X Axis Position (mm)');
 yyaxis left;
 zoom on;
 if get(handles.normalize, 'Value') > 1
-    ylabel('Normalized Dose');
+    ylabel('Relative Dose');
     ylim([0 1.2]);
 else
-    ylabel('Dose');
+    ylabel('Signal');
 end
 yyaxis right;
 ylabel('Gamma');
@@ -153,10 +153,10 @@ xlabel('IEC Y Axis Position (mm)');
 yyaxis left;
 zoom on;
 if get(handles.normalize, 'Value') > 1
-    ylabel('Normalized Dose');
+    ylabel('Relative Dose');
     ylim([0 1.2]);
 else
-    ylabel('Dose');
+    ylabel('Signal');
 end
 yyaxis right;
 ylabel('Gamma');
@@ -219,10 +219,10 @@ xlabel('Depth (mm)');
 yyaxis left;
 zoom on;
 if get(handles.normalize, 'Value') > 1
-    ylabel('Normalized Dose');
+    ylabel('Relative Dose');
     ylim([0 1.2]);
 else
-    ylabel('Dose');
+    ylabel('Signal');
 end
 yyaxis right;
 ylabel('Gamma');

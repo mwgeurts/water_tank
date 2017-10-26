@@ -42,8 +42,11 @@ switch varargin{2}
     % OmniPro RFA300 ASCII BDS
     case 1
         
+        % Open file to provided filename 
         fid = fopen(varargin{1});
-        j = 0;
+        
+        % Initialize counter and return variable
+        i = 0;
         profile = cell(0);
 
         % Loop through file contents
@@ -54,25 +57,36 @@ switch varargin{2}
 
             % If line matches format
             if length(l) > 1 && strcmp(l(1), '=')
-                if length(profile) == j
-                    profile{j} = vertcat(profile{j}, ...
+                if length(profile) == i
+                    profile{i} = vertcat(profile{i}, ...
                         cell2mat(textscan(l(2:end), '%f %f %f %f')));
                 else
-                    profile{j} = cell2mat(textscan(l(2:end), '%f %f %f %f'));
+                    profile{i} = cell2mat(textscan(l(2:end), '%f %f %f %f'));
                 end
 
             else
-                j = j + 1;
+                i = i + 1;
             end
         end
 
         % Close file
         fclose(fid);
-        clear fid j l;
 
         % Remove empty cells
         profile = profile(~cellfun('isempty', profile));
         
+        % Loop through each profile
+        for i = 1:length(profile)
+            
+            % If depth is negative (given by a negative mean value), flip
+            % the dimension so that depths are down
+            if mean(profile{i}(:,3)) < 0
+                profile{i}(:,3) = -profile{i}(:,3);
+            end
+        end
+        
+        % Clear temporary variables
+        clear fid i l;
 end
 
 % Log number of profiles

@@ -24,8 +24,9 @@ function profile = ScaleProfiles(varargin)
 % Specify options and order
 options = {
     'None'
-    'Reference CAX'
     'Max Value'
+    'CAX'
+    'CAX/PDD'
 };
 
 % If no input arguments are provided
@@ -47,14 +48,80 @@ switch varargin{2}
         % Return raw profile
         profile = varargin{1};
         
-    % Refence CAX
+    % Max Value
     case 2
         
         % Start with raw profile
         profile = varargin{1};
         
         % Log action 
-        Event('Profiles scaled to match reference CAX value at that depth');
+        Event('Profiles scaled to maximum values');
+
+        % Loop through each profile
+        for i = 1:length(profile)
+        
+            % Scale by max;
+            profile{i}(:,4) = profile{i}(:,4) / max(profile{i}(:,4));
+            profile{i}(:,5) = profile{i}(:,5) / max(profile{i}(:,5));
+        end 
+        
+        % Clear temporary variables
+        clear i;
+        
+    % CAX/PDD
+    case 3
+        
+        % Start with raw profile
+        profile = varargin{1};
+        
+        % Log action 
+        Event('Profiles scaled to match CAX value');
+
+        % Loop through each profile
+        for i = 1:length(profile)
+        
+            % If X changes, this is an X profile
+            if profile{i}(1,1) ~= profile{i}(2,1)
+                
+                % Scale measured data to CAX
+                profile{i}(:,4) = profile{i}(:,4) / interp1(profile{i}(:,1), ...
+                    profile{i}(:,4), 0);
+                
+                % Scale reference data to CAX
+                profile{i}(:,5) = profile{i}(:,5) / interp1(profile{i}(:,1), ...
+                    profile{i}(:,5), 0);
+                
+            % Otherwise, if Y changes, this is an Y profile
+            elseif profile{i}(1,2) ~= profile{i}(2,2)
+                
+                % Scale measured data to CAX
+                profile{i}(:,4) = profile{i}(:,4) / interp1(profile{i}(:,2), ...
+                    profile{i}(:,4), 0);
+                
+                % Scale reference data to CAX
+                profile{i}(:,5) = profile{i}(:,5) / interp1(profile{i}(:,2), ...
+                    profile{i}(:,5), 0);
+                
+            % Otherwise, if Z changes, this is an depth profile
+            elseif profile{i}(1,3) ~= profile{i}(2,3)
+                
+                % Scale measured data to match reference Dmax
+                profile{i}(:,4) = profile{i}(:,4) * max(profile{i}(:,5)) / ...
+                    max(profile{i}(:,4));
+            end
+        end 
+        
+        % Clear temporary variables
+        clear i;    
+        
+    % CAX/PDD
+    case 4
+        
+        % Start with raw profile
+        profile = varargin{1};
+        
+        % Log action 
+        Event('Profiles scaled to match CAX value at reference depth');
 
         % Loop through each profile
         for i = 1:length(profile)
@@ -87,23 +154,5 @@ switch varargin{2}
         % Clear temporary variables
         clear i;
         
-    % Max Value
-    case 3
-        
-        % Start with raw profile
-        profile = varargin{1};
-        
-        % Log action 
-        Event('Profiles scaled to maximum values');
-
-        % Loop through each profile
-        for i = 1:length(profile)
-        
-            % Scale by max;
-            profile{i}(:,4) = profile{i}(:,4) / max(profile{i}(:,4));
-            profile{i}(:,5) = profile{i}(:,5) / max(profile{i}(:,5));
-        end 
-        
-        % Clear temporary variables
-        clear i;
+    
 end

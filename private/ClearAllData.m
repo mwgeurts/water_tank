@@ -31,6 +31,10 @@ end
 handles.raw = [];
 handles.profile = [];
 
+% The iso and rcav variables are temporary stored input values
+handles.iso = [];
+handles.rcav = [];
+
 % Clear files
 handles.files = [];
 
@@ -53,15 +57,22 @@ set(handles.xystats, 'data', CalcProfileStats());
 set(handles.zstats, 'data', CalcDepthStats());
 
 % Clear processing options
-set(handles.epom, 'Value', str2double(handles.config.DEFAULT_EPOM));
-set(handles.pdi, 'Value', str2double(handles.config.DEFAULT_PDI));
-set(handles.normalize, 'Value', str2double(handles.config.DEFAULT_NORMALIZE));
-set(handles.smooth, 'Value', str2double(handles.config.DEFAULT_SMOOTH));
-set(handles.center, 'Value', str2double(handles.config.DEFAULT_CENTER));
+set(handles.epom, 'Value', handles.config.DEFAULT_EPOM);
+set(handles.pdi, 'Value', handles.config.DEFAULT_PDI);
+set(handles.normalize, 'Value', handles.config.DEFAULT_NORMALIZE);
+set(handles.smooth, 'Value', handles.config.DEFAULT_SMOOTH);
+set(handles.center, 'Value', handles.config.DEFAULT_CENTER);
+set(handles.convolve, 'Value', handles.config.DEFAULT_CONVOLVE);
+
+% Reset default detector
+set(handles.detector, 'Value', handles.config.DEFAULT_DETECTOR);
+Event(sprintf('Detector set to %s (Rcav = %0.2f mm)', ...
+    handles.detectors{get(handles.detector, 'Value'), 1}, ...
+    handles.detectors{get(handles.detector, 'Value'), 2}/2));
 
 % Set Gamma criteria
 set(handles.gamma, 'String', handles.config.DEFAULT_GAMMA);
-if str2double(handles.config.DEFAULT_GAMMALOCAL) == 1
+if handles.config.DEFAULT_GAMMALOCAL == 1
     set(handles.radiobutton2, 'Value', 0);
     set(handles.radiobutton3, 'Value', 1);
 else

@@ -83,9 +83,7 @@ switch varargin{2}
                         I+uI-3:I+uI,1), 0.5 * max(profile{i}(:,4)), 'linear');
 
                     % Shift measured profile by offset
-                    profile{i}(:,4) = interp1(profile{i}(:,1), ...
-                        profile{i}(:,4), profile{i}(:,1) + (l+u)/2, ...
-                        'linear', 0);
+                    profile{i}(:,1) = profile{i}(:,1) - (l+u)/2;
                 catch
                     Event(sprintf(['FWHM could not be computed for ', ...
                         'profile %i'], i), 'WARN');
@@ -115,9 +113,7 @@ switch varargin{2}
                         I+uI-3:I+uI,2), 0.5 * max(profile{i}(:,4)), 'linear');
 
                     % Shift measured profile by offset
-                    profile{i}(:,4) = interp1(profile{i}(:,2), ...
-                        profile{i}(:,4), profile{i}(:,2) + (l+u)/2, ...
-                        'linear', 0);
+                    profile{i}(:,2) = profile{i}(:,2) - (l+u)/2;
                 catch
                     Event(sprintf(['FWHM could not be computed for ', ...
                         'profile %i'], i), 'WARN');
@@ -164,9 +160,7 @@ switch varargin{2}
                         I+uI-3:I+uI,1), 0.25 * max(profile{i}(:,4)), 'linear');
 
                     % Shift measured profile by offset
-                    profile{i}(:,4) = interp1(profile{i}(:,1), ...
-                        profile{i}(:,4), profile{i}(:,1) + (l+u)/2, ...
-                        'linear', 0);
+                    profile{i}(:,1) = profile{i}(:,1) - (l+u)/2;
                 catch
                     Event(sprintf(['FWQM could not be computed for ', ...
                         'profile %i'], i), 'WARN');
@@ -196,9 +190,7 @@ switch varargin{2}
                         I+uI-3:I+uI,2), 0.25 * max(profile{i}(:,4)), 'linear');
 
                     % Shift measured profile by offset
-                    profile{i}(:,4) = interp1(profile{i}(:,2), ...
-                        profile{i}(:,4), profile{i}(:,2) + (l+u)/2, ...
-                        'linear', 0);
+                    profile{i}(:,2) = profile{i}(:,2) - (l+u)/2;
                 catch
                     Event(sprintf(['FWQM could not be computed for ', ...
                         'profile %i'], i), 'WARN');

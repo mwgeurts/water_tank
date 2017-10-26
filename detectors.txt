@@ -1,0 +1,9 @@
+PTW 31014 PinPoint      =   2.0
+PTW 31015 PinPoint      =   2.9
+PTW 31016 PinPoint 3D	=   2.9
+PTW 31010 SemiFlex      =   5.5
+PTW 31013 SemiFlex      =   5.5
+IBA CC01                =   2.0
+IBA CC04                =   4.0
+IBA CC08                =   6.0
+IBA CC13                =   6.0

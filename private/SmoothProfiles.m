@@ -3,7 +3,8 @@ function profile = SmoothProfiles(varargin)
 % If called with no inputs, it will return a list of available algorithms 
 % that can be used. If called with inputs, the first must be the
 % name of the file while the second is an integer corresponding to the
-% algorithm.
+% algorithm, and the third is a structure array containing configuration
+% options.
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
 % Copyright (C) 2017 University of Wisconsin Board of Regents
@@ -24,6 +25,8 @@ function profile = SmoothProfiles(varargin)
 % Specify options and order
 options = {
     'None'
+    'Moving Average'
+    'Robust 2° Poly Fit' 
     'Savitzky-Golay'
 };
 
@@ -45,5 +48,143 @@ switch varargin{2}
         
         % Return raw profile
         profile = varargin{1};
+       
+    % Moving average filter
+    case 2
         
+        % If no configuration options exist, define default values
+        if nargin >= 3
+            config = varargin{3};
+        else
+            config.SMOOTH_SPAN = 15;
+        end
+        
+        % Log action
+        if exist('Event', 'file') == 2
+            Event(sprintf(['Smoothing profiles using moving average ', ...
+                'filter with span %i'], config.SMOOTH_SPAN));
+        end
+        
+        % Start with raw profile
+        profile = varargin{1};
+        
+        % Check if MATLAB can find smooth (Curve Fitting Toolbox)
+        if exist('dicominfo', 'file') ~= 2
+
+            % If not, throw an error
+            if exist('Event', 'file') == 2
+                Event(['The Curve Fitting Toolbox cannot be found and is ', ...
+                    'required for moving average smoothing.'], 'ERROR');
+            else
+                error(['The Curve Fitting Toolbox cannot be found and is ', ...
+                    'required by moving average smoothing.']);
+            end
+        end
+        
+        % Loop through each profile
+        for i = 1:length(profile)
+            
+            % Smooth the measured data
+            profile{i}(:,4) = smooth(profile{i}(:,4), ...
+                config.SMOOTH_SPAN / length(profile{i}(:,4)), ...
+                'moving');
+        end
+        
+    % Robust 2nd degree Polynomial Regression filter
+    case 3
+        
+        % If no configuration options exist, define default values
+        if nargin >= 3
+            config = varargin{3};
+        else
+            config.SMOOTH_SPAN = 15;
+        end
+        
+        % Log action
+        if exist('Event', 'file') == 2
+            Event(sprintf(['Smoothing profiles using 2nd degree polynomial ', ...
+                'regression filter with span %i'], config.SMOOTH_SPAN));
+        end
+        
+        % Start with raw profile
+        profile = varargin{1};
+        
+        % Check if MATLAB can find smooth (Curve Fitting Toolbox)
+        if exist('dicominfo', 'file') ~= 2
+
+            % If not, throw an error
+            if exist('Event', 'file') == 2
+                Event(['The Curve Fitting Toolbox cannot be found and is ', ...
+                    'required for Robust Polynomial smoothing.'], 'ERROR');
+            else
+                error(['The Curve Fitting Toolbox cannot be found and is ', ...
+                    'required by Robust Polynomial smoothing.']);
+            end
+        end
+        
+        % Loop through each profile
+        for i = 1:length(profile)
+            
+            % If this is an X or Y profile
+            if profile{i}(1,1) ~= profile{i}(2,1)
+                
+                % Smooth the measured data
+                profile{i}(:,4) = smooth(profile{i}(:,4), ...
+                    config.SMOOTH_SPAN / length(profile{i}(:,4)), ...
+                    'rloess');
+            
+            % Otherwise, reduce the span for depth profiles
+            else
+                
+                % Smooth the measured data
+                profile{i}(:,4) = smooth(profile{i}(:,4), ...
+                    config.SMOOTH_SPAN / length(profile{i}(:,4)) / 10, ...
+                    'rloess');
+            end
+        end
+        
+    % Savitzky-Golay filter
+    case 4
+        
+        % If no configuration options exist, define default values
+        if nargin >= 3
+            config = varargin{3};
+        else
+            config.SMOOTH_SPAN = 15;
+            config.SGOLAY_DEGREE = 3;
+        end
+        
+        
+        % Log action
+        if exist('Event', 'file') == 2
+            Event(sprintf(['Smoothing profiles using Savitzky-Golay filter', ...
+                ' with span %i and degree %i'], config.SMOOTH_SPAN, ...
+                config.SGOLAY_DEGREE));
+        end
+        
+        % Start with raw profile
+        profile = varargin{1};
+        
+        % Check if MATLAB can find smooth (Curve Fitting Toolbox)
+        if exist('dicominfo', 'file') ~= 2
+
+            % If not, throw an error
+            if exist('Event', 'file') == 2
+                Event(['The Curve Fitting Toolbox cannot be found and is ', ...
+                    'required for Savitzky-Golay smoothing.'], 'ERROR');
+            else
+                error(['The Curve Fitting Toolbox cannot be found and is ', ...
+                    'required by Savitzky-Golay smoothing.']);
+            end
+        end
+        
+        % Loop through each profile
+        for i = 1:length(profile)
+            
+            % Smooth the measured data
+            profile{i}(:,4) = smooth(profile{i}(:,4), ...
+                config.SMOOTH_SPAN, 'sgolay', ...
+                config.SGOLAY_DEGREE);
+        end
+
 end

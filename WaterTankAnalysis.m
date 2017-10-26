@@ -22,7 +22,7 @@ function varargout = WaterTankAnalysis(varargin)
 
 % Edit the above text to modify the response to help WaterTankAnalysis
 
-% Last Modified by GUIDE v2.5 24-Oct-2017 15:15:59
+% Last Modified by GUIDE v2.5 26-Oct-2017 18:10:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -109,6 +109,9 @@ Event('Loading configuration options');
 
 % Execute ParseConfigOptions to load the global variables
 handles.config = ParseConfigOptions('config.txt');
+
+% Load detectors list
+handles.detectors = ParseDetectorFile(handles.config.DETECTOR_FILE);
 
 % Load reference data
 handles.reference = LoadReferenceData(handles.config.REFERENCE_PATH);
@@ -514,3 +517,62 @@ handles = UpdateResults(handles);
 
 % Update handles structure
 guidata(hObject, handles);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function convolve_Callback(hObject, ~, handles)
+% hObject    handle to convolve (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Execute ProcessProfiles
+handles = ProcessProfiles(handles);
+
+% Execute UpdateResults
+handles = UpdateResults(handles);
+
+% Update handles structure
+guidata(hObject, handles);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function convolve_CreateFcn(hObject, ~, ~)
+% hObject    handle to convolve (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Popupmenu controls usually have a white background on Windows.
+if ispc && isequal(get(hObject,'BackgroundColor'), ...
+        get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function detector_Callback(hObject, ~, handles)
+% hObject    handle to detector (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Log change
+Event(sprintf('Detector set to %s (Rcav = %0.2f mm)', ...
+    handles.detectors{get(hObject, 'Value'), 1}, ...
+    handles.detectors{get(hObject, 'Value'), 2}/2));
+
+% Execute ProcessProfiles
+handles = ProcessProfiles(handles);
+
+% Execute UpdateResults
+handles = UpdateResults(handles);
+
+% Update handles structure
+guidata(hObject, handles);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function detector_CreateFcn(hObject, ~, ~)
+% hObject    handle to detector (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Popupmenu controls usually have a white background on Windows.
+if ispc && isequal(get(hObject,'BackgroundColor'), ...
+        get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
