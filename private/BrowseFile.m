@@ -59,34 +59,39 @@ if iscell(name) || sum(name ~= 0)
     handles.data = ParseProfile(fullfile(path, files), ...
         get(handles.format, 'Value'));
     
-    % Find closest match for file name
-    [a, b, c] = MatchFileName(name, handles.reference);
-   
-    % Log selection
-    Event(['Reference dataset ', handles.reference{a}.machine, ', ', ...
-        handles.reference{a}.energies{b}.energy, ', ', handles.reference{a}...
-        .energies{b}.fields{c}, ' found as most likely matching profile']);  
-    
-    % Update energy list
-    str = cell(size(handles.reference{a}.energies));
-    for i = 1:length(handles.reference{a}.energies)
-        str{i} = handles.reference{a}.energies{i}.energy;
+    % If filename matching is enabled
+    if handles.config.MATCH_FILENAME == 1
+        
+        % Find closest match for file name
+        [a, b, c] = MatchFileName(name, handles.reference);
+
+        % Log selection
+        Event(['Reference dataset ', handles.reference{a}.machine, ', ', ...
+            handles.reference{a}.energies{b}.energy, ', ', handles.reference{a}...
+            .energies{b}.fields{c}, ' found as most likely matching profile']);  
+
+        % Update energy list
+        str = cell(size(handles.reference{a}.energies));
+        for i = 1:length(handles.reference{a}.energies)
+            str{i} = handles.reference{a}.energies{i}.energy;
+        end
+        set(handles.energy, 'String', str);
+
+        % Update field list list
+        str = cell(size(handles.reference{a}.energies{b}.fields));
+        for i = 1:length(handles.reference{a}.energies{b}.fields)
+            str{i} = handles.reference{a}.energies{b}.fields{i};
+        end
+        set(handles.fieldsize, 'String', str);
+
+        % Update selection
+        set(handles.machine, 'Value', a);
+        set(handles.energy, 'Value', b);
+        set(handles.fieldsize, 'Value', c);
+        
+        % Clear temporary variables
+        clear a b c i m str;
     end
-    set(handles.energy, 'String', str);
-    clear i str;
-    
-    % Update field list list
-    str = cell(size(handles.reference{a}.energies{b}.fields));
-    for i = 1:length(handles.reference{a}.energies{b}.fields)
-        str{i} = handles.reference{a}.energies{b}.fields{i};
-    end
-    set(handles.fieldsize, 'String', str);
-    clear m i str;
-    
-    % Update selection
-    set(handles.machine, 'Value', a);
-    set(handles.energy, 'Value', b);
-    set(handles.fieldsize, 'Value', c);
     
     % Execute ProcessProfiles
     handles = ProcessProfiles(handles);
@@ -96,4 +101,4 @@ if iscell(name) || sum(name ~= 0)
 end
 
 % Clear temporary variables
-clear name path;
+clear name path files;

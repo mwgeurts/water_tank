@@ -17,3 +17,4 @@ REFERENCE_ISOY      =   0
 REFERENCE_ISOZ      =   0
 ASK_REFERENCE_ISO   =   0
 ASK_RCAV            =   0
+MATCH_FILENAME      =   1

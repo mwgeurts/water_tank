@@ -80,3 +80,6 @@ config.DEFAULT_DETECTOR = str2double(config.DEFAULT_DETECTOR);
 % Parse smoothing options
 config.SMOOTH_SPAN = str2double(config.SMOOTH_SPAN);
 config.SGOLAY_DEGREE = str2double(config.SGOLAY_DEGREE);
+
+% Parse file matching flag
+config.MATCH_FILENAME = str2double(config.MATCH_FILENAME);
