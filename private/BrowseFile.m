@@ -26,7 +26,6 @@ Event('UI window opened to select file');
 
 % If a file was selected
 if iscell(name) || sum(name ~= 0)
-    
 
     % If not cell array, cast as one
     if ~iscell(name)
@@ -35,35 +34,30 @@ if iscell(name) || sum(name ~= 0)
         set(handles.filepath, 'String', fullfile(path, name));
         
         % Store filenames
-        handles.files = cell(1);
-        handles.files{1} = name;
+        files = cell(1);
+        files{1} = name;
     else
     
         % Update text box with first file
         set(handles.filepath, 'String', 'Multiple files selected');
         
         % Store filenames
-        handles.files = name;
+        files = name;
     end
     
     % Log names
-    Event([strjoin(handles.files, ' selected\n'), ' selected']);
+    Event([strjoin(files, ' selected\n'), ' selected']);
     
     % Update default path
     handles.config.DEFAULT_PATH = path;
     Event(['Default file path updated to ', path]);
     
-    % Initialize raw profile cell array
-    handles.raw = cell(0);
-    handles.profile = [];
+    % Clear processed data cell array
+    handles.processed = [];
     
-    % Loop through files
-    for i = 1:length(handles.files)
-        
-        % Execute ParseProfile, concatenating results
-        handles.raw = horzcat(handles.raw, ParseProfile(fullfile(path, ...
-            handles.files{i}), get(handles.format, 'Value')));
-    end
+    % Execute ParseProfile
+    handles.data = ParseProfile(fullfile(path, files), ...
+        get(handles.format, 'Value'));
     
     % Find closest match for file name
     [a, b, c] = MatchFileName(name, handles.reference);

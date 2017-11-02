@@ -1,4 +1,4 @@
-function profile = ScaleProfiles(varargin)
+function profiles = ScaleProfiles(varargin)
 % ScaleProfiles scales a cell array of profiles by a specified algorithm. 
 % If called with no inputs, it will return a list of available algorithms 
 % that can be used. If called with inputs, the first must be the
@@ -33,7 +33,7 @@ options = {
 if nargin == 0
     
     % Return the options
-    profile = options;
+    profiles = options;
     
     % Stop execution
     return;
@@ -46,23 +46,23 @@ switch varargin{2}
     case 1
         
         % Return raw profile
-        profile = varargin{1};
+        profiles = varargin{1};
         
     % Max Value
     case 2
         
         % Start with raw profile
-        profile = varargin{1};
+        profiles = varargin{1};
         
         % Log action 
         Event('Profiles scaled to maximum values');
 
         % Loop through each profile
-        for i = 1:length(profile)
+        for i = 1:length(profiles)
         
             % Scale by max;
-            profile{i}(:,4) = profile{i}(:,4) / max(profile{i}(:,4));
-            profile{i}(:,5) = profile{i}(:,5) / max(profile{i}(:,5));
+            profiles{i}(:,4) = profiles{i}(:,4) / max(profiles{i}(:,4));
+            profiles{i}(:,5) = profiles{i}(:,5) / max(profiles{i}(:,5));
         end 
         
         % Clear temporary variables
@@ -72,42 +72,42 @@ switch varargin{2}
     case 3
         
         % Start with raw profile
-        profile = varargin{1};
+        profiles = varargin{1};
         
         % Log action 
         Event('Profiles scaled to match CAX value');
 
         % Loop through each profile
-        for i = 1:length(profile)
+        for i = 1:length(profiles)
         
             % If X changes, this is an X profile
-            if profile{i}(1,1) ~= profile{i}(2,1)
+            if profiles{i}(1,1) ~= profiles{i}(2,1)
                 
                 % Scale measured data to CAX
-                profile{i}(:,4) = profile{i}(:,4) / interp1(profile{i}(:,1), ...
-                    profile{i}(:,4), 0);
+                profiles{i}(:,4) = profiles{i}(:,4) / interp1(profiles{i}(:,1), ...
+                    profiles{i}(:,4), 0);
                 
                 % Scale reference data to CAX
-                profile{i}(:,5) = profile{i}(:,5) / interp1(profile{i}(:,1), ...
-                    profile{i}(:,5), 0);
+                profiles{i}(:,5) = profiles{i}(:,5) / interp1(profiles{i}(:,1), ...
+                    profiles{i}(:,5), 0);
                 
             % Otherwise, if Y changes, this is an Y profile
-            elseif profile{i}(1,2) ~= profile{i}(2,2)
+            elseif profiles{i}(1,2) ~= profiles{i}(2,2)
                 
                 % Scale measured data to CAX
-                profile{i}(:,4) = profile{i}(:,4) / interp1(profile{i}(:,2), ...
-                    profile{i}(:,4), 0);
+                profiles{i}(:,4) = profiles{i}(:,4) / interp1(profiles{i}(:,2), ...
+                    profiles{i}(:,4), 0);
                 
                 % Scale reference data to CAX
-                profile{i}(:,5) = profile{i}(:,5) / interp1(profile{i}(:,2), ...
-                    profile{i}(:,5), 0);
+                profiles{i}(:,5) = profiles{i}(:,5) / interp1(profiles{i}(:,2), ...
+                    profiles{i}(:,5), 0);
                 
             % Otherwise, if Z changes, this is an depth profile
-            elseif profile{i}(1,3) ~= profile{i}(2,3)
+            elseif profiles{i}(1,3) ~= profiles{i}(2,3)
                 
                 % Scale measured data to match reference Dmax
-                profile{i}(:,4) = profile{i}(:,4) * max(profile{i}(:,5)) / ...
-                    max(profile{i}(:,4));
+                profiles{i}(:,4) = profiles{i}(:,4) * max(profiles{i}(:,5)) / ...
+                    max(profiles{i}(:,4));
             end
         end 
         
@@ -118,41 +118,40 @@ switch varargin{2}
     case 4
         
         % Start with raw profile
-        profile = varargin{1};
+        profiles = varargin{1};
         
         % Log action 
         Event('Profiles scaled to match CAX value at reference depth');
 
         % Loop through each profile
-        for i = 1:length(profile)
+        for i = 1:length(profiles)
         
             % If X changes, this is an X profile
-            if profile{i}(1,1) ~= profile{i}(2,1)
+            if profiles{i}(1,1) ~= profiles{i}(2,1)
                 
                 % Scale measured data to match at the reference CAX
-                profile{i}(:,4) = profile{i}(:,4) * interp1(profile{i}(:,1), ...
-                    profile{i}(:,5), 0) / interp1(profile{i}(:,1), ...
-                    profile{i}(:,4), 0);
+                profiles{i}(:,4) = profiles{i}(:,4) * interp1(profiles{i}(:,1), ...
+                    profiles{i}(:,5), 0) / interp1(profiles{i}(:,1), ...
+                    profiles{i}(:,4), 0);
                 
             % Otherwise, if Y changes, this is an Y profile
-            elseif profile{i}(1,2) ~= profile{i}(2,2)
+            elseif profiles{i}(1,2) ~= profiles{i}(2,2)
                 
                 % Scale measured data to match at the reference CAX
-                profile{i}(:,4) = profile{i}(:,4) * interp1(profile{i}(:,2), ...
-                    profile{i}(:,5), 0) / interp1(profile{i}(:,2), ...
-                    profile{i}(:,4), 0);
+                profiles{i}(:,4) = profiles{i}(:,4) * interp1(profiles{i}(:,2), ...
+                    profiles{i}(:,5), 0) / interp1(profiles{i}(:,2), ...
+                    profiles{i}(:,4), 0);
                 
             % Otherwise, if Z changes, this is an depth profile
-            elseif profile{i}(1,3) ~= profile{i}(2,3)
+            elseif profiles{i}(1,3) ~= profiles{i}(2,3)
                 
                 % Scale measured data to match reference Dmax
-                profile{i}(:,4) = profile{i}(:,4) * max(profile{i}(:,5)) / ...
-                    max(profile{i}(:,4));
+                profiles{i}(:,4) = profiles{i}(:,4) * max(profiles{i}(:,5)) / ...
+                    max(profiles{i}(:,4));
             end
         end 
         
         % Clear temporary variables
         clear i;
-        
-    
+
 end

@@ -28,7 +28,7 @@ if nargin == 0 || isempty(regexpi(varargin{1}, 'e'))
         'Reference Dmax'
         'PDD 10' 
         'Reference PDD 10'
-        'Difference'
+        'R50 Difference'
         'TPR 20/10'
         'Local RMS Error'
         'Local Max Error'
@@ -59,112 +59,112 @@ end
 if nargin < 2
     return;
 else
-    profile = varargin{2};
+    profiles = varargin{2};
 end
 
 % Initialize counter
 c = 1;
 
 % Loop through profiles
-for i = 1:length(profile)
+for i = 1:length(profiles)
     
     % If this is a Z profile
-    if profile{i}(1,3) ~= profile{i}(2,3)
+    if profiles{i}(1,3) ~= profiles{i}(2,3)
         
         % Increment counter
         c = c + 1;
         
         % Calculate Dmax
-        data{1,c} = sprintf('%0.1f mm', profile{i}(find(profile{i}(:,4) == ...
-            max(profile{i}(:,4)), 1, 'first'),3));
+        data{1,c} = sprintf('%0.1f mm', profiles{i}(find(profiles{i}(:,4) == ...
+            max(profiles{i}(:,4)), 1, 'first'),3));
         
         % Calculate Reference Dmax
-        data{2,c} = sprintf('%0.1f mm', profile{i}(find(profile{i}(:,5) == ...
-            max(profile{i}(:,5)), 1, 'first'),3));
+        data{2,c} = sprintf('%0.1f mm', profiles{i}(find(profiles{i}(:,5) == ...
+            max(profiles{i}(:,5)), 1, 'first'),3));
         
          % Find the index of Dmax
-        uI = find(profile{i}(:,4) == max(profile{i}(:,4)), 1, 'first');
+        uI = find(profiles{i}(:,4) == max(profiles{i}(:,4)), 1, 'first');
 
         % Find the index of 5% of Dmax
-        lI = find(profile{i}(:,4) > 0.05 * max(profile{i}(:,4)), 1, 'first');
+        lI = find(profiles{i}(:,4) > 0.05 * max(profiles{i}(:,4)), 1, 'first');
         
         % If a photon energy is selected
         if isempty(regexpi(varargin{1}, 'e'))
             
             % Calculate the PDD10
-            M = interp1(profile{i}(lI:uI,3), ...
-                profile{i}(lI:uI,4), 100, 'linear') * 100;
+            M = interp1(profiles{i}(lI:uI,3), ...
+                profiles{i}(lI:uI,4), 100, 'linear') * 100;
             data{3,c} = sprintf('%0.1f%%', M);
             
             % Find the index of Dmax
-            uIr = find(profile{i}(:,5) == max(profile{i}(:,5)), 1, 'first');
+            uIr = find(profiles{i}(:,5) == max(profiles{i}(:,5)), 1, 'first');
 
             % Find the index of 5% of Dmax
-            lIr = find(profile{i}(:,5) > 0.05 * ...
-                max(profile{i}(:,5)), 1, 'first');
+            lIr = find(profiles{i}(:,5) > 0.05 * ...
+                max(profiles{i}(:,5)), 1, 'first');
             
             % Calculate the Reference PDD10
-            R = interp1(profile{i}(lIr:uIr,3), ...
-                profile{i}(lIr:uIr,5), 100, 'linear') * 100;
+            R = interp1(profiles{i}(lIr:uIr,3), ...
+                profiles{i}(lIr:uIr,5), 100, 'linear') * 100;
             data{4,c} = sprintf('%0.1f%%', R);
             
             % Calculate the PDD difference
             data{5,c} = sprintf('%0.2f%%', M - R);
             
             % Calculate the TPR 20/10
-            data{6,c} = sprintf('%0.3f', interp1(profile{i}(lI:uI,3), ...
-                profile{i}(lI:uI,5), 200, 'linear') / ...
-                interp1(profile{i}(lI:uI,3), profile{i}(lI:uI,5), ...
+            data{6,c} = sprintf('%0.3f', interp1(profiles{i}(lI:uI,3), ...
+                profiles{i}(lI:uI,5), 200, 'linear') / ...
+                interp1(profiles{i}(lI:uI,3), profiles{i}(lI:uI,5), ...
                 100, 'linear'));
         else
             
             % Calculate the R50
-            M = interp1(profile{i}(lI:uI,4), ...
-                profile{i}(lI:uI,3), 0.5 * max(profile{i}(lI:uI,4)), 'linear');
+            M = interp1(profiles{i}(lI:uI,4), ...
+                profiles{i}(lI:uI,3), 0.5 * max(profiles{i}(lI:uI,4)), 'linear');
             data{3,c} = sprintf('%0.1f mm', M);
             
             % Find the index of Dmax
-            uIr = find(profile{i}(:,5) == max(profile{i}(:,5)), 1, 'first');
+            uIr = find(profiles{i}(:,5) == max(profiles{i}(:,5)), 1, 'first');
 
             % Find the index of 5% of Dmax
-            lIr = find(profile{i}(:,5) > 0.05 * ...
-                max(profile{i}(:,5)), 1, 'first');
+            lIr = find(profiles{i}(:,5) > 0.05 * ...
+                max(profiles{i}(:,5)), 1, 'first');
             
             % Calculate the Reference R50
-            R = interp1(profile{i}(lIr:uIr,5), ...
-                profile{i}(lIr:uIr,3), 0.5 * max(profile{i}(lIr:uIr,5)), 'linear');
+            R = interp1(profiles{i}(lIr:uIr,5), ...
+                profiles{i}(lIr:uIr,3), 0.5 * max(profiles{i}(lIr:uIr,5)), 'linear');
             data{4,c} = sprintf('%0.1f mm', R);
             
             % Calculate the R50 difference
             data{5,c} = sprintf('%0.1f mm', M - R);
             
             % Calculate Rp
-            I = find(profile{i}(lI:uI,4) < 0.5 * max(profile{i}(:,4)), 1, 'last');
-            Rp = interp1(profile{i}(lI:uI,4), profile{i}(lI:uI,3), 0.5 * ...
-                max(profile{i}(lI:uI,4))) - (0.5 * max(profile{i}(:,4)) - ...
-                min(profile{i}(:,4))) ...
-                * mean(diff(profile{i}(lI+I-3:lI+I+3,3))) / ...
-                mean(diff(profile{i}(lI+I-3:lI+I+3,4)));
-            [~, lI] = min(abs(profile{i}(:,3) - Rp));
+            I = find(profiles{i}(lI:uI,4) < 0.5 * max(profiles{i}(:,4)), 1, 'last');
+            Rp = interp1(profiles{i}(lI:uI,4), profiles{i}(lI:uI,3), 0.5 * ...
+                max(profiles{i}(lI:uI,4))) - (0.5 * max(profiles{i}(:,4)) - ...
+                min(profiles{i}(:,4))) ...
+                * mean(diff(profiles{i}(lI+I-3:lI+I+3,3))) / ...
+                mean(diff(profiles{i}(lI+I-3:lI+I+3,4)));
+            [~, lI] = min(abs(profiles{i}(:,3) - Rp));
             data{6,c} = sprintf('%0.1f mm', Rp);
         end
 
         % Calculate RMS error
-        data{7,c} = sprintf('%0.2f%%', sqrt(mean(((profile{i}(lI:uI,4) - ...
-            profile{i}(lI:uI,5)) ./ profile{i}(lI:uI,5)).^2)) * 100);
+        data{7,c} = sprintf('%0.2f%%', sqrt(mean(((profiles{i}(lI:uI,4) - ...
+            profiles{i}(lI:uI,5)) ./ profiles{i}(lI:uI,5)).^2)) * 100);
         
         % Calculate Max error
-        data{8,c} = sprintf('%0.2f%%', max((profile{i}(lI:uI,4) - ...
-            profile{i}(lI:uI,5)) ./ profile{i}(lI:uI,5)) * 100);
+        data{8,c} = sprintf('%0.2f%%', max((profiles{i}(lI:uI,4) - ...
+            profiles{i}(lI:uI,5)) ./ profiles{i}(lI:uI,5)) * 100);
         
         % Calculate Mean Gamma
-        data{9,c} = sprintf('%0.2f', mean(profile{i}(lI:uI,6)));
+        data{9,c} = sprintf('%0.2f', mean(profiles{i}(lI:uI,6)));
         
         % Calculate Max Gamma
-        data{10,c} = sprintf('%0.2f', max(profile{i}(lI:uI,6)));
+        data{10,c} = sprintf('%0.2f', max(profiles{i}(lI:uI,6)));
         
         % Calculate Gamma Pass Rate
-        data{11,c} = sprintf('%0.1f%%', sum(profile{i}(lI:uI,6) < 1) / ...
+        data{11,c} = sprintf('%0.1f%%', sum(profiles{i}(lI:uI,6) < 1) / ...
             length(lI:uI) * 100);
         
     end

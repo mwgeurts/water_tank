@@ -1,6 +1,6 @@
 function handles = PlotProfiles(handles)
 % PlotProfiles plots the X, Y, and Z profiles for WaterTankAnalysis using
-% the data contained in handles.profiles.
+% the data contained in handles.processeds.
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
 % Copyright (C) 2017 University of Wisconsin Board of Regents
@@ -40,28 +40,28 @@ axes(handles.iecx);
 c = 0;
 
 % Loop through each profile
-for i = 1:length(handles.profile)
+for i = 1:length(handles.processed)
     
     % If X changes, this is an X profile
-    if handles.profile{i}(1,1) ~= handles.profile{i}(2,1)
+    if handles.processed{i}(1,1) ~= handles.processed{i}(2,1)
     
         % Increment counter
         c = c + 1;
         
         % Plot measured profile
         yyaxis left;
-        plot(handles.profile{i}(:,1), handles.profile{i}(:,4), '-', ...
+        plot(handles.processed{i}(:,1), handles.processed{i}(:,4), '-', ...
             'Color', cmap(c,:));
 
         % Hold remaining plots
         if c == 1
-            xlim([min(handles.profile{i}(:,1)) ...
-                max(handles.profile{i}(:,1))]);
+            xlim([min(handles.processed{i}(:,1)) ...
+                max(handles.processed{i}(:,1))]);
             hold on;
         end
         
         % Plot reference profile
-        plot(handles.profile{i}(:,1), handles.profile{i}(:,5), '--', ...
+        plot(handles.processed{i}(:,1), handles.processed{i}(:,5), '--', ...
             'Color', cmap(c,:));
         
         % Plot Gamma
@@ -69,7 +69,7 @@ for i = 1:length(handles.profile)
         if c == 1
             hold off;
         end
-        plot(handles.profile{i}(:,1), handles.profile{i}(:,6), ':', ...
+        plot(handles.processed{i}(:,1), handles.processed{i}(:,6), ':', ...
             'Color', cmap(c,:));
         
         % Hold remaining plots
@@ -106,28 +106,28 @@ axes(handles.iecy);
 c = 0;
 
 % Loop through each profile
-for i = 1:length(handles.profile)
+for i = 1:length(handles.processed)
     
     % If Y changes, this is an Y profile
-    if handles.profile{i}(1,2) ~= handles.profile{i}(2,2)
+    if handles.processed{i}(1,2) ~= handles.processed{i}(2,2)
     
         % Increment counter
         c = c + 1;
         
         % Plot measured profile
         yyaxis left;
-        plot(handles.profile{i}(:,2), handles.profile{i}(:,4), '-', ...
+        plot(handles.processed{i}(:,2), handles.processed{i}(:,4), '-', ...
             'Color', cmap(c,:));
         
         % Hold remaining plots
         if c == 1
-            xlim([min(handles.profile{i}(:,2)) ...
-                max(handles.profile{i}(:,2))]);
+            xlim([min(handles.processed{i}(:,2)) ...
+                max(handles.processed{i}(:,2))]);
             hold on;
         end
 
         % Plot reference profile
-        plot(handles.profile{i}(:,2), handles.profile{i}(:,5), '--', ...
+        plot(handles.processed{i}(:,2), handles.processed{i}(:,5), '--', ...
             'Color', cmap(c,:));
         
         % Plot Gamma
@@ -135,7 +135,7 @@ for i = 1:length(handles.profile)
         if c == 1
             hold off;
         end
-        plot(handles.profile{i}(:,2), handles.profile{i}(:,6), ':', ...
+        plot(handles.processed{i}(:,2), handles.processed{i}(:,6), ':', ...
             'Color', cmap(c,:));
         
         % Hold remaining plots
@@ -172,28 +172,28 @@ axes(handles.iecz);
 c = 0;
 
 % Loop through each profile
-for i = 1:length(handles.profile)
+for i = 1:length(handles.processed)
     
     % If Z changes, this is a depth profile
-    if handles.profile{i}(1,3) ~= handles.profile{i}(2,3)
+    if handles.processed{i}(1,3) ~= handles.processed{i}(2,3)
     
         % Increment counter
         c = c + 1;
         
         % Plot measured profile
         yyaxis left;
-        plot(handles.profile{i}(:,3), handles.profile{i}(:,4), '-', ...
+        plot(handles.processed{i}(:,3), handles.processed{i}(:,4), '-', ...
             'Color', cmap(c,:));
         
         % Hold remaining plots
         if c == 1
-            xlim([min(handles.profile{i}(:,3)) ...
-                max(handles.profile{i}(:,3))]);
+            xlim([min(handles.processed{i}(:,3)) ...
+                max(handles.processed{i}(:,3))]);
             hold on;
         end
 
         % Plot reference profile
-        plot(handles.profile{i}(:,3), handles.profile{i}(:,5), '--', ...
+        plot(handles.processed{i}(:,3), handles.processed{i}(:,5), '--', ...
             'Color', cmap(c,:));
         
         % Plot Gamma
@@ -201,7 +201,7 @@ for i = 1:length(handles.profile)
         if c == 1
             hold off;
         end
-        plot(handles.profile{i}(:,3), handles.profile{i}(:,6), ':', ...
+        plot(handles.processed{i}(:,3), handles.processed{i}(:,6), ':', ...
             'Color', cmap(c,:));
         
         % Hold remaining plots

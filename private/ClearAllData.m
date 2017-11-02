@@ -27,9 +27,9 @@ else
     Event('Initializing data variables');
 end
 
-% The raw and profile variables store the loaded profiles
-handles.raw = [];
-handles.profile = [];
+% The data and processed variables store the loaded profiles
+handles.data = [];
+handles.processed = [];
 
 % The iso and rcav variables are temporary stored input values
 handles.iso = [];

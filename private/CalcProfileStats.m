@@ -41,52 +41,52 @@ data = {
 if nargin == 0
     return;
 else
-    profile = varargin{1};
+    profiles = varargin{1};
 end
 
 % Initialize counter
 c = 1;
 
 % Loop through profiles
-for i = 1:length(profile)
+for i = 1:length(profiles)
     
     % If this is an X or Y profile
-    if profile{i}(1,1) ~= profile{i}(2,1) || ...
-            profile{i}(1,2) ~= profile{i}(2,2)
+    if profiles{i}(1,1) ~= profiles{i}(2,1) || ...
+            profiles{i}(1,2) ~= profiles{i}(2,2)
         
         % Increment counter
         c = c + 1;
         
         % List the axis and store the axis
-        if profile{i}(1,1) ~= profile{i}(2,1)
+        if profiles{i}(1,1) ~= profiles{i}(2,1)
             data{1,c} = 'IEC X';
-            x = profile{i}(:,1);
+            x = profiles{i}(:,1);
         else
             data{1,c} = 'IEC Y';
-            x = profile{i}(:,2);
+            x = profiles{i}(:,2);
         end
         
         % List depth
-        data{2,c} = sprintf('%0.1f mm', profile{i}(1,3));
+        data{2,c} = sprintf('%0.1f mm', profiles{i}(1,3));
         
         % Find index of central value
         [~, I] = min(abs(x));
 
         % Find highest lower index just below half maximum
-        lI = find(profile{i}(1:I,4) < 0.5 * max(profile{i}(:,4)), 1, 'last');
+        lI = find(profiles{i}(1:I,4) < 0.5 * max(profiles{i}(:,4)), 1, 'last');
 
         % Find lowest upper index just above half maximum
-        uI = find(profile{i}(I:end,4) < 0.5 * max(profile{i}(:,4)), 1, 'first');
+        uI = find(profiles{i}(I:end,4) < 0.5 * max(profiles{i}(:,4)), 1, 'first');
 
         % Calculate FWHM and offset
         try
             % Interpolate to find lower half-maximum value
-            l = interp1(profile{i}(lI-1:lI+2,4), ...
-                x(lI-1:lI+2), 0.5 * max(profile{i}(:,4)), 'linear');
+            l = interp1(profiles{i}(lI-1:lI+2,4), ...
+                x(lI-1:lI+2), 0.5 * max(profiles{i}(:,4)), 'linear');
 
             % Interpolate to find upper half-maximum value
-            u = interp1(profile{i}(I+uI-3:I+uI,4), ...
-                x(I+uI-3:I+uI), 0.5 * max(profile{i}(:,4)), 'linear');
+            u = interp1(profiles{i}(I+uI-3:I+uI,4), ...
+                x(I+uI-3:I+uI), 0.5 * max(profiles{i}(:,4)), 'linear');
 
             % Compute FWHM and offset
             fwhm = sprintf('%0.1f mm', sum(abs([l u])));
@@ -111,39 +111,39 @@ for i = 1:length(profile)
             floor((lI + I + uI)/2 + abs(I + uI - lI) * 0.4);
         
         % Calculate Flatness
-        data{3,c} = sprintf('%0.2f%%', (max(profile{i}(range,4)) - ...
-            min(profile{i}(range,4)))/(max(profile{i}(range,4)) + ...
-            min(profile{i}(range,4))) * 100);
+        data{3,c} = sprintf('%0.2f%%', (max(profiles{i}(range,4)) - ...
+            min(profiles{i}(range,4)))/(max(profiles{i}(range,4)) + ...
+            min(profiles{i}(range,4))) * 100);
         
         % Calculate CAX Point Symmetry
-        data{4,c} = sprintf('%0.2f%%', max((profile{i}(range(1):I,4) - ...
-            interp1(x, profile{i}(:,4), -x(range(1):I), 'linear')) / ...
-            interp1(x, profile{i}(:,4), 0, 'linear')) * 100);
+        data{4,c} = sprintf('%0.2f%%', max((profiles{i}(range(1):I,4) - ...
+            interp1(x, profiles{i}(:,4), -x(range(1):I), 'linear')) / ...
+            interp1(x, profiles{i}(:,4), 0, 'linear')) * 100);
         
         % Calculate Areal Symmetry
-        data{5,c} = sprintf('%0.2f%%', (sum(profile{i}(range(1):I,4)) - ...
-            sum(interp1(x, profile{i}(:,4), -x(range(1):I), 'linear'))) / ...
-            (sum(profile{i}(range(1):I,4)) + sum(interp1(x, profile{i}(:,4), ...
+        data{5,c} = sprintf('%0.2f%%', (sum(profiles{i}(range(1):I,4)) - ...
+            sum(interp1(x, profiles{i}(:,4), -x(range(1):I), 'linear'))) / ...
+            (sum(profiles{i}(range(1):I,4)) + sum(interp1(x, profiles{i}(:,4), ...
             -x(range(1):I), 'linear'))) * 200);
         
         % Store FWHM
         data{6,c} = fwhm;
         
         % Find reference highest lower index just below half maximum
-        lI = find(profile{i}(1:I,5) < 0.5 * max(profile{i}(:,5)), 1, 'last');
+        lI = find(profiles{i}(1:I,5) < 0.5 * max(profiles{i}(:,5)), 1, 'last');
 
         % Find reference lowest upper index just above half maximum
-        uI = find(profile{i}(I:end,5) < 0.5 * max(profile{i}(:,5)), 1, 'first');
+        uI = find(profiles{i}(I:end,5) < 0.5 * max(profiles{i}(:,5)), 1, 'first');
 
         % Calculate reference FWHM
         try
             % Interpolate to find lower half-maximum value
-            l = interp1(profile{i}(lI-1:lI+2,5), ...
-                x(lI-1:lI+2), 0.5 * max(profile{i}(:,5)), 'linear');
+            l = interp1(profiles{i}(lI-1:lI+2,5), ...
+                x(lI-1:lI+2), 0.5 * max(profiles{i}(:,5)), 'linear');
 
             % Interpolate to find upper half-maximum value
-            u = interp1(profile{i}(I+uI-3:I+uI,5), ...
-                x(I+uI-3:I+uI), 0.5 * max(profile{i}(:,5)), 'linear');
+            u = interp1(profiles{i}(I+uI-3:I+uI,5), ...
+                x(I+uI-3:I+uI), 0.5 * max(profiles{i}(:,5)), 'linear');
 
             % Compute FWHM and offset
             data{7,c} = sprintf('%0.1f mm', sum(abs([l u])));
@@ -166,21 +166,21 @@ for i = 1:length(profile)
         data{9,c} = offset;
         
         % Calculate RMS error
-        data{10,c} = sprintf('%0.2f%%', sqrt(mean(((profile{i}(range,4) - ...
-            profile{i}(range,5)) ./ profile{i}(range,5)).^2)) * 100);
+        data{10,c} = sprintf('%0.2f%%', sqrt(mean(((profiles{i}(range,4) - ...
+            profiles{i}(range,5)) ./ profiles{i}(range,5)).^2)) * 100);
         
         % Calculate Max error
-        data{11,c} = sprintf('%0.2f%%', max((profile{i}(range,4) - ...
-            profile{i}(range,5)) ./ profile{i}(range,5)) * 100);
+        data{11,c} = sprintf('%0.2f%%', max((profiles{i}(range,4) - ...
+            profiles{i}(range,5)) ./ profiles{i}(range,5)) * 100);
         
         % Calculate Mean Gamma
-        data{12,c} = sprintf('%0.2f', mean(profile{i}(range,6)));
+        data{12,c} = sprintf('%0.2f', mean(profiles{i}(range,6)));
         
         % Calculate Max Gamma
-        data{13,c} = sprintf('%0.2f', max(profile{i}(range,6)));
+        data{13,c} = sprintf('%0.2f', max(profiles{i}(range,6)));
         
         % Calculate Gamma Pass Rate
-        data{14,c} = sprintf('%0.1f%%', sum(profile{i}(range,6) < 1) / ...
+        data{14,c} = sprintf('%0.1f%%', sum(profiles{i}(range,6) < 1) / ...
             length(range) * 100);
     end
 end

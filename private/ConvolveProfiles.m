@@ -1,4 +1,4 @@
-function profile = ConvolveProfiles(varargin)
+function profiles = ConvolveProfiles(varargin)
 % ConvolveProfiles performs a convolution of each reference profile to 
 % account for detector volume.
 %
@@ -28,7 +28,7 @@ options = {
 if nargin == 0
     
     % Return the options
-    profile = options;
+    profiles = options;
     
     % Stop execution
     return;
@@ -41,7 +41,7 @@ switch varargin{2}
     case 1
         
         % Return raw profile
-        profile = varargin{1};
+        profiles = varargin{1};
    
         
     % Looe et al Gaussian approximation
@@ -62,7 +62,7 @@ switch varargin{2}
         };
     
         % Start with raw profile
-        profile = varargin{1};
+        profiles = varargin{1};
     
         % If inputs were not provided or the chamber doesn't match the
         % above list, inform the user
@@ -104,15 +104,15 @@ switch varargin{2}
         end
         
         % Loop through each profile
-        for i = 1:length(profile)
+        for i = 1:length(profiles)
             
             % If X changes, this is an X profile
-            if profile{i}(1,1) ~= profile{i}(2,1)
+            if profiles{i}(1,1) ~= profiles{i}(2,1)
                 
                 % Interpolate data to be equally spaced at 0.1 mm
-                x = profile{i}(1,1):0.1*sign(profile{i}(end,1)-...
-                    profile{i}(1,1)):profile{i}(end,1);
-                p = interp1(profile{i}(:,1), profile{i}(:,5), x, '*linear');
+                x = profiles{i}(1,1):0.1*sign(profiles{i}(end,1)-...
+                    profiles{i}(1,1)):profiles{i}(end,1);
+                p = interp1(profiles{i}(:,1), profiles{i}(:,5), x, '*linear');
                 g = 1/(latstd * sqrt(2 * pi)) * exp(-(x-mean(x)).^2 / ...
                     (2 * (latstd) ^ 2));
                 
@@ -121,16 +121,16 @@ switch varargin{2}
                 z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), length(x)*2+1);
 
                 % Extract the profile from the convolved, padded value
-                profile{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) + ...
-                    floor(length(x)/2)-1) * max(p)/max(z), profile{i}(:,1), '*linear');
+                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) + ...
+                    floor(length(x)/2)-1) * max(p)/max(z), profiles{i}(:,1), '*linear');
                 
             % Otherwise, if Y changes, this is an Y profile
-            elseif profile{i}(1,2) ~= profile{i}(2,2)
+            elseif profiles{i}(1,2) ~= profiles{i}(2,2)
                 
                 % Interpolate data to be equally spaced at 0.1 mm
-                x = profile{i}(1,2):0.1*sign(profile{i}(end,2)-...
-                    profile{i}(1,2)):profile{i}(end,2);
-                p = interp1(profile{i}(:,2), profile{i}(:,5), x, '*linear');
+                x = profiles{i}(1,2):0.1*sign(profiles{i}(end,2)-...
+                    profiles{i}(1,2)):profiles{i}(end,2);
+                p = interp1(profiles{i}(:,2), profiles{i}(:,5), x, '*linear');
                 g = 1/(longstd * sqrt(2 * pi)) * exp(-(x-mean(x)).^2 / ...
                     (2 * (longstd) ^ 2));
                 
@@ -139,16 +139,16 @@ switch varargin{2}
                 z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), length(x)*2+1);
 
                 % Extract the profile from the convolved, padded value
-                profile{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) + ...
-                    floor(length(x)/2)-1) * max(p)/max(z), profile{i}(:,2), '*linear');
+                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) + ...
+                    floor(length(x)/2)-1) * max(p)/max(z), profiles{i}(:,2), '*linear');
                 
             % Otherwise, if Z changes, this is an depth profile
-            elseif profile{i}(1,3) ~= profile{i}(2,3) 
+            elseif profiles{i}(1,3) ~= profiles{i}(2,3) 
                 
                 % Interpolate data to be equally spaced at 0.1 mm
-                x = profile{i}(1,3):0.1*sign(profile{i}(end,3)-...
-                    profile{i}(1,3)):profile{i}(end,3);
-                p = interp1(profile{i}(:,3), profile{i}(:,5), x, '*linear');
+                x = profiles{i}(1,3):0.1*sign(profiles{i}(end,3)-...
+                    profiles{i}(1,3)):profiles{i}(end,3);
+                p = interp1(profiles{i}(:,3), profiles{i}(:,5), x, '*linear');
                 g = 1/(latstd * sqrt(2 * pi)) * exp(-(x-mean(x)).^2 / ...
                     (2 * (latstd) ^ 2));
                 
@@ -157,8 +157,8 @@ switch varargin{2}
                 z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), length(x)*2+1);
 
                 % Extract the profile from the convolved, padded value
-                profile{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) + ...
-                    floor(length(x)/2)-1) * max(p)/max(z), profile{i}(:,3), '*linear');
+                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) + ...
+                    floor(length(x)/2)-1) * max(p)/max(z), profiles{i}(:,3), '*linear');
             end
             
             

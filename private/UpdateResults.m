@@ -18,8 +18,8 @@ function handles = UpdateResults(handles)
 % You should have received a copy of the GNU General Public License along 
 % with this program. If not, see http://www.gnu.org/licenses/.
 
-% If profile data exists
-if isfield(handles, 'profile') && ~isempty(handles.profile)
+% If processed profile data exists
+if isfield(handles, 'processed') && ~isempty(handles.processed)
     
     % Retrieve Gamma criteria
     c = strsplit(get(handles.gamma,'String'), '/');
@@ -38,18 +38,18 @@ if isfield(handles, 'profile') && ~isempty(handles.profile)
     end 
     
     % Execute CalcProfileGamma()
-    handles.profile = CalcProfileGamma(handles.profile, percent, dta, ...
+    handles.processed = CalcProfileGamma(handles.processed, percent, dta, ...
             get(handles.radiobutton3, 'Value'));
 
     % Execute PlotProfiles()
     handles = PlotProfiles(handles);
 
     % Execute CalcProfileStats()
-    set(handles.xystats, 'data', CalcProfileStats(handles.profile));
+    set(handles.xystats, 'data', CalcProfileStats(handles.processed));
 
     % Execute CalcDepthStats()
     set(handles.zstats, 'data', CalcDepthStats(handles.reference{...
         get(handles.machine, 'Value')}.energies{get(...
-        handles.energy, 'Value')}.energy, handles.profile));
+        handles.energy, 'Value')}.energy, handles.processed));
     
 end

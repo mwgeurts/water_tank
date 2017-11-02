@@ -1,4 +1,4 @@
-function profile = SmoothProfiles(varargin)
+function profiles = SmoothProfiles(varargin)
 % SmoothProfiles smooths a cell array of profiles by a specified algorithm. 
 % If called with no inputs, it will return a list of available algorithms 
 % that can be used. If called with inputs, the first must be the
@@ -34,7 +34,7 @@ options = {
 if nargin == 0
     
     % Return the options
-    profile = options;
+    profiles = options;
     
     % Stop execution
     return;
@@ -47,7 +47,7 @@ switch varargin{2}
     case 1
         
         % Return raw profile
-        profile = varargin{1};
+        profiles = varargin{1};
        
     % Moving average filter
     case 2
@@ -66,7 +66,7 @@ switch varargin{2}
         end
         
         % Start with raw profile
-        profile = varargin{1};
+        profiles = varargin{1};
         
         % Check if MATLAB can find smooth (Curve Fitting Toolbox)
         if exist('dicominfo', 'file') ~= 2
@@ -82,11 +82,11 @@ switch varargin{2}
         end
         
         % Loop through each profile
-        for i = 1:length(profile)
+        for i = 1:length(profiles)
             
             % Smooth the measured data
-            profile{i}(:,4) = smooth(profile{i}(:,4), ...
-                config.SMOOTH_SPAN / length(profile{i}(:,4)), ...
+            profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
+                config.SMOOTH_SPAN / length(profiles{i}(:,4)), ...
                 'moving');
         end
         
@@ -107,7 +107,7 @@ switch varargin{2}
         end
         
         % Start with raw profile
-        profile = varargin{1};
+        profiles = varargin{1};
         
         % Check if MATLAB can find smooth (Curve Fitting Toolbox)
         if exist('dicominfo', 'file') ~= 2
@@ -123,22 +123,22 @@ switch varargin{2}
         end
         
         % Loop through each profile
-        for i = 1:length(profile)
+        for i = 1:length(profiles)
             
             % If this is an X or Y profile
-            if profile{i}(1,1) ~= profile{i}(2,1)
+            if profiles{i}(1,1) ~= profiles{i}(2,1)
                 
                 % Smooth the measured data
-                profile{i}(:,4) = smooth(profile{i}(:,4), ...
-                    config.SMOOTH_SPAN / length(profile{i}(:,4)), ...
+                profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
+                    config.SMOOTH_SPAN / length(profiles{i}(:,4)), ...
                     'rloess');
             
             % Otherwise, reduce the span for depth profiles
             else
                 
                 % Smooth the measured data
-                profile{i}(:,4) = smooth(profile{i}(:,4), ...
-                    config.SMOOTH_SPAN / length(profile{i}(:,4)) / 10, ...
+                profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
+                    config.SMOOTH_SPAN / length(profiles{i}(:,4)) / 10, ...
                     'rloess');
             end
         end
@@ -163,7 +163,7 @@ switch varargin{2}
         end
         
         % Start with raw profile
-        profile = varargin{1};
+        profiles = varargin{1};
         
         % Check if MATLAB can find smooth (Curve Fitting Toolbox)
         if exist('dicominfo', 'file') ~= 2
@@ -179,10 +179,10 @@ switch varargin{2}
         end
         
         % Loop through each profile
-        for i = 1:length(profile)
+        for i = 1:length(profiles)
             
             % Smooth the measured data
-            profile{i}(:,4) = smooth(profile{i}(:,4), ...
+            profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
                 config.SMOOTH_SPAN, 'sgolay', ...
                 config.SGOLAY_DEGREE);
         end
