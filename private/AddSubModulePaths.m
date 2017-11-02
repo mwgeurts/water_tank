@@ -39,7 +39,19 @@ addpath('./gamma');
 if exist('CalcGamma', 'file') ~= 2
     
     % If not, throw an error
-    Event(['The CalcGamma submodule does not exist in the search path. Use ', ...
+    Event(['The gamma submodule does not exist in the search path. Use ', ...
+        'git clone --recursive or git submodule init followed by git ', ...
+        'submodule update to fetch all submodules'], 'ERROR');
+end
+
+% Add snc_extract submodule to search path
+addpath('./snc_extract');
+
+% Check if MATLAB can find ParseSNCprm
+if exist('ParseSNCprm', 'file') ~= 2
+    
+    % If not, throw an error
+    Event(['The snc_extract submodule does not exist in the search path. Use ', ...
         'git clone --recursive or git submodule init followed by git ', ...
         'submodule update to fetch all submodules'], 'ERROR');
 end

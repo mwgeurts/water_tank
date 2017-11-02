@@ -21,9 +21,13 @@ function profile = ParseProfile(varargin)
 % You should have received a copy of the GNU General Public License along 
 % with this program. If not, see http://www.gnu.org/licenses/.
 
+% Declare persistent buildup option
+persistent buildup;
+
 % Specify options and order
 options = {
     'OmniPro RFA300 ASCII BDS (.txt)'
+    'SNC IC Profiler (.prm)'
 };
 
 % If no input arguments are provided
@@ -87,6 +91,67 @@ switch varargin{2}
         
         % Clear temporary variables
         clear fid i l;
+        
+    % IC Profiler PRM
+    case 2
+        
+        % Define default buildup
+        if ~exist('buildup', 'var')
+            buildup = 0;
+        end
+        
+        % Execute ParseSNCprm
+        raw = ParseSNCprm('', varargin{1});
+        
+        % Correct profiles using AnalyzeProfilerFields
+        processed = AnalyzeProfilerFields(raw);
+        
+        % Initialize return cell array
+        profile = cell(0);
+        
+        % Ask user for buildup
+        buildup = str2double(inputdlg(['Enter additional buildup on ', ...
+            'IC Profiler (inherent 9 mm is already added) in mm:'], ...
+            'Enter Buildup', 1, {sprintf('%0.1f', buildup)}));
+        
+        % If user clicked cancel, default back to zero
+        if isempty(buildup)
+            buildup = 0;
+        end
+        
+        % Loop through IEC X profiles
+        for i = 1:size(processed.xdata,1)-1
+            
+            % Add cell
+            profile{length(profile)+1} = zeros(size(processed.xdata, 2),4);
+            
+            % Add X values
+            profile{length(profile)}(:,1) = 10 * processed.xdata(1,:)';
+            
+            % Set depth to 0.9 cm (Gao et al)
+            profile{length(profile)}(:,3) = repmat(9 + buildup, ...
+                size(processed.xdata, 2), 1);
+            
+            % Add corrected dose
+            profile{length(profile)}(:,4) = processed.xdata(1+i,:)';
+        end
+        
+        % Loop through IEC Y profiles
+        for i = 1:size(processed.xdata,1)-1
+            
+            % Add cell
+            profile{length(profile)+1} = zeros(size(processed.ydata, 2),4);
+            
+            % Add Y values
+            profile{length(profile)}(:,2) = 10 * processed.ydata(1,:)';
+            
+            % Set depth to 0.9 cm (Gao et al)
+            profile{length(profile)}(:,3) = repmat(9 + buildup, ...
+                size(processed.ydata, 2), 1);
+            
+            % Add corrected dose
+            profile{length(profile)}(:,4) = processed.ydata(1+i,:);
+        end
 end
 
 % Log number of profiles

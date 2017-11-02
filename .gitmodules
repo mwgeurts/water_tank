@@ -1,3 +1,6 @@
 [submodule "gamma"]
 	path = gamma
 	url = https://github.com/mwgeurts/gamma
+[submodule "snc_extract"]
+	path = snc_extract
+	url = https://github.com/mwgeurts/snc_extract
