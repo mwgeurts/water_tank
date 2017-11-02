@@ -57,7 +57,6 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
-
 % Turn off MATLAB warnings
 warning('off','all');
 
