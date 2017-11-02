@@ -27,7 +27,8 @@ Event(sprintf('Machine %s selected', handles.reference{value}.machine));
 set(handles.machine, 'Value', value)
 
 % Reset selected energy
-set(handles.energy, 'Value', 1);
+set(handles.energy, 'Value', min(get(handles.energy, ...
+    'Value'), length(handles.reference{value}.energies)));
 
 % Update energy list
 str = cell(size(handles.reference{value}.energies));
@@ -38,4 +39,4 @@ set(handles.energy, 'String', str);
 clear i str;
 
 % Call SelectEnergy to update field size list
-handles = SelectEnergy(handles, 1);
+handles = SelectEnergy(handles, get(handles.energy, 'Value'));

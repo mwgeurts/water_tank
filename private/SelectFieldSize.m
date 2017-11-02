@@ -25,6 +25,9 @@ e = get(handles.energy, 'Value');
 Event(sprintf('Field Size %s selected', ...
     handles.reference{m}.energies{e}.fields{value}));
 
+% Unset iso
+handles.iso = [];
+
 % Execute ProcessProfiles
 handles = ProcessProfiles(handles);
 

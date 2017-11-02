@@ -29,7 +29,8 @@ Event(sprintf('Energy %s selected', ...
 set(handles.energy, 'Value', value)
 
 % Reset selected field size
-set(handles.fieldsize, 'Value', 1);
+set(handles.fieldsize, 'Value', min(get(handles.fieldsize, 'Value'), ...
+    length(handles.reference{m}.energies{value}.fields)));
 
 % Update field list list
 str = cell(size(handles.reference{m}.energies{value}.fields));
@@ -40,4 +41,4 @@ set(handles.fieldsize, 'String', str);
 clear m i str;
 
 % Call SelectFieldSize to update reference dose
-handles = SelectFieldSize(handles, 1);
+handles = SelectFieldSize(handles, get(handles.fieldsize, 'Value'));
