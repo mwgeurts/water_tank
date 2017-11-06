@@ -62,9 +62,18 @@ if iscell(name) || sum(name ~= 0)
     % If filename matching is enabled
     if handles.config.MATCH_FILENAME == 1
         
-        % Find closest match for file name
-        [a, b, c] = MatchFileName(name, handles.reference);
+        % Find closest match for first file name
+        if iscell(name)
+            [a, b, c] = MatchFileName(name{1}, handles.reference);
+        else
+            [a, b, c] = MatchFileName(name, handles.reference);
+        end
 
+        % Set minimum to 1
+        a = max(a, 1);
+        b = max(b, 1);
+        c = max(c, 1);
+        
         % Log selection
         Event(['Reference dataset ', handles.reference{a}.machine, ', ', ...
             handles.reference{a}.energies{b}.energy, ', ', handles.reference{a}...
