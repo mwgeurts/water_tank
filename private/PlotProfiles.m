@@ -35,6 +35,7 @@ set(gcf,'defaultAxesColorOrder',[0 0 0; 0 0 0]);
 set(allchild(handles.iecx),'visible','on'); 
 set(handles.iecx,'visible','on');
 axes(handles.iecx);
+cla reset;
 
 % Initialize counter
 c = 0;
@@ -101,6 +102,7 @@ legend('Measured', 'Reference');
 set(allchild(handles.iecy),'visible','on'); 
 set(handles.iecy,'visible','on');
 axes(handles.iecy);
+cla reset;
 
 % Initialize counter
 c = 0;
@@ -167,6 +169,7 @@ legend('Measured', 'Reference');
 set(allchild(handles.iecz),'visible','on'); 
 set(handles.iecz,'visible','on');
 axes(handles.iecz);
+cla reset;
 
 % Initialize counter
 c = 0;
