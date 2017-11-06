@@ -112,17 +112,20 @@ switch varargin{2}
                 % Interpolate data to be equally spaced at 0.1 mm
                 x = profiles{i}(1,1):0.1*sign(profiles{i}(end,1)-...
                     profiles{i}(1,1)):profiles{i}(end,1);
-                p = interp1(profiles{i}(:,1), profiles{i}(:,5), x, '*linear');
+                p = interp1(profiles{i}(:,1), profiles{i}(:,5), x, ...
+                    'linear', 0);
                 g = 1/(latstd * sqrt(2 * pi)) * exp(-(x-mean(x)).^2 / ...
                     (2 * (latstd) ^ 2));
                 
                 % Convolve using lateral model (assumes detector cylinder
                 % is parallel to IEC Y axis)
-                z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), length(x)*2+1);
+                z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), ...
+                    length(x)*2+1);
 
                 % Extract the profile from the convolved, padded value
-                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) + ...
-                    floor(length(x)/2)-1) * max(p)/max(z), profiles{i}(:,1), '*linear');
+                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) ...
+                    + floor(length(x)/2)-1) * max(p)/max(z), ...
+                    profiles{i}(:,1), 'linear', 0);
                 
             % Otherwise, if Y changes, this is an Y profile
             elseif profiles{i}(1,2) ~= profiles{i}(2,2)
@@ -130,17 +133,20 @@ switch varargin{2}
                 % Interpolate data to be equally spaced at 0.1 mm
                 x = profiles{i}(1,2):0.1*sign(profiles{i}(end,2)-...
                     profiles{i}(1,2)):profiles{i}(end,2);
-                p = interp1(profiles{i}(:,2), profiles{i}(:,5), x, '*linear');
+                p = interp1(profiles{i}(:,2), profiles{i}(:,5), x, ...
+                    'linear', 0);
                 g = 1/(longstd * sqrt(2 * pi)) * exp(-(x-mean(x)).^2 / ...
                     (2 * (longstd) ^ 2));
                 
                 % Convolve using longitudinal model (assumes detector cylinder
                 % is parallel to IEC Y axis)
-                z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), length(x)*2+1);
+                z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), ...
+                    length(x)*2+1);
 
                 % Extract the profile from the convolved, padded value
-                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) + ...
-                    floor(length(x)/2)-1) * max(p)/max(z), profiles{i}(:,2), '*linear');
+                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) ...
+                    + floor(length(x)/2)-1) * max(p)/max(z), ...
+                    profiles{i}(:,2), 'linear', 0);
                 
             % Otherwise, if Z changes, this is an depth profile
             elseif profiles{i}(1,3) ~= profiles{i}(2,3) 
@@ -148,19 +154,20 @@ switch varargin{2}
                 % Interpolate data to be equally spaced at 0.1 mm
                 x = profiles{i}(1,3):0.1*sign(profiles{i}(end,3)-...
                     profiles{i}(1,3)):profiles{i}(end,3);
-                p = interp1(profiles{i}(:,3), profiles{i}(:,5), x, '*linear');
+                p = interp1(profiles{i}(:,3), profiles{i}(:,5), x, ...
+                    'linear');
                 g = 1/(latstd * sqrt(2 * pi)) * exp(-(x-mean(x)).^2 / ...
                     (2 * (latstd) ^ 2));
                 
                 % Convolve using lateral model (assumes detector cylinder
                 % is parallel to IEC Y or X axis)
-                z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), length(x)*2+1);
+                z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), ...
+                    length(x)*2+1);
 
                 % Extract the profile from the convolved, padded value
-                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) + ...
-                    floor(length(x)/2)-1) * max(p)/max(z), profiles{i}(:,3), '*linear');
+                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) ...
+                    + floor(length(x)/2)-1) * max(p)/max(z), ...
+                    profiles{i}(:,3), 'linear', 0);
             end
-            
-            
         end
 end
