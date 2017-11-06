@@ -29,9 +29,10 @@ function data = ParseProfile(varargin)
 
 % Specify options and order
 options = {
-    'OmniPro RFA300 ASCII BDS (.txt)'
+    'OmniPro RFA300 ASCII BDS (.txt, .asc)'
     'SNC IC Profiler (.prm)'
     'SNC IC Profiler (.txt)'
+    'Standard Imaging TEMS (.csv)'
 };
 
 % If no input arguments are provided
@@ -56,58 +57,8 @@ switch varargin{2}
     % OmniPro RFA300 ASCII BDS
     case 1
         
-        % If not cell array, cast as one
-        if ~iscell(varargin{1}); varargin{1} = cell({varargin{1}}); end
-        
-        % Initialize counter
-        i = 0;
-        
-        % Loop through each file
-        for f = 1:length(varargin{1})
-            
-            % Open file to provided filename 
-            fid = fopen(varargin{1}{f});
-            
-            % Loop through file contents
-            while ~feof(fid)
-
-                % Get line
-                l = fgetl(fid);
-
-                % If line matches format
-                if length(l) > 1 && strcmp(l(1), '=')
-                    if length(data.profiles) == i
-                        data.profiles{i} = vertcat(data.profiles{i}, ...
-                            cell2mat(textscan(l(2:end), '%f %f %f %f')));
-                    else
-                        data.profiles{i} = ...
-                            cell2mat(textscan(l(2:end), '%f %f %f %f'));
-                    end
-
-                else
-                    i = i + 1;
-                end
-            end
-
-            % Close file
-            fclose(fid);
-        end
-        
-        % Remove empty cells
-        data.profiles = data.profiles(~cellfun('isempty', data.profiles));
-        
-        % Loop through each profile
-        for i = 1:length(data.profiles)
-            
-            % If depth is negative (given by a negative mean value), flip
-            % the dimension so that depths are down
-            if mean(data.profiles{i}(:,3)) < 0
-                data.profiles{i}(:,3) = -data.profiles{i}(:,3);
-            end
-        end
-        
-        % Clear temporary variables
-        clear f fid i l;
+        % Execute ParseIBAtxt
+        data = ParseIBAtxt('', varargin{1});
         
     % IC Profiler PRM
     case 2
@@ -252,6 +203,12 @@ switch varargin{2}
         
         % Clear temporary variables
         clear f i b raw processed;
+        
+    % Standard Imaging TEMS
+    case 4
+        
+        % Execute ParseSIcsv
+        data = ParseSIcsv('', varargin{1});
 end
 
 % Log number of profiles
