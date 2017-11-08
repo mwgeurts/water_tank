@@ -28,11 +28,11 @@ if isfield(handles, 'data') && ~isempty(handles.data)
             'EPOM Adjustment', 1, sprintf('%0.1f', ...
             handles.config.DEFAULT_RCAV)));
     
-    % Otherwise, use value from selected detector
+    % Otherwise, use value from selected detectors.txt entry
     else
         rcav = handles.detectors{get(handles.detector, 'Value'), 2} / 2;
     end
-    
+
     % If this is an electron energy and EPOM is set to 0.6, set to 0.5
     % rcav, and vice versa for photons
     if ~isempty(regexpi(handles.reference{get(handles.machine, ...
@@ -44,14 +44,23 @@ if isfield(handles, 'data') && ~isempty(handles.data)
             && get(handles.epom, 'Value') == 4
         set(handles.epom, 'Value', 3);
     end
+    
+    % Start waitbar
+    progress = waitbar(0, 'Processing profiles');
 
     % Shift by EPOM
     handles.processed = ShiftProfiles(handles.data.profiles, ...
         get(handles.epom, 'Value'), rcav);
     
+    % Update waitbar
+    waitbar(0.1, progress);
+    
     % Smooth profiles
     handles.processed = SmoothProfiles(handles.processed, ...
         get(handles.smooth, 'Value'), handles.config);
+    
+    % Update waitbar
+    waitbar(0.3, progress);
     
     % Center profiles
     handles.processed = CenterProfiles(handles.processed, ...
@@ -70,6 +79,9 @@ if isfield(handles, 'data') && ~isempty(handles.data)
             handles.config.REFERENCE_ISOY ...
             handles.config.REFERENCE_ISOZ];
     end
+    
+    % Update waitbar
+    waitbar(0.5, progress);
       
     % Execute ExtractRefProfile
     handles.processed = ExtractRefProfile(handles.processed, ...
@@ -80,6 +92,9 @@ if isfield(handles, 'data') && ~isempty(handles.data)
         [handles.reference{get(handles.machine, 'Value')}...
         .energies{get(handles.energy, 'Value')}...
         .fields{get(handles.fieldsize, 'Value')}, '.dcm']), handles.iso);
+    
+    % Update waitbar
+    waitbar(0.7, progress);
     
     % Convolve profiles
     handles.processed = ConvolveProfiles(handles.processed, ...
@@ -94,11 +109,18 @@ if isfield(handles, 'data') && ~isempty(handles.data)
         handles.processed = ConvertDepthDose(handles.processed, ...
             get(handles.pdi, 'Value'));
     end
+    
+    % Update waitbar
+    waitbar(0.9, progress);
 
     % Normalize profiles
     handles.processed = ScaleProfiles(handles.processed, ...
         get(handles.normalize, 'Value'));
     
+    % Close
+    waitbar(1.0, progress, 'Done');
+    close(progress);
+    
     % Clear temporary variables
-    clear rcav;
+    clear rcav progress;
 end
