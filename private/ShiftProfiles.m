@@ -21,6 +21,9 @@ function profiles = ShiftProfiles(varargin)
 % You should have received a copy of the GNU General Public License along 
 % with this program. If not, see http://www.gnu.org/licenses/.
 
+% Persistently store shift
+persistent shift;
+
 % Specify options and order
 options = {
     'None'
@@ -60,9 +63,14 @@ switch varargin{2}
         % Start raw profile
         profiles = varargin{1};
         
+        % If shift is not defined
+        if ~exist('shift', 'var') || isempty(shift) || isnan(shift)
+            shift = 0;
+        end
+        
         % Ask user for shift
         shift = str2double(inputdlg('Enter EPOM shift (mm):', ...
-            'EPOM Adjustment', 1, {'0.0'}));
+            'EPOM Adjustment', 1, {sprintf('%0.1f', shift)}));
         
         % If the user provided a valid value
         if ~isempty(shift) && ~isnan(shift)
@@ -74,7 +82,7 @@ switch varargin{2}
             for i = 1:length(profiles)
 
                 % Shift depth
-                profiles{i}(:,3) = profiles{i}(:,3) + shift;
+                profiles{i}(:,3) = profiles{i}(:,3) - shift;
             end
         end
 
@@ -92,7 +100,7 @@ switch varargin{2}
         for i = 1:length(profiles)
             
             % Shift depth
-            profiles{i}(:,3) = profiles{i}(:,3) + 0.6 * varargin{3};
+            profiles{i}(:,3) = profiles{i}(:,3) - 0.6 * varargin{3};
         end
         
     % 0.5 rcav
@@ -102,13 +110,13 @@ switch varargin{2}
         profiles = varargin{1};
         
         % Log action 
-        Event(sprintf('Shifting profiles by 0.5 rcav = %0.1f mm', 0.6 * ...
+        Event(sprintf('Shifting profiles by 0.5 rcav = %0.1f mm', 0.5 * ...
             varargin{3}));
 
         % Loop through each profile
         for i = 1:length(profiles)
             
             % Shift depth
-            profiles{i}(:,3) = profiles{i}(:,3) + 0.6 * varargin{3};
+            profiles{i}(:,3) = profiles{i}(:,3) - 0.5 * varargin{3};
         end
 end
