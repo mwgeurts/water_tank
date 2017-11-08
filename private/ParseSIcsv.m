@@ -188,11 +188,12 @@ for f = 1:length(names)
             else
                 y = input(['Normalize by reference channel ', ...
                     '(1 == yes, 0 == no)? ']);
+                if y == 1; y = 'Yes'; else; y = 'No'; end
             end
         end
         
         % If user clicked yes
-        if strcmp(y, 'Yes') || y == 1
+        if  strcmp(y, 'Yes')
 
             % Normalize channel with greater variation by channel with less
             if std(raw{5})/mean(raw{5}) > std(raw{6})/mean(raw{6})
@@ -311,6 +312,9 @@ for f = 1:length(names)
             d = raw{4}(1);
             i = 1;
             c = 0;
+            
+            % Append EOF flag onto raw{4}
+            raw{4}(length(raw{4})+1) = 9999;
 
             % Loop through depth array
             for j = 2:length(raw{4})
@@ -369,6 +373,9 @@ for f = 1:length(names)
         % Initialize start depth and index
         d = raw{4}(1);
         i = 1;
+        
+        % Append EOF flag onto raw{4}
+        raw{4}(length(raw{4})+1) = 9999;
         
         % Loop through depth array
         for j = 2:length(raw{4})
@@ -434,16 +441,29 @@ for i = 1:length(data.profiles)
         data.profiles{i}(:,3) = -data.profiles{i}(:,3);
     end
     
-    % If depth changes (i.e. PDD), sort descending
-    if data.profiles{i}(2,3) ~= data.profiles{i}(1,3)
+    % If depth is negative (given by a negative mean value), flip
+    % the dimension so that depths are down
+    if mean(data.profiles{i}(:,3)) < 0
         
         % Log event
         if exist('Event', 'file') == 2
-            Event('Sorting depth profile by descending IEC Z value');
+            Event('Flipping IEC Z axis (positive down)');
         end
         
-        % Store sorted table in descending order
-        data.profiles{i} = flip(sortrows(data.profiles{i}, 3), 1);
+        % Store negative value
+        data.profiles{i}(:,3) = -data.profiles{i}(:,3);
+    end
+    
+    % If signal is negative (positive bias), invert the signal
+    if mean(data.profiles{i}(:,4)) < 0
+        
+        % Log event
+        if exist('Event', 'file') == 2
+            Event('Inverting negative signal');
+        end
+        
+        % Store negative value
+        data.profiles{i}(:,4) = -data.profiles{i}(:,4);
     end
 end
 
