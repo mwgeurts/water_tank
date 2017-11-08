@@ -58,6 +58,12 @@ if strcmpi(config.DEFAULT_PATH, 'userpath')
 end
 Event(['Default file path set to ', config.DEFAULT_PATH]);
 
+% Parse default reference options
+config.DEFAULT_MACHINE = str2double(config.DEFAULT_MACHINE);
+config.DEFAULT_ENERGY = str2double(config.DEFAULT_ENERGY);
+config.DEFAULT_SSD = str2double(config.DEFAULT_SSD);
+config.DEFAULT_FIELDSIZE = str2double(config.DEFAULT_FIELDSIZE);
+
 % Parse default UI options
 config.DEFAULT_EPOM = str2double(config.DEFAULT_EPOM);
 config.DEFAULT_PDI = str2double(config.DEFAULT_PDI);

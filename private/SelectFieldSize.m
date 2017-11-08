@@ -22,8 +22,9 @@ function handles = SelectFieldSize(handles, value)
 % Log selected field size
 m = get(handles.machine, 'Value');
 e = get(handles.energy, 'Value');
+s = get(handles.ssd, 'Value');
 Event(sprintf('Field Size %s selected', ...
-    handles.reference{m}.energies{e}.fields{value}));
+    handles.reference{m}.energies{e}.ssds{s}.fields{value}));
 
 % Unset iso
 handles.iso = [];

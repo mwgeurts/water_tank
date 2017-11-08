@@ -1,8 +1,8 @@
 function handles = SelectEnergy(handles, value)
 % SelectEnergy is called by WaterTankAnalysis during tool initialization, 
 % when the user clicks Clear All, or when the energy dropdown is changed.
-% It updates the field size options and calls SelectFieldSize to load the
-% reference dose if a file is selected.
+% It updates the SSD options and calls SelectSSD to load the reference 
+% dose if a file is selected.
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
 % Copyright (C) 2017 University of Wisconsin Board of Regents
@@ -28,17 +28,17 @@ Event(sprintf('Energy %s selected', ...
 % Update dropdown menu
 set(handles.energy, 'Value', value)
 
-% Reset selected field size
-set(handles.fieldsize, 'Value', min(get(handles.fieldsize, 'Value'), ...
-    length(handles.reference{m}.energies{value}.fields)));
+% Reset selected SSD
+set(handles.ssd, 'Value', min(get(handles.ssd, 'Value'), ...
+    length(handles.reference{m}.energies{value}.ssds)));
 
-% Update field list list
-str = cell(size(handles.reference{m}.energies{value}.fields));
-for i = 1:length(handles.reference{m}.energies{value}.fields)
-    str{i} = handles.reference{m}.energies{value}.fields{i};
+% Update SSD list
+str = cell(size(handles.reference{m}.energies{value}.ssds));
+for i = 1:length(handles.reference{m}.energies{value}.ssds)
+    str{i} = handles.reference{m}.energies{value}.ssds{i}.ssd;
 end
-set(handles.fieldsize, 'String', str);
+set(handles.ssd, 'String', str);
 clear m i str;
 
-% Call SelectFieldSize to update reference dose
-handles = SelectFieldSize(handles, get(handles.fieldsize, 'Value'));
+% Call SelectSSD to update reference dose
+handles = SelectSSD(handles, get(handles.ssd, 'Value'));

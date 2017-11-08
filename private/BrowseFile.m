@@ -64,20 +64,30 @@ if iscell(name) || sum(name ~= 0)
         
         % Find closest match for first file name
         if iscell(name)
-            [a, b, c] = MatchFileName(name{1}, handles.reference);
+            [a, b, c, d] = MatchFileName(name{1}, handles.reference);
         else
-            [a, b, c] = MatchFileName(name, handles.reference);
+            [a, b, c, d] = MatchFileName(name, handles.reference);
         end
 
-        % Set minimum to 1
-        a = max(a, 1);
-        b = max(b, 1);
-        c = max(c, 1);
-        
-        % Log selection
-        Event(['Reference dataset ', handles.reference{a}.machine, ', ', ...
-            handles.reference{a}.energies{b}.energy, ', ', handles.reference{a}...
-            .energies{b}.fields{c}, ' found as most likely matching profile']);  
+		% If a match was found
+		if a > 0
+			% Log selection
+			Event(['Reference dataset ', handles.reference{a}.machine, ...
+                ', ', handles.reference{a}.energies{b}.energy, ', ', ...
+                handles.reference{a}.energies{b}.ssds{c}.ssd, ', ', ...
+                handles.reference{a}.energies{b}.ssds{c}.fields{d}, ...
+                ' found as most likely matching profile']); 
+		else
+			% Log lack of selection
+			Event('The file name could not be matched to reference data', ...
+                'WARN');
+
+			% Use current values
+			a = get(handles.machine, 'Value');
+			b = get(handles.energy, 'Value');
+			c = get(handles.ssd, 'Value');
+			d = get(handles.fieldsize, 'Value');
+		end
 
         % Update energy list
         str = cell(size(handles.reference{a}.energies));
@@ -85,21 +95,29 @@ if iscell(name) || sum(name ~= 0)
             str{i} = handles.reference{a}.energies{i}.energy;
         end
         set(handles.energy, 'String', str);
-
-        % Update field list list
-        str = cell(size(handles.reference{a}.energies{b}.fields));
-        for i = 1:length(handles.reference{a}.energies{b}.fields)
-            str{i} = handles.reference{a}.energies{b}.fields{i};
+        
+        % Update SSD list
+        str = cell(size(handles.reference{a}.energies{b}.ssds));
+        for i = 1:length(handles.reference{a}.energies{b}.ssds)
+            str{i} = handles.reference{a}.energies{b}.ssds{i}.ssd;
+        end
+        set(handles.ssd, 'String', str);
+        
+        % Update field size list
+        str = cell(size(handles.reference{a}.energies{b}.ssds{c}.fields));
+        for i = 1:length(handles.reference{a}.energies{b}.ssds{c}.fields)
+            str{i} = handles.reference{a}.energies{b}.ssds{c}.fields{i};
         end
         set(handles.fieldsize, 'String', str);
 
         % Update selection
         set(handles.machine, 'Value', a);
         set(handles.energy, 'Value', b);
-        set(handles.fieldsize, 'Value', c);
+        set(handles.ssd, 'Value', c);
+        set(handles.fieldsize, 'Value', d);
         
         % Clear temporary variables
-        clear a b c i m str;
+        clear a b c d i m str;
     end
     
     % Execute ProcessProfiles

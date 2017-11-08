@@ -56,7 +56,13 @@ set(handles.iecz, 'visible', 'off');
 set(handles.xystats, 'data', CalcProfileStats());
 set(handles.zstats, 'data', CalcDepthStats());
 
-% Clear processing options
+% Reset reference dropdowns
+set(handles.machine, 'Value', handles.config.DEFAULT_MACHINE);
+set(handles.energy, 'Value', handles.config.DEFAULT_ENERGY);
+set(handles.ssd, 'Value', handles.config.DEFAULT_SSD);
+set(handles.fieldsize, 'Value', handles.config.DEFAULT_FIELDSIZE);
+
+% Reset processing options
 set(handles.epom, 'Value', handles.config.DEFAULT_EPOM);
 set(handles.pdi, 'Value', handles.config.DEFAULT_PDI);
 set(handles.normalize, 'Value', handles.config.DEFAULT_NORMALIZE);

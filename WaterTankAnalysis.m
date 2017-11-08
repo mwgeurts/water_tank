@@ -22,7 +22,7 @@ function varargout = WaterTankAnalysis(varargin)
 
 % Edit the above text to modify the response to help WaterTankAnalysis
 
-% Last Modified by GUIDE v2.5 02-Nov-2017 14:19:28
+% Last Modified by GUIDE v2.5 08-Nov-2017 12:14:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 0;
@@ -597,6 +597,31 @@ guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function detector_CreateFcn(hObject, ~, ~)
 % hObject    handle to detector (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Popupmenu controls usually have a white background on Windows.
+if ispc && isequal(get(hObject,'BackgroundColor'), ...
+        get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function ssd_Callback(hObject, ~, handles)
+% hObject    handle to ssd (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Execute SelectSSD()
+handles = SelectSSD(handles, get(hObject,'Value'));
+
+% Update handles structure
+guidata(hObject, handles);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function ssd_CreateFcn(hObject, ~, ~)
+% hObject    handle to ssd (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
