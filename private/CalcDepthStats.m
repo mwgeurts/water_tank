@@ -82,7 +82,7 @@ for i = 1:length(profiles)
         data{2,c} = sprintf('%0.1f mm', profiles{i}(find(profiles{i}(:,5) == ...
             max(profiles{i}(:,5)), 1, 'first'),3));
         
-         % Find the index of Dmax
+        % Find the index of Dmax
         uI = find(profiles{i}(:,4) == max(profiles{i}(:,4)), 1, 'first');
 
         % Find the index of 5% of Dmax

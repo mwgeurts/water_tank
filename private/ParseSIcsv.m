@@ -428,42 +428,41 @@ end
 % Loop through each profile
 for i = 1:length(data.profiles)
 
-    % If depth is negative (given by a negative mean value), flip
-    % the dimension so that depths are down
-    if mean(data.profiles{i}(:,3)) < 0
-        
-        % Log event
-        if exist('Event', 'file') == 2
-            Event('Flipping IEC Z axis (positive down)');
-        end
-        
-        % Store negative value
-        data.profiles{i}(:,3) = -data.profiles{i}(:,3);
-    end
-    
-    % If depth is negative (given by a negative mean value), flip
-    % the dimension so that depths are down
-    if mean(data.profiles{i}(:,3)) < 0
-        
-        % Log event
-        if exist('Event', 'file') == 2
-            Event('Flipping IEC Z axis (positive down)');
-        end
-        
-        % Store negative value
-        data.profiles{i}(:,3) = -data.profiles{i}(:,3);
-    end
-    
-    % If signal is negative (positive bias), invert the signal
+    % If signal is negative ()negative bias), flip it
     if mean(data.profiles{i}(:,4)) < 0
         
         % Log event
         if exist('Event', 'file') == 2
-            Event('Inverting negative signal');
+            Event('Inverting negative signal (positive bias)');
         end
         
         % Store negative value
         data.profiles{i}(:,4) = -data.profiles{i}(:,4);
+    end
+    
+    % If depth is negative (given by a negative mean value), flip
+    % the dimension so that depths are down
+    if mean(data.profiles{i}(:,3)) < 0
+        
+        % Log event
+        if exist('Event', 'file') == 2
+            Event('Flipping IEC Z axis (positive down)');
+        end
+        
+        % Store negative value
+        data.profiles{i}(:,3) = -data.profiles{i}(:,3);
+    end
+    
+    % If depth changes (i.e. PDD), sort descending
+    if data.profiles{i}(2,3) ~= data.profiles{i}(1,3)
+        
+        % Log event
+        if exist('Event', 'file') == 2
+            Event('Sorting depth profile by descending IEC Z value');
+        end
+        
+        % Store sorted table in descending order
+        data.profiles{i} = flip(sortrows(data.profiles{i}, 3), 1);
     end
 end
 
