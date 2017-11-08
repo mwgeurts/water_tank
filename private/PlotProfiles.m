@@ -1,6 +1,8 @@
-function handles = PlotProfiles(handles)
+function handles = PlotProfiles(handles, varargin)
 % PlotProfiles plots the X, Y, and Z profiles for WaterTankAnalysis using
-% the data contained in handles.processeds.
+% the data contained in handles.processeds. If called with additional
+% arguments, PlotProfiles will save the plots to the folder specified by
+% varargin{1}.
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
 % Copyright (C) 2017 University of Wisconsin Board of Regents
@@ -27,15 +29,27 @@ cmap = [0.0000    0.4470    0.7410
     0.3010    0.7450    0.9330
     0.6350    0.0780    0.1840];
 
+% If printing the figures
+if nargin == 2
+    
+    % Create a new empty figure
+    f = figure('Color', [1 1 1], 'Position', [100 100 1000 500]);
+    set(f, 'PaperUnits', 'centimeters');
+    set(f, 'PaperPosition', [0 0 25 12]);
+end
+
 % Set figure axes colors
 set(gcf,'defaultAxesColorOrder',[0 0 0; 0 0 0]);
 
 %% IEC X
-% Enable axes and set focus
-set(allchild(handles.iecx),'visible','on'); 
-set(handles.iecx,'visible','on');
-axes(handles.iecx);
-cla reset;
+if nargin < 2
+    
+    % Enable axes and set focus
+    set(allchild(handles.iecx),'visible','on'); 
+    set(handles.iecx,'visible','on');
+    axes(handles.iecx);
+    cla reset;
+end
 
 % Initialize counter
 c = 0;
@@ -95,14 +109,27 @@ else
 end
 yyaxis right;
 ylabel('Gamma');
-legend('Measured', 'Reference');
+if c > 0
+    legend('Measured', 'Reference');
+    
+    % If saving the plot to a file
+    if nargin == 2
+        Event(['Saving IECX plot to ', fullfile(varargin{1}, ['IECX.', ...
+            lower(handles.config.PLOT_SAVE_FORMAT)])]);
+        saveas(f, fullfile(varargin{1}, ['IECX.', ...
+            lower(handles.config.PLOT_SAVE_FORMAT)]));
+    end
+end
 
 %% IEC Y
-% Enable axes and set focus
-set(allchild(handles.iecy),'visible','on'); 
-set(handles.iecy,'visible','on');
-axes(handles.iecy);
-cla reset;
+if nargin < 2
+    
+    % Enable axes and set focus
+    set(allchild(handles.iecy),'visible','on'); 
+    set(handles.iecy,'visible','on');
+    axes(handles.iecy);
+    cla reset;
+end
 
 % Initialize counter
 c = 0;
@@ -162,14 +189,27 @@ else
 end
 yyaxis right;
 ylabel('Gamma');
-legend('Measured', 'Reference');
+if c > 0
+    legend('Measured', 'Reference');
+    
+    % If saving the plot to a file
+    if nargin == 2
+        Event(['Saving IECY plot to ', fullfile(varargin{1}, ['IECY.', ...
+            lower(handles.config.PLOT_SAVE_FORMAT)])]);
+        saveas(f, fullfile(varargin{1}, ['IECY.', ...
+            lower(handles.config.PLOT_SAVE_FORMAT)]));
+    end
+end
 
 %% IEC Z
-% Enable axes and set focus
-set(allchild(handles.iecz),'visible','on'); 
-set(handles.iecz,'visible','on');
-axes(handles.iecz);
-cla reset;
+if nargin < 2
+
+    % Enable axes and set focus
+    set(allchild(handles.iecz),'visible','on'); 
+    set(handles.iecz,'visible','on');
+    axes(handles.iecz);
+    cla reset;
+end
 
 % Initialize counter
 c = 0;
@@ -229,4 +269,19 @@ else
 end
 yyaxis right;
 ylabel('Gamma');
-legend('Measured', 'Reference');
+if c > 0
+    legend('Measured', 'Reference');
+    
+    % If saving the plot to a file
+    if nargin == 2
+        Event(['Saving IECZ plot to ', fullfile(varargin{1}, ['IECZ.', ...
+            lower(handles.config.PLOT_SAVE_FORMAT)])]);
+        saveas(f, fullfile(varargin{1}, ['IECZ.', ...
+            lower(handles.config.PLOT_SAVE_FORMAT)]));
+    end
+end
+
+% Close save figure
+if nargin == 2
+    close(f);
+end

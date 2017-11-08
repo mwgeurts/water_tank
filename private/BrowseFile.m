@@ -107,6 +107,9 @@ if iscell(name) || sum(name ~= 0)
     
     % Execute UpdateResults
     handles = UpdateResults(handles);
+    
+    % Enable save button
+    set(handles.saveplots, 'Enable', 'on');
 end
 
 % Clear temporary variables

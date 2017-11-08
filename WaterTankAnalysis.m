@@ -156,6 +156,36 @@ function saveplots_Callback(hObject, ~, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% Log action
+Event('Opening dialog box for user to select export directory');
+
+% Get folder path
+path = uigetdir(handles.config.DEFAULT_PATH, ...
+    'Select directory to export plots to:');
+
+% If the user chose a path
+if ~isempty(path) && ~isnumeric(path)
+    
+    % Start timer
+    t = tic;
+    
+    % Update default path
+    handles.config.DEFAULT_PATH = path;
+    Event(['Default file path updated to ', path]);
+    
+    % Call PlotProfiles() with path
+    handles = PlotProfiles(handles, path);
+    
+    % Log completion
+    Event(sprintf('Plot export completed successfully in %0.3f seconds', ...
+        toc(t)));
+end
+
+% Clear temporary variables
+clear path t;
+
+% Update handles structure
+guidata(hObject, handles);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function epom_Callback(hObject, ~, handles)

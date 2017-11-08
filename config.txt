@@ -18,3 +18,4 @@ REFERENCE_ISOZ      =   0
 ASK_REFERENCE_ISO   =   0
 ASK_RCAV            =   0
 MATCH_FILENAME      =   1
+PLOT_SAVE_FORMAT    =   PNG
