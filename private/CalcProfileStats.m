@@ -69,14 +69,16 @@ for i = 1:length(profiles)
         % List depth
         data{2,c} = sprintf('%0.1f mm', profiles{i}(1,3));
         
-        % Find index of central value
-        [~, I] = min(abs(x));
+        % Find index of maximum value
+        [~, I] = max(profiles{i}(:,4));
 
         % Find highest lower index just below half maximum
-        lI = find(profiles{i}(1:I,4) < 0.5 * max(profiles{i}(:,4)), 1, 'last');
+        lI = find(profiles{i}(1:I,4) < ...
+            0.5 * max(profiles{i}(:,4)), 1, 'last');
 
         % Find lowest upper index just above half maximum
-        uI = find(profiles{i}(I:end,4) < 0.5 * max(profiles{i}(:,4)), 1, 'first');
+        uI = find(profiles{i}(I:end,4) < ...
+            0.5 * max(profiles{i}(:,4)), 1, 'first');
 
         % Calculate FWHM and offset
         try
@@ -114,21 +116,21 @@ for i = 1:length(profiles)
         data{3,c} = sprintf('%0.2f%%', (max(profiles{i}(range,4)) - ...
             min(profiles{i}(range,4)))/(max(profiles{i}(range,4)) + ...
             min(profiles{i}(range,4))) * 100);
-        
+
         % Calculate CAX Point Symmetry
         data{4,c} = sprintf('%0.2f%%', max((profiles{i}(range(1):I,4) - ...
             interp1(x, profiles{i}(:,4), -x(range(1):I), 'linear')) / ...
             interp1(x, profiles{i}(:,4), 0, 'linear')) * 100);
-        
+
         % Calculate Areal Symmetry
         data{5,c} = sprintf('%0.2f%%', (sum(profiles{i}(range(1):I,4)) - ...
             sum(interp1(x, profiles{i}(:,4), -x(range(1):I), 'linear'))) / ...
             (sum(profiles{i}(range(1):I,4)) + sum(interp1(x, profiles{i}(:,4), ...
             -x(range(1):I), 'linear'))) * 200);
-        
+
         % Store FWHM
         data{6,c} = fwhm;
-        
+ 
         % Find reference highest lower index just below half maximum
         lI = find(profiles{i}(1:I,5) < 0.5 * max(profiles{i}(:,5)), 1, 'last');
 

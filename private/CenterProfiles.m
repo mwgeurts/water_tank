@@ -62,8 +62,8 @@ switch varargin{2}
             % If X changes, this is an X profile
             if profiles{i}(1,1) ~= profiles{i}(2,1)
                 
-                % Find index of central value
-                [~, I] = min(abs(profiles{i}(:,1)));
+                % Find index of max value
+                [~, I] = max(profiles{i}(:,4));
 
                 % Find highest lower index just below half maximum
                 lI = find(profiles{i}(1:I,4) < 0.5 * ...
@@ -92,8 +92,8 @@ switch varargin{2}
             % Otherwise, if Y changes, this is an Y profile
             elseif profiles{i}(1,2) ~= profiles{i}(2,2)
                 
-                % Find index of central value
-                [~, I] = min(abs(profiles{i}(:, 2)));
+                % Find index of max value
+                [~, I] = max(profiles{i}(:,4));
 
                 % Find highest lower index just below half maximum
                 lI = find(profiles{i}(1:I,4) < 0.5 * ...
@@ -139,8 +139,8 @@ switch varargin{2}
             % If X changes, this is an X profile
             if profiles{i}(1,1) ~= profiles{i}(2,1)
                 
-                % Find index of central value
-                [~, I] = min(abs(profiles{i}(:,1)));
+                % Find index of max value
+                [~, I] = max(profiles{i}(:,4));
 
                 % Find highest lower index just below half maximum
                 lI = find(profiles{i}(1:I,4) < 0.25 * ...
@@ -169,8 +169,8 @@ switch varargin{2}
             % Otherwise, if Y changes, this is an Y profile
             elseif profiles{i}(1,2) ~= profiles{i}(2,2)
                 
-                % Find index of central value
-                [~, I] = min(abs(profiles{i}(:, 2)));
+                % Find index of max value
+                [~, I] = max(profiles{i}(:,4));
 
                 % Find highest lower index just below half quarter
                 lI = find(profiles{i}(1:I,4) < 0.25 * ...

@@ -28,8 +28,8 @@ if nargin == 0 || isempty(regexpi(varargin{1}, 'e'))
         'Reference Dmax'
         'PDD 10' 
         'Reference PDD 10'
-        'R50 Difference'
-        'TPR 20/10'
+        'PDD10 Difference'
+        'PDD 20/10 Ratio'
         'Local RMS Error'
         'Local Max Error'
         'Mean Gamma'
@@ -111,10 +111,10 @@ for i = 1:length(profiles)
             % Calculate the PDD difference
             data{5,c} = sprintf('%0.2f%%', M - R);
             
-            % Calculate the TPR 20/10
+            % Calculate the PDD 20/10
             data{6,c} = sprintf('%0.3f', interp1(profiles{i}(lI:uI,3), ...
-                profiles{i}(lI:uI,5), 200, 'linear') / ...
-                interp1(profiles{i}(lI:uI,3), profiles{i}(lI:uI,5), ...
+                profiles{i}(lI:uI,4), 200, 'linear') / ...
+                interp1(profiles{i}(lI:uI,3), profiles{i}(lI:uI,4), ...
                 100, 'linear'));
         else
             
