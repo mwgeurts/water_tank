@@ -91,11 +91,6 @@ end
 % Remove empty cells
 data.profiles = data.profiles(~cellfun('isempty', data.profiles));
 
-% Log event
-if exist('Event', 'file') == 2
-    Event(sprintf('%i data profiles extracted', length(data.profiles)));
-end
-
 % Loop through each profile
 for i = 1:length(data.profiles)
 
@@ -125,5 +120,11 @@ for i = 1:length(data.profiles)
     end
 end
 
+% Log event
+if exist('Event', 'file') == 2
+    Event(sprintf('%i data profiles extracted successfully in %0.3f seconds', ...
+        length(data.profiles), toc(t)));
+end
+
 % Clear temporary variables
-clear f fid i l;
+clear f fid i l t;

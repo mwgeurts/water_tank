@@ -30,6 +30,7 @@ function data = ParseProfile(varargin)
 % Specify options and order
 options = {
     'OmniPro RFA300 ASCII BDS (.txt, .asc)'
+    'OmniPro V6 RFB (.rfb)'
     'SNC IC Profiler (.prm)'
     'SNC IC Profiler (.txt)'
     'Standard Imaging TEMS (.csv)'
@@ -60,8 +61,54 @@ switch varargin{2}
         % Execute ParseIBAtxt
         data = ParseIBAtxt('', varargin{1});
         
-    % IC Profiler PRM
+    % OmniPro RFB
     case 2
+        
+        % Execute ParseIBArfb
+        data = ParseIBArfb('', varargin{1});  
+        
+        % Loop through profiles and generate selection menu
+        str = cell(1, length(data.profiles));
+        def = [];
+        for i = 1:length(data.profiles)
+            
+            % If profile type is CProfileCurv or CDepthDoseCurv, select it 
+            % by default
+            if strcmp(data.profiletype{i}, 'CProfileCurv') || ...
+                    strcmp(data.profiletype{i}, 'CDepthDoseCurv')
+                def(length(def)+1) = i; %#ok<AGROW>
+            end
+            
+            % Set description based on orientation, depth
+            if data.profiles{i}(2,1) ~= data.profiles{i}(1,1)
+                s = sprintf('IEC X %0.1f cm depth', data.profiles{i}(1,3));
+            elseif data.profiles{i}(2,2) ~= data.profiles{i}(1,2)
+                s = sprintf('IEC Y %0.1f cm depth', data.profiles{i}(1,3));
+            elseif data.profiles{i}(2,3) ~= data.profiles{i}(1,3)
+                s = 'IEC Z (depth dose)';
+            end
+            
+            str{i} = sprintf('%s: %s %s %0.0fx%0.0f %s', data.profiletype{i}, ...
+                data.energy, data.modality, sum(abs(data.collimator(1:2)))/10, ...
+                sum(abs(data.collimator(3:4)))/10, s);
+        end
+        
+        % Open dialog box to allow user to select files
+        [s, ok] = listdlg('PromptString','Select which profiles to load:',...
+                'SelectionMode', 'multiple', 'ListString',str, ...
+                'InitialValue', def, 'Name', 'Select Profiles', ...
+                'ListSize', [400 150]);
+        
+        % If user clicked cancel, use defaults
+        if ok == 0
+            s = def;
+        end
+        
+        % Remove unselected profiles
+        data.profiles = data.profiles(s);
+        
+    % IC Profiler PRM
+    case 3
         
         % Execute ParseSNCprm
         raw = ParseSNCprm('', varargin{1});
@@ -133,7 +180,7 @@ switch varargin{2}
         clear f i b raw processed;
    
     % IC Profiler TXT
-    case 3
+    case 4
         
         % Execute ParseSNCtxt
         raw = ParseSNCtxt('', varargin{1});
@@ -205,7 +252,7 @@ switch varargin{2}
         clear f i b raw processed;
         
     % Standard Imaging TEMS
-    case 4
+    case 5
         
         % Execute ParseSIcsv
         data = ParseSIcsv('', varargin{1});
