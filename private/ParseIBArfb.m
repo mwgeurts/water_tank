@@ -1,5 +1,98 @@
 function data = ParseIBArfb(path, names)
+% ParseIBArfb extracts water tank profiles from IBA OmniPro 6 RFB binary 
+% files. The header contents and profiles are returned as a structure. The
+% file format was adapted from IDL code provided by Christoffer Lervåg. It
+% has been tested with .rfb files from version 6.6.26, but should work on 
+% all RFB files from version 6.3 or later (a version check is included that
+% warns users if a prior version is found.
+%
+% The following variables are required for proper execution:
+%   path: string containing the path to the TXT/ASC files
+%   names: string or cell array of strings containing the file(s) to be 
+%       loaded
+%
+% The following header fields are returned upon successful completion. The 
+% length (vectors) or size(*,1) of each field equals the number of 
+% profiles (n).
+%   version: 1 x n cell string, OmniPro version
+%   machine: 1 x n cell string, treatment system
+%   energy: 1 x n cell string, beam energy, ## MV/MeV or ## MV FFF
+%   modality: 1 x n cell string, 'Photon' or 'Electron'
+%   wtype: 1 x n cell string, wedge type, or 'No Wedge' if none specified
+%   wangle: 1 x n vector, wedge angle in degrees, 0 if none specified
+%   gangle: 1 x n vector, gantry angle in degrees
+%   cangle: 1 x n vector, collimator angle in degrees
+%   ssd: 1 x n vector, source to surface distance in cm
+%   sad: 1 x n vector, source to axis distance in cm
+%   applicator: 1 x n cell string, applicator name, or 'No Applicator'
+%   medium: 1 x n cell string, 'Water' or 'Air'
+%   clinic: 1 x n cell string, clinic name
+%   address: 1 x n cell string, address
+%   phone: 1 x n cell string, telephone number
+%   email: 1 x n cell string, email address
+%   collimator: n x 4 array of collimator settings in cm [X1 X2 Y1 Y2]
+%   orientation: 1 x n cell string, gantry specification, such as 
+%       '0 deg up, CW'
 
+% The above values are not always specified for each profile, so are copied
+% from one profile to the next. The following fields are always profile 
+% specific. Where specified, I/C/D refers to Inline/Crossline/Depth.
+%   profiletype: 1 x n cell string, 'CProfileCurv' or 'CDepthDoseCurv'
+%   measured: 1 x n datenum vector, measured timestamps
+%   modified: 1 x n datenum vector, modified timestamps
+%   quantity: 1 x n cell string, description of profile signal such as
+%       'Relative Dose'
+%   radius: 1 x n vector, detector radius in mm
+%   calfactor: 1 x n vector, detector calibration factor
+%   temperature: 1 x n vector, temperature
+%   pressure: 1 x n vector, pressure
+%   caldate: 1 x n cell string, calibration date
+%   offset: 1 x n vector, detector offset applied in mm
+%   detector: 1 x n cell string, detector model
+%   dtype: 1 x n cell string, detector type such as 
+%       'Ion Chamber (cylindrical'
+%   operator: 1 x n cell string, operator name
+%   mcomment: 1 x n cell string, measurement comment
+%   mapping: n x 3 cell array, I/C/D orientation mapping
+%   meas: 1 x n vector, number of measurements per point
+%   speed: 1 x n vector, scan speed in mm/sec
+%   origin: n x 3 array, I/C/D origin tank positions in mm
+%   isocenter: n x 3 array, isocenter I/C/D position in mm
+%   nposition: n x 3 array, normalization I/C/D position in mm
+%   nvalue: n x 2 array, field and reference normalization values
+%   dark: n x 2 array, field and reference dark current
+%   voltage: n x 2 array, field and reference voltage potential in V
+%   gain: n x 2 array, field and reference gain values
+%   range: n x 2 cell string, field and reference range setting ('HIGH')
+%   surface: 1 x n vector, water surface scan position
+%   reference: n x 3 array, reference signal min/max/avg
+%   sample: 1 x n vector, sample time in msec
+%   renorm: 1 x n vector, renormalization value
+%   coffset: 1 x n vector, curve offset
+%   scomment: 1 x n cell string, setup comment
+%   posA: n x 3 array, position A I/C/D value in mm
+%   posB: n x 3 array, position A I/C/D value in mm
+%   posC: n x 3 array, position A I/C/D value in mm
+%   posD: n x 3 array, position A I/C/D value in mm
+%   
+%   profiles: cell array of profiles, where each cell contains a n x 4
+%       array of IEC X, IEC Y, IEC Z (depth), and signal.
+%
+% Author: Mark Geurts, mark.w.geurts@gmail.com
+% Copyright (C) 2017 University of Wisconsin Board of Regents
+%
+% This program is free software: you can redistribute it and/or modify it 
+% under the terms of the GNU General Public License as published by the  
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+%
+% This program is distributed in the hope that it will be useful, but 
+% WITHOUT ANY WARRANTY; without even the implied warranty of 
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General 
+% Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License along 
+% with this program. If not, see http://www.gnu.org/licenses/.
 
 
 % If not cell array, cast as one
@@ -74,140 +167,144 @@ for f = 1:length(names)
     % Start while loop to look for header data
     while ~feof(fid) && (ftell(fid) + 100) < s
     
+        % Increment counter
+        i = i + 1;
+        
         % If the header type is full (0)
         if header == 0
             
             % Store machine
             n = fread(fid, 1, 'uint8');
-            data.machine = fread(fid, n, '*char')';
+            data.machine{i} = fread(fid, n, '*char')';
     
             % Store energy and type
             fseek(fid, 2, 0);
-            data.energy = sprintf('%g', fread(fid, 1, 'float64'));
+            data.energy{i} = sprintf('%g', fread(fid, 1, 'float64'));
             switch fread(fid, 1, 'uint8')
                 case 0
-                    data.energy = [data.energy, ' MV'];
-                    data.modality = 'Photon';
+                    data.energy{i} = [data.energy{i}, ' MV'];
+                    data.modality{i} = 'Photon';
                 case 1
-                    data.energy = [data.energy, ' MeV'];
-                    data.modality = 'Electron';
+                    data.energy{i} = [data.energy{i}, ' MeV'];
+                    data.modality{i} = 'Electron';
                 case 2
-                    data.energy = [data.energy, ' MeV'];
-                    data.modality = 'Proton';
+                    data.energy{i} = [data.energy{i}, ' MeV'];
+                    data.modality{i} = 'Proton';
                 case 3
-                    data.energy = [data.energy, ' MeV'];
-                    data.modality = 'Neutron';
+                    data.energy{i} = [data.energy{i}, ' MeV'];
+                    data.modality{i} = 'Neutron';
                 case 4
-                    data.energy = [data.energy, ' MeV'];
-                    data.modality = 'Cobalt';
+                    data.energy{i} = [data.energy{i}, ' MeV'];
+                    data.modality{i} = 'Cobalt';
                 case 5
-                    data.energy = [data.energy, ' MeV'];
-                    data.modality = 'Isotope';
+                    data.energy{i} = [data.energy{i}, ' MeV'];
+                    data.modality{i} = 'Isotope';
             end
             
             % If FFF flag exists, update energy
-            if regexp(data.energy, '666')
-                data.energy = [regexprep(data.energy, '666', ''), ' FFF'];
+            if regexp(data.energy{i}, '666')
+                data.energy{i} = [regexprep(data.energy{i}, ...
+                    '666', ''), ' FFF'];
             end
             
             % Store wedge type and angle
             fseek(fid, 1, 0);
             switch fread(fid, 1, 'uint8')
                 case 255
-                    data.wtype = 'No Wedge';
+                    data.wtype{i} = 'No Wedge';
                     fseek(fid, 4, 0);
-                    data.wangle = 0;
+                    data.wangle{i} = 0;
                 case 0
-                    data.wtype = 'Hard';
+                    data.wtype{i} = 'Hard';
                     fseek(fid, 3, 0);
-                    data.wangle = fread(fid, 1, 'uint8');
+                    data.wangle(i) = fread(fid, 1, 'uint8');
                 case 1
-                    data.wtype = 'Dynamic';
+                    data.wtype{i} = 'Dynamic';
                     fseek(fid, 3, 0);
-                    data.wangle = fread(fid, 1, 'uint8');
+                    data.wangle(i) = fread(fid, 1, 'uint8');
                 case 2
-                    data.wtype = 'Enhanced';
+                    data.wtype{i} = 'Enhanced';
                     fseek(fid, 3, 0);
-                    data.wangle = fread(fid, 1, 'uint8');
+                    data.wangle(i) = fread(fid, 1, 'uint8');
                 case 3
-                    data.wtype = 'Virtual';
+                    data.wtype{i} = 'Virtual';
                     fseek(fid, 3, 0);
-                    data.wangle = fread(fid, 1, 'uint8');
+                    data.wangle(i) = fread(fid, 1, 'uint8');
                 case 4
-                    data.wtype = 'Soft';
+                    data.wtype{i} = 'Soft';
                     fseek(fid, 3, 0);
-                    data.wangle = fread(fid, 1, 'uint8');
+                    data.wangle(i) = fread(fid, 1, 'uint8');
             end
             
             % Store gantry angle
             fseek(fid, 3, 0);
-            data.gangle = fread(fid, 1, 'uint8');
+            data.gangle(i) = fread(fid, 1, 'uint8');
             
             % Store collimator angle
             fseek(fid, 3, 0);
-            data.cangle = fread(fid, 1, 'uint8');
+            data.cangle(i) = fread(fid, 1, 'uint8');
             
             % Store SSD in cm
             fseek(fid, 3, 0);
-            data.ssd = fread(fid, 1, 'float64')/10;
+            data.ssd(i) = fread(fid, 1, 'float64')/10;
             
             % Store SAD in cm
             fseek(fid, 2, 0);
-            data.sad = fread(fid, 1, 'float64')/10;
+            data.sad(i) = fread(fid, 1, 'float64')/10;
             
             % Store applicator
             n = fread(fid, 1, 'uint8');
-            data.applicator = fread(fid, n, '*char')';
+            data.applicator{i} = fread(fid, n, '*char')';
             
             % Store medium
             fseek(fid, 1, 0);
             switch fread(fid, 1, 'uint8')
                 case 0
-                    data.medium = 'Air';
+                    data.medium{i} = 'Air';
                 case 1
-                    data.medium = 'Water';
+                    data.medium{i} = 'Water';
                 case 2
-                    data.medium = 'Film';
+                    data.medium{i} = 'Film';
             end
             
             % Store clinic
             n = fread(fid, 1, 'uint8');
-            data.clinic = fread(fid, n, '*char')';
+            data.clinic{i} = fread(fid, n, '*char')';
             
             % Store address
             n = fread(fid, 1, 'uint8');
-            data.address = fread(fid, n, '*char')';
+            data.address{i} = fread(fid, n, '*char')';
             
             % Store phone
             n = fread(fid, 1, 'uint8');
-            data.phone = fread(fid, n, '*char')';
+            data.phone{i} = fread(fid, n, '*char')';
             
             % Store email
             n = fread(fid, 1, 'uint8');
-            data.email = fread(fid, n, '*char')';
+            data.email{i} = fread(fid, n, '*char')';
             
             % Store inline field size
             fseek(fid, 2, 0);
-            data.collimator(1) = fread(fid, 1, 'float64');
+            data.collimator(i,1) = fread(fid, 1, 'float64');
             fseek(fid, 2, 0);
-            data.collimator(2) = fread(fid, 1, 'float64');
+            data.collimator(i,2) = fread(fid, 1, 'float64');
             
             % Store crossline field size
             fseek(fid, 2, 0);
-            data.collimator(3) = fread(fid, 1, 'float64');
+            data.collimator(i,3) = fread(fid, 1, 'float64');
             fseek(fid, 2, 0);
-            data.collimator(4) = fread(fid, 1, 'float64');
+            data.collimator(i,4) = fread(fid, 1, 'float64');
             
             % Store gantry orientation
             switch fread(fid, 1, 'uint8')
                 case 0
-                    data.orientation = '0 deg up, CW';
+                    data.orientation{i} = '0 deg up, CW';
                 case 1
-                    data.orientation = '0 deg up, CCW';
+                    data.orientation{i} = '0 deg up, CCW';
                 case 2
-                    data.orientation = '180 deg up, CW';
+                    data.orientation{i} = '180 deg up, CW';
                 case 3
-                    data.orientation = '180 deg up, CCW';
+                    data.orientation{i} = '180 deg up, CCW';
             end
 
             % Jump to profile type
@@ -216,10 +313,26 @@ for f = 1:length(names)
                 b = fread(fid, 1, 'uint8');
             end
             fseek(fid, 1, 0);
+        else
+            
+            % Otherwise, copy header from previous value
+            data.machine{i} = data.machine{i-1};
+            data.energy{i} = data.energy{i-1};
+            data.modality{i} = data.modality{i-1};
+            data.wtype{i} = data.wtype{i-1};
+            data.gangle(i) = data.gangle(i-1);
+            data.cangle(i) = data.cangle(i-1);
+            data.ssd(i) = data.ssd(i-1);
+            data.sad(i) = data.sad(i-1);
+            data.applicator{i} = data.applicator{i-1};
+            data.medium{i} = data.medium{i-1};
+            data.clinic{i} = data.clinic{i-1};
+            data.address{i} = data.address{i-1};
+            data.phone{i} = data.phone{i-1};
+            data.email{i} = data.email{i-1};
+            data.collimator(i,:) = data.collimator(i-1,:);
+            data.orientation{i} = data.orientation{i-1}; 
         end
-        
-        % Increment counter
-        i = i + 1;
         
         % If header flag is full or reduced
         if header == 0 || header == 1
@@ -283,23 +396,23 @@ for f = 1:length(names)
             % Store detector type
             switch fread(fid, 1, 'uint16')
                 case 1
-                    data.detectortype{i} = 'Single Diode';
+                    data.dtype{i} = 'Single Diode';
                 case 2
-                    data.detectortype{i} = 'LDA-11';
+                    data.dtype{i} = 'LDA-11';
                 case 3
-                    data.detectortype{i} = 'LDA-25';
+                    data.dtype{i} = 'LDA-25';
                 case 4
-                    data.detectortype{i} = 'Ion Chamber (cylindrical)';
+                    data.dtype{i} = 'Ion Chamber (cylindrical)';
                 case 5
-                    data.detectortype{i} = 'Ion Chamber (plane parallel)';
+                    data.dtype{i} = 'Ion Chamber (plane parallel)';
                 case 6
-                    data.detectortype{i} = 'Stereotactic';
+                    data.dtype{i} = 'Stereotactic';
                 case 7
-                    data.detectortype{i} = 'Film';
+                    data.dtype{i} = 'Film';
                 case 8
-                    data.detectortype{i} = 'CA24';
+                    data.dtype{i} = 'CA24';
                 case 9
-                    data.detectortype{i} = 'BIS-2G';
+                    data.dtype{i} = 'BIS-2G';
             end
             
             % Store operator
@@ -308,7 +421,7 @@ for f = 1:length(names)
             
             % Store comment
             n = fread(fid, 1, 'uint8');
-            data.meascomment{i} = fread(fid, n, '*char')';
+            data.mcomment{i} = fread(fid, n, '*char')';
             
             % Store mapping
             m = fread(fid, 3, 'int16');
@@ -331,10 +444,10 @@ for f = 1:length(names)
             
             % Store measurements per point
             fseek(fid, 2, 0);
-            data.measurements(i) = fread(fid, 1, 'int16');
+            data.meas(i) = fread(fid, 1, 'int16');
             
             % Store scan speed
-            data.scanspeed(i) = fread(fid, 1, 'float64');
+            data.speed(i) = fread(fid, 1, 'float64');
             
             % Store origin
             fseek(fid, 4, 0);
@@ -344,13 +457,13 @@ for f = 1:length(names)
             data.isocenter(i,1:3) = fread(fid, 3, 'float64');
             
             % Store normalization position
-            data.normposition(i,1:3) = fread(fid, 3, 'float64');
+            data.nposition(i,1:3) = fread(fid, 3, 'float64');
             
             % Store normalization values
-            data.normalization(i,1:2) = fread(fid, 2, 'float64');
+            data.nvalue(i,1:2) = fread(fid, 2, 'float64');
             
             % Store dark current values
-            data.darkcurrent(i,1:2) = fread(fid, 2, 'float64');
+            data.dark(i,1:2) = fread(fid, 2, 'float64');
             
             % Store voltage values
             data.voltage(i,1:2) = fread(fid, 2, 'float64');
@@ -360,9 +473,9 @@ for f = 1:length(names)
             
             % Store range strings
             n = fread(fid, 1, 'uint8');
-            data.range{i}{1} = fread(fid, n, '*char')';
+            data.range{i,1} = fread(fid, n, '*char')';
             n = fread(fid, 1, 'uint8');
-            data.range{i}{2} = fread(fid, n, '*char')';
+            data.range{i,2} = fread(fid, n, '*char')';
             
             % Store water surface
             data.surface(i) = fread(fid, 1, 'float64');
@@ -373,17 +486,17 @@ for f = 1:length(names)
             
             % Store sampling time
             fseek(fid, 8, 0);
-            data.sampletime(i) = fread(fid, 1, 'uint16');
+            data.sample(i) = fread(fid, 1, 'uint16');
             
             % Store renormalization value
-            data.renormalization(i) = fread(fid, 1, 'float64');
+            data.renorm(i) = fread(fid, 1, 'float64');
             
             % Store curveoffset value
-            data.curveoffset(i) = fread(fid, 1, 'float64');
+            data.coffset(i) = fread(fid, 1, 'float64');
             
             % Store setup comment
             n = fread(fid, 1, 'uint8');
-            data.setupcomment{i} = fread(fid, n, '*char')';
+            data.scomment{i} = fread(fid, n, '*char')';
             
             % Store positions A, B, C, and D
             fseek(fid, 2, 0);
@@ -454,6 +567,9 @@ for f = 1:length(names)
     fclose(fid);
 end
 
+% Clear temporary variables
+clear b c f fid header info j m n pts s;
+
 % Loop through each profile
 for i = 1:length(data.profiles)
 
@@ -488,3 +604,6 @@ if exist('Event', 'file') == 2
     Event(sprintf(['%i data profiles extracted successfully in ', ...
         '%0.3f seconds'], length(data.profiles), toc(t)));
 end
+
+% Clear temporary variables
+clear i t;
