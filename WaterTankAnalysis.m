@@ -22,7 +22,7 @@ function varargout = WaterTankAnalysis(varargin)
 
 % Edit the above text to modify the response to help WaterTankAnalysis
 
-% Last Modified by GUIDE v2.5 08-Nov-2017 12:14:10
+% Last Modified by GUIDE v2.5 13-Nov-2017 19:11:22
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 0;
@@ -630,3 +630,62 @@ if ispc && isequal(get(hObject,'BackgroundColor'), ...
         get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function importref_Callback(hObject, ~, handles)
+% hObject    handle to importref (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Display notification explaining purpose of this tool
+ok = questdlg(['The Reference Import Tool will scan a directory of DICOM ', ...
+    'RT PLAN and DOSE files from your TPS and copy them into the reference ', ...
+    'folder, optionally compressing the data. A folder hierarchy will be ', ...
+    'created based on the RT beam name, using the format [Energy]_[SSD]_', ...
+    '[Field Size]. Click OK to continue, or cancel to return to the Water', ...
+    'Tank Analysis Tool.'], 'Import Notification', 'OK', 'Cancel', 'Cancel');
+
+% If the user clicked OK
+if strmp(ok, 'OK')
+    
+    % Execute ProcessReference()
+    ProcessReference(handles.config);
+    
+    % Execute ClearAllData
+    handles = ClearAllData(handles);
+    
+    % Reload reference data
+    handles.reference = LoadReferenceData(handles.config.REFERENCE_PATH);
+
+    % Re-initialize dropdown menu options
+    handles = InitializeMenus(handles); 
+end
+
+% Update handles structure
+guidata(hObject, handles);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function outputfactors_Callback(hObject, ~, handles)
+% hObject    handle to outputfactors (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Execute PlotOutputFactors, using the current machine/energy/SSD and 
+% convolve settings
+PlotOutputFactors(fullfile(pwd, handles.config.REFERENCE_PATH, ...
+    handles.reference{get(handles.machine, 'Value')}.machine, ...
+    handles.reference{get(handles.machine, 'Value')}...
+    .energies{get(handles.energy, 'Value')}.energy, ...
+    handles.reference{get(handles.machine, 'Value')}...
+    .energies{get(handles.energy, 'Value')}...
+    .ssds{get(handles.ssd, 'Value')}.ssd), ...
+    [handles.config.REFERENCE_ISOX handles.config.REFERENCE_ISOY ...
+    handles.config.REFERENCE_ISOZ], get(handles.convolve, 'Value'), ...
+    handles.detectors{get(handles.detector, 'Value'), 1}, ...
+    handles.reference{get(handles.machine, 'Value')}.energies{...
+    get(handles.energy, 'Value')}.energy);
+    
+% Update handles structure
+guidata(hObject, handles);
+

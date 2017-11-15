@@ -89,3 +89,7 @@ config.SGOLAY_DEGREE = str2double(config.SGOLAY_DEGREE);
 
 % Parse file matching flag
 config.MATCH_FILENAME = str2double(config.MATCH_FILENAME);
+
+% Parse compression option
+config.COMPRESS_REFERENCE = str2double(config.COMPRESS_REFERENCE);
+config.MASK_REFERENCE = str2double(config.MASK_REFERENCE);
