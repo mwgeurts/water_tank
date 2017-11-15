@@ -20,7 +20,7 @@ function profile = ExtractRefProfile(profile, file, iso)
 % with this program. If not, see http://www.gnu.org/licenses/.
 
 % Persistently store DICOM data
-persistent storedfile info ref  meshx meshy meshz;
+persistent storedfile info ref meshx meshy meshz;
 
 % Check if MATLAB can find dicominfo (Image Processing Toolbox)
 if exist('dicominfo', 'file') ~= 2

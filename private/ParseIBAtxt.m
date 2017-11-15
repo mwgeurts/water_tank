@@ -5,7 +5,7 @@ function data = ParseIBAtxt(path, names)
 % exported ASCII files.
 %
 % The following variables are required for proper execution:
-%   path: string containing the path to the TXT files
+%   path: string containing the path to the TXT/ASC files
 %   names: string or cell array of strings containing the file(s) to be 
 %       loaded
 %

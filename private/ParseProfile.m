@@ -9,7 +9,6 @@ function data = ParseProfile(varargin)
 %   profiles:   cell array of 4 x n profile matrices, where the first 
 %               column is IEC X, the second IEC Y, the third IEC Z/Depth 
 %               (positive values are down), and the fourth is signal
-%               
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
 % Copyright (C) 2017 University of Wisconsin Board of Regents
@@ -94,18 +93,18 @@ switch varargin{2}
         end
         
         % Open dialog box to allow user to select files
-        [s, ok] = listdlg('PromptString','Select which profiles to load:',...
+        [sel, ok] = listdlg('PromptString','Select which profiles to load:',...
                 'SelectionMode', 'multiple', 'ListString',str, ...
                 'InitialValue', def, 'Name', 'Select Profiles', ...
                 'ListSize', [400 150]);
         
         % If user clicked cancel, use defaults
         if ok == 0
-            s = def;
+            sel = def;
         end
         
         % Remove unselected profiles
-        data.profiles = data.profiles(s);
+        data.profiles = data.profiles(sel);
         
     % IC Profiler PRM
     case 3
