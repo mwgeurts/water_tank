@@ -50,7 +50,7 @@ function data = ParseIBArfb(path, names)
 %   offset: 1 x n vector, detector offset applied in mm
 %   detector: 1 x n cell string, detector model
 %   dtype: 1 x n cell string, detector type such as 
-%       'Ion Chamber (cylindrical'
+%       'Ion Chamber (cylindrical)'
 %   operator: 1 x n cell string, operator name
 %   mcomment: 1 x n cell string, measurement comment
 %   mapping: n x 3 cell array, I/C/D orientation mapping
@@ -74,9 +74,8 @@ function data = ParseIBArfb(path, names)
 %   posB: n x 3 array, position A I/C/D value in mm
 %   posC: n x 3 array, position A I/C/D value in mm
 %   posD: n x 3 array, position A I/C/D value in mm
-%   
-%   profiles: cell array of profiles, where each cell contains a n x 4
-%       array of IEC X, IEC Y, IEC Z (depth), and signal.
+%   profiles: 1 x n cell array of profiles, where each cell contains a 
+%       n x 4 array of IEC X, IEC Y, IEC Z (depth), and signal
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
 % Copyright (C) 2017 University of Wisconsin Board of Regents
