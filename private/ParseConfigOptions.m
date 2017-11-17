@@ -87,8 +87,10 @@ config.DEFAULT_DETECTOR = str2double(config.DEFAULT_DETECTOR);
 config.SMOOTH_SPAN = str2double(config.SMOOTH_SPAN);
 config.SGOLAY_DEGREE = str2double(config.SGOLAY_DEGREE);
 
-% Parse file matching flag
+% Parse header/file matching flags
 config.MATCH_FILENAME = str2double(config.MATCH_FILENAME);
+config.MATCH_HEADER = str2double(config.MATCH_HEADER);
+config.LEVENSHTEIN_THRESH = str2double(config.LEVENSHTEIN_THRESH);
 
 % Parse compression option
 config.COMPRESS_REFERENCE = str2double(config.COMPRESS_REFERENCE);

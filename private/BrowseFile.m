@@ -59,67 +59,270 @@ if iscell(name) || sum(name ~= 0)
     handles.data = ParseProfile(fullfile(path, files), ...
         get(handles.format, 'Value'));
     
-    % If filename matching is enabled
-    if handles.config.MATCH_FILENAME == 1
-        
-        % Find closest match for first file name
-        if iscell(name)
-            [a, b, c, d] = MatchFileName(name{1}, handles.reference);
-        else
-            [a, b, c, d] = MatchFileName(name, handles.reference);
-        end
-
-		% If a match was found
-		if a > 0
-			% Log selection
-			Event(['Reference dataset ', handles.reference{a}.machine, ...
-                ', ', handles.reference{a}.energies{b}.energy, ', ', ...
-                handles.reference{a}.energies{b}.ssds{c}.ssd, ', ', ...
-                handles.reference{a}.energies{b}.ssds{c}.fields{d}, ...
-                ' found as most likely matching profile']); 
-		else
-			% Log lack of selection
-			Event('The file name could not be matched to reference data', ...
-                'WARN');
-
-			% Use current values
-			a = get(handles.machine, 'Value');
-			b = get(handles.energy, 'Value');
-			c = get(handles.ssd, 'Value');
-			d = get(handles.fieldsize, 'Value');
-		end
-
-        % Update energy list
-        str = cell(size(handles.reference{a}.energies));
-        for i = 1:length(handles.reference{a}.energies)
-            str{i} = handles.reference{a}.energies{i}.energy;
-        end
-        set(handles.energy, 'String', str);
-        
-        % Update SSD list
-        str = cell(size(handles.reference{a}.energies{b}.ssds));
-        for i = 1:length(handles.reference{a}.energies{b}.ssds)
-            str{i} = handles.reference{a}.energies{b}.ssds{i}.ssd;
-        end
-        set(handles.ssd, 'String', str);
-        
-        % Update field size list
-        str = cell(size(handles.reference{a}.energies{b}.ssds{c}.fields));
-        for i = 1:length(handles.reference{a}.energies{b}.ssds{c}.fields)
-            str{i} = handles.reference{a}.energies{b}.ssds{c}.fields{i};
-        end
-        set(handles.fieldsize, 'String', str);
-
-        % Update selection
-        set(handles.machine, 'Value', a);
-        set(handles.energy, 'Value', b);
-        set(handles.ssd, 'Value', c);
-        set(handles.fieldsize, 'Value', d);
-        
-        % Clear temporary variables
-        clear a b c d i m str;
+    %% Match machine
+    % If machines is specified in profiles, find best match
+    if handles.config.MATCH_HEADER == 1 && isfield(handles.data, 'machine')
+        [a1, ld1] = strnearest(handles.data.machine{1}, ...
+            get(handles.machine, 'String'), 'case');
+    else
+        ld1 = Inf;
     end
     
+    % If match filename is enabled, find best match
+    if handles.config.MATCH_FILENAME == 1
+        if iscell(name)
+            parts = strsplit(name{1}, {'-', '_', '.', ' '});
+        else
+            parts = strsplit(name, {'-', '_', '.', ' '});
+        end
+        ld2 = Inf;
+        for i = 1:length(parts)
+            [x, y] = strnearest(parts{i}, ...
+                get(handles.machine, 'String'), 'case');
+            if y < ld2
+                a2 = x;
+                ld2 = y;
+            end
+        end
+    else
+        ld2 = Inf;
+    end
+    
+    % Update machine with smaller of two Levenshtein distances
+    if ld1 <= ld2 && ld1 < handles.config.LEVENSHTEIN_THRESH
+        
+        % Log result
+        Event(sprintf(['Profile header matched machine index %i with ', ...
+            'Levenshtein distance of %i'], a1(1), ld1));
+        
+        % Set machine name
+        set(handles.machine, 'Value', a1(1));
+        
+    elseif ld2 < ld1 && ld2 < handles.config.LEVENSHTEIN_THRESH
+        
+        % Log result
+        Event(sprintf(['File name matched machine index %i with ', ...
+            'Levenshtein distance of %i'], a2(1), ld2));
+        
+        % Set machine name
+        set(handles.machine, 'Value', a2(1));
+    end
+    
+    % Update energy list
+    str = cell(size(handles.reference{get(handles.machine, 'Value')}...
+        .energies));
+    for i = 1:length(handles.reference{get(handles.machine, 'Value')}...
+            .energies)
+        str{i} = handles.reference{get(handles.machine, 'Value')}...
+            .energies{i}.energy;
+    end
+    set(handles.energy, 'String', str);
+    
+    %% Match energy
+    % If energy is specified in profiles, find best match
+    if handles.config.MATCH_HEADER == 1 && isfield(handles.data, 'energy')
+        [a1, ld1] = strnearest(handles.data.energy{1}, ...
+            get(handles.energy, 'String'), 'case');
+    else
+        ld1 = Inf;
+    end
+    
+    % If match filename is enabled, find best match
+    if handles.config.MATCH_FILENAME == 1
+        if iscell(name)
+            parts = strsplit(name{1}, {'-', '_', '.', ' '});
+        else
+            parts = strsplit(name, {'-', '_', '.', ' '});
+        end
+        ld2 = Inf;
+        for i = 1:length(parts)
+            parts{i} = strrep(parts{i}, 'MV', ' MV');
+            parts{i} = strrep(parts{i}, 'MeV', ' MeV');
+            parts{i} = strrep(parts{i}, 'X', ' MV');
+            parts{i} = strrep(parts{i}, 'E', ' MeV');
+            [x, y] = strnearest(parts{i}, ...
+                get(handles.energy, 'String'), 'case');
+            if y < ld2
+                a2 = x;
+                ld2 = y;
+            end
+        end
+    else
+        ld2 = Inf;
+    end
+    
+    % Update energy with smaller of two Levenshtein distances
+    if ld1 <= ld2 && ld1 < handles.config.LEVENSHTEIN_THRESH
+        
+        % Log result
+        Event(sprintf(['Profile header matched energy index %i with ', ...
+            'Levenshtein distance of %i'], a1(1), ld1));
+        
+        % Set energy
+        set(handles.energy, 'Value', a1(1));
+        
+    elseif ld2 < ld1 && ld2 < handles.config.LEVENSHTEIN_THRESH
+        
+        % Log result
+        Event(sprintf(['File name matched energy index %i with ', ...
+            'Levenshtein distance of %i'], a2(1), ld2));
+        
+        % Set energy
+        set(handles.energy, 'Value', a2(1));
+    end
+    
+    % Update SSD list
+    str = cell(size(handles.reference{get(handles.machine, 'Value')}...
+        .energies{get(handles.energy, 'Value')}.ssds));
+    for i = 1:length(handles.reference{get(handles.machine, 'Value')}...
+            .energies{get(handles.energy, 'Value')}.ssds)
+        str{i} = handles.reference{get(handles.machine, 'Value')}...
+            .energies{get(handles.energy, 'Value')}.ssds{i}.ssd;
+    end
+    set(handles.ssd, 'String', str);
+    
+    %% Match SSD
+    % If SSD is specified in profiles, find best match
+    if handles.config.MATCH_HEADER == 1 && isfield(handles.data, 'ssd')
+        [a1, ld1] = strnearest(sprintf('%0.0f cm', handles.data.ssd(1)), ...
+            get(handles.ssd, 'String'), 'case');
+    else
+        ld1 = Inf;
+    end
+    
+    % If match filename is enabled, find best match
+    if handles.config.MATCH_FILENAME == 1
+        if iscell(name)
+            parts = strsplit(name{1}, {'-', '_', '.', ' '});
+        else
+            parts = strsplit(name, {'-', '_', '.', ' '});
+        end
+        ld2 = Inf;
+        for i = 1:length(parts)
+            parts{i} = strrep(parts{i}, 'cm', ' cm');
+            [x, y] = strnearest(parts{i}, ...
+                get(handles.ssd, 'String'), 'case');
+            if y < ld2
+                a2 = x;
+                ld2 = y;
+            end
+        end
+    else
+        ld2 = Inf;
+    end
+    
+    % Update SSD with smaller of two Levenshtein distances
+    if ld1 <= ld2 && ld1 < handles.config.LEVENSHTEIN_THRESH
+        
+        % Log result
+        Event(sprintf(['Profile header matched SSD index %i with ', ...
+            'Levenshtein distance of %i'], a1(1), ld1));
+        
+        % Set SSD
+        set(handles.ssd, 'Value', a1(1));
+        
+    elseif ld2 < ld1 && ld2 < handles.config.LEVENSHTEIN_THRESH
+        
+        % Log result
+        Event(sprintf(['File name matched SSD index %i with ', ...
+            'Levenshtein distance of %i'], a2(1), ld2));
+        
+        % Set SSD
+        set(handles.ssd, 'Value', a2(1));
+    end
+    
+    % Update field size list
+    str = cell(size(handles.reference{get(handles.machine, 'Value')}...
+        .energies{get(handles.energy, 'Value')}...
+        .ssds{get(handles.ssd, 'Value')}.fields));
+    for i = 1:length(handles.reference{get(handles.machine, 'Value')}...
+            .energies{get(handles.energy, 'Value')}...
+            .ssds{get(handles.ssd, 'Value')}.fields)
+        str{i} = handles.reference{get(handles.machine, 'Value')}...
+            .energies{get(handles.energy, 'Value')}...
+            .ssds{get(handles.ssd, 'Value')}.fields{i};
+    end
+    set(handles.fieldsize, 'String', str);
+    
+    %% Match field size
+    % If collimator is specified in profiles, find best match
+    if handles.config.MATCH_HEADER == 1 && ...
+            isfield(handles.data, 'collimator') && ...
+            sum(sum(abs(handles.data.collimator))) > 0
+        [a1, ld1] = strnearest(sprintf('%0.0f x %0.0f', ...
+            sum(abs(handles.data.collimator(1,1:2))), ...
+            sum(abs(handles.data.collimator(1,3:4)))), ...
+            get(handles.fieldsize, 'String'), 'case');
+    else
+        ld1 = Inf;
+    end
+    
+    % If match filename is enabled, find best match
+    if handles.config.MATCH_FILENAME == 1
+        if iscell(name)
+            parts = strsplit(name{1}, {'-', '_', '.', ' '});
+        else
+            parts = strsplit(name, {'-', '_', '.', ' '});
+        end
+        ld2 = Inf;
+        for i = 1:length(parts)
+            parts{i} = strrep(parts{i}, 'x', ' x ');
+            [x, y] = strnearest(parts{i}, ...
+                get(handles.fieldsize, 'String'), 'case');
+            if y < ld2
+                a2 = x;
+                ld2 = y;
+            end
+        end
+    else
+        ld2 = Inf;
+    end
+    
+    % Update field size with smaller of two Levenshtein distances
+    if ld1 <= ld2 && ld1 < handles.config.LEVENSHTEIN_THRESH
+        
+        % Log result
+        Event(sprintf(['Profile header matched field size index %i with ', ...
+            'Levenshtein distance of %i'], a1(1), ld1));
+        
+        % Set field size
+        set(handles.fieldsize, 'Value', a1(1));
+        
+    elseif ld2 < ld1 && ld2 < handles.config.LEVENSHTEIN_THRESH
+        
+        % Log result
+        Event(sprintf(['File name matched field size index %i with ', ...
+            'Levenshtein distance of %i'], a2(1), ld2));
+        
+        % Set field size
+        set(handles.fieldsize, 'Value', a2(1));
+        
+    end
+    
+    %% Match detector 
+    % If detector model is included
+    if isfield(handles.data, 'detector')
+        
+        % Match detector to list
+        [a1, ld1] = strnearest(handles.data.detector{1}, ...
+            get(handles.detector, 'String'), 'case');
+        
+        % If distance is less than threshold
+        if ld1 < handles.config.LEVENSHTEIN_THRESH
+            
+            % Log result
+            Event(sprintf(['Profile header matched detector index %i with ', ...
+                'Levenshtein distance of %i'], a1(1), ld1));
+
+            % Set field size
+            set(handles.detector, 'Value', a1(1));
+        end
+    end
+    
+    % Clear temporary variables
+    clear a1 a2 ld1 ld2 i str x y;
+    
+    %% Continue to ProcessProfiles and UpdateResults
     % Execute ProcessProfiles
     handles = ProcessProfiles(handles);
     

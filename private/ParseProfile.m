@@ -86,10 +86,10 @@ switch varargin{2}
             elseif data.profiles{i}(2,3) ~= data.profiles{i}(1,3)
                 s = 'IEC Z (depth dose)';
             end
-            
             str{i} = sprintf('%s: %s %s %0.0fx%0.0f %s', data.profiletype{i}, ...
-                data.energy, data.modality, sum(abs(data.collimator(1:2)))/10, ...
-                sum(abs(data.collimator(3:4)))/10, s);
+                data.energy{i}, data.modality{i}, ...
+                sum(abs(data.collimator(i, 1:2)))/10, ...
+                sum(abs(data.collimator(i, 3:4)))/10, s);
         end
         
         % Open dialog box to allow user to select files
@@ -125,6 +125,42 @@ switch varargin{2}
             data.(f{i}) = processed.(f{i});
         end
         
+        % Store machine as combination of model, S/N
+        if isfield(data, 'mmodel')
+            if iscell(data.mmodel)
+                data.machine{1} = data.mmodel{1};
+            else
+                data.machine{1} = data.mmodel;
+            end
+        else
+            data.machine{1} = '';
+        end
+        if isfield(data, 'mserial')
+            if iscell(data.mserial)
+                data.machine{1} = [data.machine{1}, ' ', data.mserial{1}];
+            else
+                data.machine{1} = [data.machine{1}, ' ', data.mserial];
+            end
+        end
+        
+        % Store energy
+        if isfield(data, 'menergy')
+            if iscell(data.mmodel)
+                data.energy{1} = data.menergy{1};
+            else
+                data.energy{1} = data.menergy;
+            end
+        end
+        
+        % Store SSD
+        if isfield(data, 'dssd')
+            if iscell(data.dssd)
+                data.ssd{1} = data.dssd{1};
+            else
+                data.ssd{1} = data.dssd;
+            end
+        end
+        
         % Ask user for buildup
         b = str2double(inputdlg(['Enter additional buildup on ', ...
             'IC Profiler (inherent 9 mm is already added) in mm:'], ...
@@ -146,7 +182,7 @@ switch varargin{2}
             data.profiles{length(data.profiles)}(:,1) = ...
                 10 * processed.xdata(1,:)';
             
-            % Set depth to 0.9 cm (Gao et al)
+            % Set depth to 0.9 cm (Gao et al) plus buildup
             data.profiles{length(data.profiles)}(:,3) = repmat(9 + b, ...
                 size(processed.xdata, 2), 1);
             
@@ -166,7 +202,7 @@ switch varargin{2}
             data.profiles{length(data.profiles)}(:,2) = ...
                 10 * processed.ydata(1,:)';
             
-            % Set depth to 0.9 cm (Gao et al)
+            % Set depth to 0.9 cm (Gao et al) plus buildup
             data.profiles{length(data.profiles)}(:,3) = repmat(9 + b, ...
                 size(processed.ydata, 2), 1);
             
@@ -197,6 +233,42 @@ switch varargin{2}
             data.(f{i}) = processed.(f{i});
         end
         
+        % Store machine as combination of model, S/N
+        if isfield(data, 'mmodel')
+            if iscell(data.mmodel)
+                data.machine{1} = data.mmodel{1};
+            else
+                data.machine{1} = data.mmodel;
+            end
+        else
+            data.machine{1} = '';
+        end
+        if isfield(data, 'mserial')
+            if iscell(data.mserial)
+                data.machine{1} = [data.machine{1}, ' ', data.mserial{1}];
+            else
+                data.machine{1} = [data.machine{1}, ' ', data.mserial];
+            end
+        end
+        
+        % Store energy
+        if isfield(data, 'menergy')
+            if iscell(data.mmodel)
+                data.energy{1} = data.menergy{1};
+            else
+                data.energy{1} = data.menergy;
+            end
+        end
+        
+        % Store SSD
+        if isfield(data, 'dssd')
+            if iscell(data.dssd)
+                data.ssd{1} = data.dssd{1};
+            else
+                data.ssd{1} = data.dssd;
+            end
+        end
+        
         % Ask user for buildup
         b = str2double(inputdlg(['Enter additional buildup on ', ...
             'IC Profiler (inherent 9 mm is already added) in mm:'], ...
@@ -218,7 +290,7 @@ switch varargin{2}
             data.profiles{length(data.profiles)}(:,1) = ...
                 10 * processed.xdata(1,:)';
             
-            % Set depth to 0.9 cm (Gao et al)
+            % Set depth to 0.9 cm (Gao et al) plus buildup
             data.profiles{length(data.profiles)}(:,3) = repmat(9 + b, ...
                 size(processed.xdata, 2), 1);
             
@@ -238,7 +310,7 @@ switch varargin{2}
             data.profiles{length(data.profiles)}(:,2) = ...
                 10 * processed.ydata(1,:)';
             
-            % Set depth to 0.9 cm (Gao et al)
+            % Set depth to 0.9 cm (Gao et al) plus buildup
             data.profiles{length(data.profiles)}(:,3) = repmat(9 + b, ...
                 size(processed.ydata, 2), 1);
             
@@ -255,6 +327,9 @@ switch varargin{2}
         
         % Execute ParseSIcsv
         data = ParseSIcsv('', varargin{1});
+        
+        % Assume machine is Tomo
+        data.machine = 'TomoTherapy';
 end
 
 % Log number of profiles
