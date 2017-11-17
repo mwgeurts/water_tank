@@ -56,7 +56,7 @@ if ~iscell(names); names = cell({names}); end
 % Log start of file load and start timer
 if exist('Event', 'file') == 2
     Event(['Loading ASCII file ', strjoin(names, '\nLoading ASCII file ')]);
-    tic;
+    tim = tic;
 end
 
 % Initialize return structure
@@ -373,7 +373,7 @@ end
 % Log event
 if exist('Event', 'file') == 2
     Event(sprintf('%i data profiles extracted successfully in %0.3f seconds', ...
-        length(data.profiles), toc(t)));
+        length(data.profiles), toc(tim)));
 end
 
 % Clear temporary variables

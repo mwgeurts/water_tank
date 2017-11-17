@@ -329,7 +329,7 @@ switch varargin{2}
         data = ParseSIcsv('', varargin{1});
         
         % Assume machine is Tomo
-        data.machine = 'TomoTherapy';
+        data.machine{1} = 'TomoTherapy';
 end
 
 % Log number of profiles
