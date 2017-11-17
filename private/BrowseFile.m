@@ -19,10 +19,21 @@ function handles = BrowseFile(handles)
 % You should have received a copy of the GNU General Public License along 
 % with this program. If not, see http://www.gnu.org/licenses/.
 
+% Retrieve current file type and parse extension tokens
+s = get(handles.format, 'String');
+t = regexp(s{get(handles.format, 'Value')}, '\((.+)\)', 'tokens');
+if ~isempty(t)
+    types = strsplit(t{end}{1}, ', ')';
+else
+    types = '*.*';
+end
+
 % Request the user to select the profile
 Event('UI window opened to select file');
-[name, path] = uigetfile('*.*', 'Select the profiles to load', ...
+[name, path] = uigetfile(types, ['Select the ', ...
+    s{get(handles.format, 'Value')}, 'profiles to load'], ...
     handles.config.DEFAULT_PATH, 'MultiSelect', 'on');
+clear s t types;
 
 % If a file was selected
 if iscell(name) || sum(name ~= 0)
