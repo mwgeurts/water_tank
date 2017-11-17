@@ -92,6 +92,9 @@ config.MATCH_FILENAME = str2double(config.MATCH_FILENAME);
 config.MATCH_HEADER = str2double(config.MATCH_HEADER);
 config.LEVENSHTEIN_THRESH = str2double(config.LEVENSHTEIN_THRESH);
 
+% Parse center reference flag
+config.CENTER_REFERENCE = str2double(config.CENTER_REFERENCE);
+
 % Parse compression option
 config.COMPRESS_REFERENCE = str2double(config.COMPRESS_REFERENCE);
 config.MASK_REFERENCE = str2double(config.MASK_REFERENCE);

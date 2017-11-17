@@ -55,68 +55,41 @@ switch varargin{2}
         
         % Log action 
         Event('Centering profiles by FWHM');
-
+        if nargin >= 3 && varargin{3} == 1
+            Event('Centering reference profiles by FWHM');
+        end
+        
         % Loop through each profile
         for i = 1:length(profiles)
         
             % If X changes, this is an X profile
             if profiles{i}(1,1) ~= profiles{i}(2,1)
                 
-                % Find index of max value
-                [~, I] = max(profiles{i}(:,4));
-
-                % Find highest lower index just below half maximum
-                lI = find(profiles{i}(1:I,4) < 0.5 * ...
-                    max(profiles{i}(:,4)), 1, 'last');
-
-                % Find lowest upper index just above half maximum
-                uI = find(profiles{i}(I:end,4) < 0.5 * ...
-                    max(profiles{i}(:,4)), 1, 'first');
-
-                try
-                    % Interpolate to find lower half-maximum value
-                    l = interp1(profiles{i}(lI-1:lI+2,4), profiles{i}(...
-                        lI-1:lI+2,1), 0.5 * max(profiles{i}(:,4)), 'linear');
-
-                    % Interpolate to find upper half-maximum value
-                    u = interp1(profiles{i}(I+uI-3:I+uI,4), profiles{i}(...
-                        I+uI-3:I+uI,1), 0.5 * max(profiles{i}(:,4)), 'linear');
-
-                    % Shift measured profile by offset
-                    profiles{i}(:,1) = profiles{i}(:,1) - (l+u)/2;
-                catch
-                    Event(sprintf(['FWHM could not be computed for ', ...
-                        'profile %i'], i), 'WARN');
+                % Shift measured profile by offset
+                profiles{i}(:,1) = profiles{i}(:,1) - ...
+                    FWXM(profiles{i}(:,1), profiles{i}(:,4), 0.5);
+                
+                % If center reference flag is set
+                if size(profiles{i},2) >= 5 && nargin >= 3 && varargin{3} == 1
+                    
+                    % Re-interpolate reference with to center it
+                    [~, ~, profiles{i}(:,5)] = FWXM(profiles{i}(:,1), ...
+                        profiles{i}(:,5), 0.5);
                 end
 
             % Otherwise, if Y changes, this is an Y profile
             elseif profiles{i}(1,2) ~= profiles{i}(2,2)
                 
-                % Find index of max value
-                [~, I] = max(profiles{i}(:,4));
-
-                % Find highest lower index just below half maximum
-                lI = find(profiles{i}(1:I,4) < 0.5 * ...
-                    max(profiles{i}(:,4)), 1, 'last');
-
-                % Find lowest upper index just above half maximum
-                uI = find(profiles{i}(I:end,4) < 0.5 * ...
-                    max(profiles{i}(:,4)), 1, 'first');
-
-                try
-                    % Interpolate to find lower half-maximum value
-                    l = interp1(profiles{i}(lI-1:lI+2,4), profiles{i}(...
-                        lI-1:lI+2,2), 0.5 * max(profiles{i}(:,4)), 'linear');
-
-                    % Interpolate to find upper half-maximum value
-                    u = interp1(profiles{i}(I+uI-3:I+uI,4), profiles{i}(...
-                        I+uI-3:I+uI,2), 0.5 * max(profiles{i}(:,4)), 'linear');
-
-                    % Shift measured profile by offset
-                    profiles{i}(:,2) = profiles{i}(:,2) - (l+u)/2;
-                catch
-                    Event(sprintf(['FWHM could not be computed for ', ...
-                        'profile %i'], i), 'WARN');
+                % Shift measured profile by offset
+                profiles{i}(:,2) = profiles{i}(:,2) - ...
+                    FWXM(profiles{i}(:,2), profiles{i}(:,4), 0.5);
+                
+                % If center reference flag is set
+                if size(profiles{i},2) >= 5 && nargin >= 3 && varargin{3} == 1
+                    
+                    % Re-interpolate reference with to center it
+                    [~, ~, profiles{i}(:,5)] = FWXM(profiles{i}(:,2), ...
+                        profiles{i}(:,5), 0.5);
                 end
             end
         end 
@@ -132,6 +105,9 @@ switch varargin{2}
         
         % Log action 
         Event('Centering profiles by FWQM');
+        if nargin >= 3 && varargin{3} == 1
+            Event('Centering reference profiles by FWHM');
+        end
 
         % Loop through each profile
         for i = 1:length(profiles)
@@ -139,61 +115,31 @@ switch varargin{2}
             % If X changes, this is an X profile
             if profiles{i}(1,1) ~= profiles{i}(2,1)
                 
-                % Find index of max value
-                [~, I] = max(profiles{i}(:,4));
-
-                % Find highest lower index just below half maximum
-                lI = find(profiles{i}(1:I,4) < 0.25 * ...
-                    max(profiles{i}(:,4)), 1, 'last');
-
-                % Find lowest upper index just above half maximum
-                uI = find(profiles{i}(I:end,4) < 0.25 * ...
-                    max(profiles{i}(:,4)), 1, 'first');
-
-                try
-                    % Interpolate to find lower half-maximum value
-                    l = interp1(profiles{i}(lI-1:lI+2,4), profiles{i}(...
-                        lI-1:lI+2,1), 0.25 * max(profiles{i}(:,4)), 'linear');
-
-                    % Interpolate to find upper half-maximum value
-                    u = interp1(profiles{i}(I+uI-3:I+uI,4), profiles{i}(...
-                        I+uI-3:I+uI,1), 0.25 * max(profiles{i}(:,4)), 'linear');
-
-                    % Shift measured profile by offset
-                    profiles{i}(:,1) = profiles{i}(:,1) - (l+u)/2;
-                catch
-                    Event(sprintf(['FWQM could not be computed for ', ...
-                        'profile %i'], i), 'WARN');
+                % Shift measured profile by offset
+                profiles{i}(:,1) = profiles{i}(:,1) - ...
+                    FWXM(profiles{i}(:,1), profiles{i}(:,4), 0.25);
+                
+                % If center reference flag is set
+                if size(profiles{i},2) >= 5 && nargin >= 3 && varargin{3} == 1
+                    
+                    % Re-interpolate reference with to center it
+                    [~, ~, profiles{i}(:,5)] = FWXM(profiles{i}(:,1), ...
+                        profiles{i}(:,5), 0.25);
                 end
 
             % Otherwise, if Y changes, this is an Y profile
             elseif profiles{i}(1,2) ~= profiles{i}(2,2)
                 
-                % Find index of max value
-                [~, I] = max(profiles{i}(:,4));
-
-                % Find highest lower index just below half quarter
-                lI = find(profiles{i}(1:I,4) < 0.25 * ...
-                    max(profiles{i}(:,4)), 1, 'last');
-
-                % Find lowest upper index just above half quarter
-                uI = find(profiles{i}(I:end,4) < 0.25 * ...
-                    max(profiles{i}(:,4)), 1, 'first');
-
-                try
-                    % Interpolate to find lower half-quarter value
-                    l = interp1(profiles{i}(lI-1:lI+2,4), profiles{i}(...
-                        lI-1:lI+2,2), 0.25 * max(profiles{i}(:,4)), 'linear');
-
-                    % Interpolate to find upper half-quarter value
-                    u = interp1(profiles{i}(I+uI-3:I+uI,4), profiles{i}(...
-                        I+uI-3:I+uI,2), 0.25 * max(profiles{i}(:,4)), 'linear');
-
-                    % Shift measured profile by offset
-                    profiles{i}(:,2) = profiles{i}(:,2) - (l+u)/2;
-                catch
-                    Event(sprintf(['FWQM could not be computed for ', ...
-                        'profile %i'], i), 'WARN');
+                % Shift measured profile by offset
+                profiles{i}(:,2) = profiles{i}(:,2) - ...
+                    FWXM(profiles{i}(:,2), profiles{i}(:,4), 0.25);
+                
+                % If center reference flag is set
+                if size(profiles{i},2) >= 5 && nargin >= 3 && varargin{3} == 1
+                    
+                    % Re-interpolate reference with to center it
+                    [~, ~, profiles{i}(:,5)] = FWXM(profiles{i}(:,2), ...
+                        profiles{i}(:,5), 0.25);
                 end
             end
         end 

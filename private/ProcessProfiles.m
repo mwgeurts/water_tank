@@ -62,9 +62,11 @@ if isfield(handles, 'data') && ~isempty(handles.data)
     % Update waitbar
     waitbar(0.3, progress);
     
-    % Center profiles
-    handles.processed = CenterProfiles(handles.processed, ...
-        get(handles.center, 'Value'));
+    % Center profiles (unless reference will also be centered)
+    if handles.config.CENTER_REFERENCE == 0
+        handles.processed = CenterProfiles(handles.processed, ...
+            get(handles.center, 'Value'));
+    end
     
     % Ask user for isocenter
     if handles.config.ASK_REFERENCE_ISO == 1 && isempty(handles.iso)
@@ -107,6 +109,12 @@ if isfield(handles, 'data') && ~isempty(handles.data)
         handles.reference{get(handles.machine, ...
         'Value')}.energies{get(handles.energy, 'Value')}.energy);
    
+    % If center reference flag is set, center profiles now
+    if handles.config.CENTER_REFERENCE == 1
+        handles.processed = CenterProfiles(handles.processed, ...
+            get(handles.center, 'Value'), 1);
+    end
+    
     % Convert to depth dose if energy is an electron
     if ~isempty(regexpi(handles.reference{get(handles.machine, ...
             'Value')}.energies{get(handles.energy, 'Value')}.energy, 'e'))
