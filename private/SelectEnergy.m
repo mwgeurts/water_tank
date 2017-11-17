@@ -25,20 +25,31 @@ m = get(handles.machine, 'Value');
 Event(sprintf('Energy %s selected', ...
     handles.reference{m}.energies{value}.energy));
 
-% Update dropdown menu
-set(handles.energy, 'Value', value)
+% Retrieve current SSD values
+s = get(handles.ssd, 'String');
 
-% Reset selected SSD
-set(handles.ssd, 'Value', min(get(handles.ssd, 'Value'), ...
-    length(handles.reference{m}.energies{value}.ssds)));
+% Initialize new SSD
+c = min(get(handles.ssd, 'Value'), ...
+    length(handles.reference{m}.energies{value}.ssds));
 
-% Update SSD list
+% Loop through new SSDs
 str = cell(size(handles.reference{m}.energies{value}.ssds));
 for i = 1:length(handles.reference{m}.energies{value}.ssds)
+    
+    % If current SSD value matches a new value
+    if iscell(s) && strcmp(s{get(handles.ssd, 'Value')}, ...
+            handles.reference{m}.energies{value}.ssds{i}.ssd)
+        c = i;
+    end
+    
+    % Store new SSD
     str{i} = handles.reference{m}.energies{value}.ssds{i}.ssd;
 end
+
+% Update SSD list
+set(handles.ssd, 'Value', c);
 set(handles.ssd, 'String', str);
-clear m i str;
+clear m i s str;
 
 % Call SelectSSD to update reference dose
-handles = SelectSSD(handles, get(handles.ssd, 'Value'));
+handles = SelectSSD(handles, c);

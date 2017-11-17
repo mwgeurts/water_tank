@@ -23,20 +23,31 @@ function handles = SelectMachine(handles, value)
 % Log selected machine
 Event(sprintf('Machine %s selected', handles.reference{value}.machine));
 
-% Update dropdown menu
-set(handles.machine, 'Value', value)
+% Retrieve current energy values
+e = get(handles.energy, 'String');
 
-% Reset selected energy
-set(handles.energy, 'Value', min(get(handles.energy, ...
-    'Value'), length(handles.reference{value}.energies)));
+% Initialize new energy
+c = min(get(handles.energy, 'Value'), ...
+    length(handles.reference{value}.energies));
 
-% Update energy list
+% Loop through new energies
 str = cell(size(handles.reference{value}.energies));
 for i = 1:length(handles.reference{value}.energies)
+    
+    % If current energy value matches a new value
+    if iscell(e) && strcmp(e{get(handles.energy, 'Value')}, ...
+            handles.reference{value}.energies{i}.energy)
+        c = i;
+    end
+    
+    % Store new energy
     str{i} = handles.reference{value}.energies{i}.energy;
 end
+
+% Update energy list
+set(handles.energy, 'Value', c);
 set(handles.energy, 'String', str);
-clear i str;
+clear i e str;
 
 % Call SelectEnergy to update field size list
-handles = SelectEnergy(handles, get(handles.energy, 'Value'));
+handles = SelectEnergy(handles, c);

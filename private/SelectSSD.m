@@ -26,20 +26,31 @@ e = get(handles.energy, 'Value');
 Event(sprintf('SSD %s selected', ...
     handles.reference{m}.energies{e}.ssds{value}.ssd));
 
-% Update dropdown menu
-set(handles.ssd, 'Value', value)
+% Retrieve current field size values
+f = get(handles.fieldsize, 'String');
 
-% Reset selected field size
-set(handles.fieldsize, 'Value', min(get(handles.fieldsize, 'Value'), ...
-    length(handles.reference{m}.energies{e}.ssds{value}.fields)));
+% Initialize new field size
+c = min(get(handles.fieldsize, 'Value'), ...
+    length(handles.reference{m}.energies{e}.ssds{value}.fields));
 
-% Update field list list
+% Loop through new field sizes
 str = cell(size(handles.reference{m}.energies{e}.ssds{value}.fields));
 for i = 1:length(handles.reference{m}.energies{e}.ssds{value}.fields)
+    
+    % If current field size value matches a new value
+    if iscell(f) && strcmp(f{get(handles.fieldsize, 'Value')}, ...
+            handles.reference{m}.energies{e}.ssds{value}.fields{i})
+        c = i;
+    end
+    
+    % Store new field size
     str{i} = handles.reference{m}.energies{e}.ssds{value}.fields{i};
 end
+
+% Update field size list
+set(handles.fieldsize, 'Value', c);
 set(handles.fieldsize, 'String', str);
-clear m i str;
+clear m e i f str;
 
 % Call SelectFieldSize to update reference dose
-handles = SelectFieldSize(handles, get(handles.fieldsize, 'Value'));
+handles = SelectFieldSize(handles, c);
