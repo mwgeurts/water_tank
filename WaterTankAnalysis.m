@@ -60,7 +60,7 @@ guidata(hObject, handles);
 % Turn off MATLAB warnings
 warning('off','all');
 
-% Choose default command line output for ExitDetector
+% Choose default command line output for WaterTankAnalysis
 handles.output = hObject;
 
 % Set version handle
@@ -80,7 +80,7 @@ clear path;
 handles.versionInfo = LoadVersionInfo;
 
 % Store program and MATLAB/etc version information as a string cell array
-string = {'TomoTherapy Exit Detector IMRT QA Analysis'
+string = {'Water Tank Analysis Tool'
     sprintf('Version: %s (%s)', handles.version, handles.versionInfo{6});
     sprintf('Author: Mark Geurts <mark.w.geurts@gmail.com>');
     sprintf('MATLAB Version: %s', handles.versionInfo{2});
@@ -585,11 +585,15 @@ Event(sprintf('Detector set to %s (Rcav = %0.2f mm)', ...
     handles.detectors{get(hObject, 'Value'), 1}, ...
     handles.detectors{get(hObject, 'Value'), 2}/2));
 
-% Execute ProcessProfiles
-handles = ProcessProfiles(handles);
+% If shifts or convolution is enabled
+if get(handles.epom, 'Value') > 2 || get(handles.convolve, 'Value') > 1
 
-% Execute UpdateResults
-handles = UpdateResults(handles);
+    % Execute ProcessProfiles
+    handles = ProcessProfiles(handles);
+
+    % Execute UpdateResults
+    handles = UpdateResults(handles);
+end
 
 % Update handles structure
 guidata(hObject, handles);
