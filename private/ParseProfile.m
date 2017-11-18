@@ -30,6 +30,7 @@ function data = ParseProfile(varargin)
 options = {
     'OmniPro RFA300 ASCII BDS (.txt, .asc)'
     'OmniPro V6 RFB (.rfb)'
+    'RayStation Physics Export (.csv)'
     'SNC IC Profiler (.prm)'
     'SNC IC Profiler (.txt)'
     'Standard Imaging TEMS (.csv)'
@@ -52,16 +53,16 @@ t = tic;
 data.profiles = cell(0);
 
 % Execute code block based on format provided in varargin{2}
-switch varargin{2}
+switch options{varargin{2}}
     
     % OmniPro RFA300 ASCII BDS
-    case 1
+    case 'OmniPro RFA300 ASCII BDS (.txt, .asc)'
         
         % Execute ParseIBAtxt
         data = ParseIBAtxt('', varargin{1});
         
     % OmniPro RFB
-    case 2
+    case 'OmniPro V6 RFB (.rfb)'
         
         % Execute ParseIBArfb
         data = ParseIBArfb('', varargin{1});  
@@ -86,17 +87,17 @@ switch varargin{2}
             elseif data.profiles{i}(2,3) ~= data.profiles{i}(1,3)
                 s = 'IEC Z (depth dose)';
             end
-            str{i} = sprintf('%s: %s %s %0.0fx%0.0f %s', data.profiletype{i}, ...
-                data.energy{i}, data.modality{i}, ...
-                sum(abs(data.collimator(i, 1:2)))/10, ...
-                sum(abs(data.collimator(i, 3:4)))/10, s);
+            str{i} = sprintf('%s: %s %s %0.0fx%0.0f %s', ...
+                data.profiletype{i}, data.energy{i}, data.modality{i}, ...
+                sum(abs(data.collimator(i, 1:2))), ...
+                sum(abs(data.collimator(i, 3:4))), s);
         end
         
         % Open dialog box to allow user to select files
         [sel, ok] = listdlg('PromptString','Select which profiles to load:',...
                 'SelectionMode', 'multiple', 'ListString',str, ...
                 'InitialValue', def, 'Name', 'Select Profiles', ...
-                'ListSize', [400 150]);
+                'ListSize', [400 300]);
         
         % If user clicked cancel, use defaults
         if ok == 0
@@ -104,10 +105,17 @@ switch varargin{2}
         end
         
         % Remove unselected profiles
-        data.profiles = data.profiles(sel);
+        n = fieldnames(data);
+        for i = 1:length(n)
+            if size(data.(n{i}),1) == length(str)
+                data.(n{i}) = data.(n{i})(sel,:);
+            elseif size(data.(n{i}),2) == length(str)
+                data.(n{i}) = data.(n{i})(:,sel);
+            end
+        end
         
     % IC Profiler PRM
-    case 3
+    case 'SNC IC Profiler (.prm)'
         
         % Execute ParseSNCprm
         raw = ParseSNCprm('', varargin{1});
@@ -215,7 +223,7 @@ switch varargin{2}
         clear f i b raw processed;
    
     % IC Profiler TXT
-    case 4
+    case 'SNC IC Profiler (.txt)'
         
         % Execute ParseSNCtxt
         raw = ParseSNCtxt('', varargin{1});
@@ -323,13 +331,52 @@ switch varargin{2}
         clear f i b raw processed;
         
     % Standard Imaging TEMS
-    case 5
+    case 'Standard Imaging TEMS (.csv)'
         
         % Execute ParseSIcsv
         data = ParseSIcsv('', varargin{1});
         
         % Assume machine is Tomo
         data.machine{1} = 'TomoTherapy';
+        
+    % RayStation
+    case 'RayStation Physics Export (.csv)'
+        
+        % Execute ParseRScsv
+        data = ParseRScsv('', varargin{1});
+        
+        % Loop through profiles and generate selection menu
+        str = cell(1, length(data.profiles));
+        for i = 1:length(data.profiles)
+            
+            % Set description based on orientation, depth
+            str{i} = sprintf('%s: %s %s %0.0fx%0.0f', ...
+                data.profiletype{i}, ...
+                data.energy{i}, data.modality{i}, ...
+                sum(abs(data.collimator(i, 1:2))), ...
+                sum(abs(data.collimator(i, 3:4))));
+        end
+        
+        % Open dialog box to allow user to select files
+        [sel, ok] = listdlg('PromptString','Select which profiles to load:',...
+                'SelectionMode', 'multiple', 'ListString',str, ...
+                'InitialValue', 1:length(str), 'Name', 'Select Profiles', ...
+                'ListSize', [400 300]);
+        
+        % If user clicked cancel, use defaults
+        if ok == 0
+            sel = 1:length(str);
+        end
+        
+        % Remove unselected profiles
+        n = fieldnames(data);
+        for i = 1:length(n)
+            if size(data.(n{i}),1) == length(str)
+                data.(n{i}) = data.(n{i})(sel,:);
+            elseif size(data.(n{i}),2) == length(str)
+                data.(n{i}) = data.(n{i})(:,sel);
+            end
+        end
 end
 
 % Log number of profiles
