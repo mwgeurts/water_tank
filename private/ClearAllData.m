@@ -47,10 +47,13 @@ set(handles.saveplots, 'Enable', 'off');
 % Hide plots
 set(allchild(handles.iecx), 'visible', 'off'); 
 set(handles.iecx, 'visible', 'off');
+legend(handles.iecx,'hide')
 set(allchild(handles.iecy), 'visible', 'off'); 
 set(handles.iecy, 'visible', 'off');
+legend(handles.iecy,'hide')
 set(allchild(handles.iecz), 'visible', 'off'); 
 set(handles.iecz, 'visible', 'off');
+legend(handles.iecz,'hide')
 
 % Clear statistics
 set(handles.xystats, 'data', CalcProfileStats());
