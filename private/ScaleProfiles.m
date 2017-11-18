@@ -27,6 +27,7 @@ options = {
     'Max Value'
     'CAX'
     'CAX/PDD'
+    'Integral Area'
 };
 
 % If no input arguments are provided
@@ -154,4 +155,23 @@ switch varargin{2}
         % Clear temporary variables
         clear i;
 
+    % Integral Area
+    case 5
+        
+        % Start with raw profile
+        profiles = varargin{1};
+        
+        % Log action 
+        Event('Profiles scaled to match integral area');
+
+        % Loop through each profile
+        for i = 1:length(profiles)
+        
+            % Scale measured data to match integral area of reference
+            profiles{i}(:,4) = profiles{i}(:,4) * sum(profiles{i}(:,5)) ...
+                / sum(profiles{i}(:,4) .* single(profiles{i}(:,5) > 0));
+        end 
+        
+        % Clear temporary variables
+        clear i;
 end
