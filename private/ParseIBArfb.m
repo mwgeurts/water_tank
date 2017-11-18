@@ -284,15 +284,15 @@ for f = 1:length(names)
             
             % Store inline field size
             fseek(fid, 2, 0);
-            data.collimator(i,1) = fread(fid, 1, 'float64');
+            data.collimator(i,1) = fread(fid, 1, 'float64')/10;
             fseek(fid, 2, 0);
-            data.collimator(i,2) = fread(fid, 1, 'float64');
+            data.collimator(i,2) = fread(fid, 1, 'float64')/10;
             
             % Store crossline field size
             fseek(fid, 2, 0);
-            data.collimator(i,3) = fread(fid, 1, 'float64');
+            data.collimator(i,3) = fread(fid, 1, 'float64')/10;
             fseek(fid, 2, 0);
-            data.collimator(i,4) = fread(fid, 1, 'float64');
+            data.collimator(i,4) = fread(fid, 1, 'float64')/10;
             
             % Store gantry orientation
             switch fread(fid, 1, 'uint8')
