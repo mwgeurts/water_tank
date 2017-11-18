@@ -76,7 +76,7 @@ switch varargin{2}
         if ~isempty(shift) && ~isnan(shift)
             
             % Log action 
-            Event(sprintf('Shifting profiles by %0.1f mm', shift));
+            Event(sprintf('Shifting depths by %0.1f mm', shift));
 
             % Loop through each profile
             for i = 1:length(profiles)
@@ -93,7 +93,7 @@ switch varargin{2}
         profiles = varargin{1};
         
         % Log action 
-        Event(sprintf('Shifting profiles by 0.6 rcav = %0.1f mm', 0.6 * ...
+        Event(sprintf('Shifting depths by 0.6 rcav = %0.1f mm', 0.6 * ...
             varargin{3}));
 
         % Loop through each profile
@@ -110,7 +110,7 @@ switch varargin{2}
         profiles = varargin{1};
         
         % Log action 
-        Event(sprintf('Shifting profiles by 0.5 rcav = %0.1f mm', 0.5 * ...
+        Event(sprintf('Shifting depths by 0.5 rcav = %0.1f mm', 0.5 * ...
             varargin{3}));
 
         % Loop through each profile
