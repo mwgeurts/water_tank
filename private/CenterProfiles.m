@@ -31,6 +31,7 @@ options = {
     'FWHM'
     'FWQM'
     'FWXM'
+    'Integral Area'
 };
 
 % If no input arguments are provided
@@ -260,6 +261,49 @@ switch varargin{2}
                     [~, ~, profiles{i}(:,5)] = FWXM(profiles{i}(:,2), ...
                         profiles{i}(:,5), frac);
                 end
+            end
+        end 
+        
+        % Clear temporary variables
+        clear i;
+        
+    % Integral Area
+    case 6
+        
+        % Start with raw profile
+        profiles = varargin{1};
+        
+        % Log action
+        Event('Centering profiles using integral area');
+        
+        % If center reference flag is set, warn user
+        if nargin >= 3 && varargin{3} == 1
+            Event(['Reference profiles are not separately centered using ', ...
+                'integral area'], 'WARN');
+        end
+        
+        % Loop through each profile
+        for i = 1:length(profiles)
+        
+            % If X changes, this is an X profile
+            if profiles{i}(1,1) ~= profiles{i}(2,1)
+                
+                % Find index of half cumulative sum
+                idx = find(cumsum(profiles{i}(:,4)) > ...
+                    sum(profiles{i}(:,4)) * 0.5, 1, 'first');
+                
+                % Shift measured profile by offset
+                profiles{i}(:,1) = profiles{i}(:,1) - profiles{i}(idx,1);
+                
+            % Otherwise, if Y changes, this is an Y profile
+            elseif profiles{i}(1,2) ~= profiles{i}(2,2)
+                
+                % Find index of half cumulative sum
+                idx = find(cumsum(profiles{i}(:,4)) > ...
+                    sum(profiles{i}(:,4)) * 0.5, 1, 'first');
+                
+                % Shift measured profile by offset
+                profiles{i}(:,2) = profiles{i}(:,2) - profiles{i}(idx,2);
             end
         end 
         
