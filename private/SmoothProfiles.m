@@ -26,7 +26,7 @@ function profiles = SmoothProfiles(varargin)
 options = {
     'None'
     'Moving Average'
-    'Robust 2° Poly Fit' 
+    'Robust Loess 2° Poly Fit' 
     'Savitzky-Golay'
 };
 
@@ -84,10 +84,10 @@ switch varargin{2}
         % Loop through each profile
         for i = 1:length(profiles)
             
-            % Smooth the measured data
+            % Smooth the measured data, limiting span to 
             profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
-                config.SMOOTH_SPAN / length(profiles{i}(:,4)), ...
-                'moving');
+                max(3, min(config.SMOOTH_SPAN, floor(0.01 * ...
+                size(profiles{i},1)))), 'moving');
         end
         
     % Robust 2nd degree Polynomial Regression filter
@@ -124,23 +124,11 @@ switch varargin{2}
         
         % Loop through each profile
         for i = 1:length(profiles)
-            
-            % If this is an X or Y profile
-            if profiles{i}(1,1) ~= profiles{i}(2,1)
-                
-                % Smooth the measured data
-                profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
-                    config.SMOOTH_SPAN / length(profiles{i}(:,4)), ...
-                    'rloess');
-            
-            % Otherwise, reduce the span for depth profiles
-            else
-                
-                % Smooth the measured data
-                profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
-                    config.SMOOTH_SPAN / length(profiles{i}(:,4)) / 10, ...
-                    'rloess');
-            end
+
+            % Smooth the measured data
+            profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
+                max(3, min(config.SMOOTH_SPAN, floor(0.01 * ...
+                size(profiles{i},1)))), 'rloess');
         end
         
     % Savitzky-Golay filter
@@ -153,7 +141,6 @@ switch varargin{2}
             config.SMOOTH_SPAN = 15;
             config.SGOLAY_DEGREE = 3;
         end
-        
         
         % Log action
         if exist('Event', 'file') == 2
@@ -183,8 +170,8 @@ switch varargin{2}
             
             % Smooth the measured data
             profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
-                config.SMOOTH_SPAN, 'sgolay', ...
+                max(config.SGOLAY_DEGREE+1, min(config.SMOOTH_SPAN, ...
+                floor(0.01 * size(profiles{i},1)))), 'sgolay', ...
                 config.SGOLAY_DEGREE);
         end
-
 end
