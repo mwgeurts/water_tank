@@ -90,8 +90,8 @@ for i = 1:length(profiles)
             max(profiles{i}(:,4)), 1, 'first');
         
         % If zero reference values exist, cap end
-        if ~isempty(find(profiles{i}(:,5) == 0, 1))
-            lI = find(profiles{i}(:,5) == 0, 1, 'last')+1;
+        if ~isempty(find(profiles{i}(1:uI,5) == 0, 1))
+            lI = find(profiles{i}(1:uI,5) == 0, 1, 'last')+1;
         end
         
         % If a photon energy is selected
