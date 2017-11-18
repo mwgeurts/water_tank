@@ -125,7 +125,8 @@ switch varargin{2}
                 % Extract the profile from the convolved, padded value
                 profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) ...
                     + floor(length(x)/2)-1) * max(p)/max(z), ...
-                    profiles{i}(:,1), 'linear', 0);
+                    profiles{i}(:,1), 'linear', 0) .* ...
+                    single(profiles{i}(:,5) > 0);
                 
             % Otherwise, if Y changes, this is an Y profile
             elseif profiles{i}(1,2) ~= profiles{i}(2,2)
@@ -146,7 +147,8 @@ switch varargin{2}
                 % Extract the profile from the convolved, padded value
                 profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) ...
                     + floor(length(x)/2)-1) * max(p)/max(z), ...
-                    profiles{i}(:,2), 'linear', 0);
+                    profiles{i}(:,2), 'linear', 0) .* ...
+                    single(profiles{i}(:,5) > 0);
                 
             % Otherwise, if Z changes, this is an depth profile
             elseif profiles{i}(1,3) ~= profiles{i}(2,3) 
@@ -167,7 +169,8 @@ switch varargin{2}
                 % Extract the profile from the convolved, padded value
                 profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) ...
                     + floor(length(x)/2)-1) * max(p)/max(z), ...
-                    profiles{i}(:,3), 'linear', 0);
+                    profiles{i}(:,3), 'linear', 0) .* ...
+                    single(profiles{i}(:,5) > 0);
             end
         end
 end
