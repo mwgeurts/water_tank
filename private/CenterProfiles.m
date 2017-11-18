@@ -308,5 +308,5 @@ switch varargin{2}
         end 
         
         % Clear temporary variables
-        clear i;
+        clear i idx;
 end
