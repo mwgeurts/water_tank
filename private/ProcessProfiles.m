@@ -63,7 +63,8 @@ if isfield(handles, 'data') && ~isempty(handles.data)
     waitbar(0.3, progress);
     
     % Center profiles (unless reference will also be centered)
-    if handles.config.CENTER_REFERENCE == 0
+    if handles.config.CENTER_REFERENCE == 0 || ...
+            get(handles.center, 'Value') == 2
         handles.processed = CenterProfiles(handles.processed, ...
             get(handles.center, 'Value'));
     end
@@ -110,7 +111,8 @@ if isfield(handles, 'data') && ~isempty(handles.data)
         'Value')}.energies{get(handles.energy, 'Value')}.energy);
    
     % If center reference flag is set, center profiles now
-    if handles.config.CENTER_REFERENCE == 1
+    if handles.config.CENTER_REFERENCE == 1 && ...
+            get(handles.center, 'Value') > 2
         handles.processed = CenterProfiles(handles.processed, ...
             get(handles.center, 'Value'), 1);
     end
