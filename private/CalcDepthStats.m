@@ -20,7 +20,7 @@ function data = CalcDepthStats(varargin)
 % with this program. If not, see http://www.gnu.org/licenses/.
 
 % If this is an electron energy, return R50s
-if nargin == 0 || isempty(regexpi(varargin{1}, 'e'))
+if nargin == 0 || contains(varargin{1}, 'e', 'IgnoreCase', true)
 
     % Initialize data table
     data = {
@@ -86,10 +86,16 @@ for i = 1:length(profiles)
         uI = find(profiles{i}(:,4) == max(profiles{i}(:,4)), 1, 'first');
 
         % Find the index of 5% of Dmax
-        lI = find(profiles{i}(:,4) > 0.05 * max(profiles{i}(:,4)), 1, 'first');
+        lI = find(profiles{i}(:,4) > 0.05 * ...
+            max(profiles{i}(:,4)), 1, 'first');
+        
+        % If zero reference values exist, cap end
+        if ~isempty(find(profiles{i}(:,5) == 0, 1))
+            lI = find(profiles{i}(:,5) == 0, 1, 'last')+1;
+        end
         
         % If a photon energy is selected
-        if isempty(regexpi(varargin{1}, 'e'))
+        if ~contains(varargin{1}, 'e', 'IgnoreCase', true)
             
             % Calculate the PDD10
             M = interp1(profiles{i}(lI:uI,3), ...
@@ -118,9 +124,12 @@ for i = 1:length(profiles)
                 100, 'linear'));
         else
             
+            % Remove duplicate points (they will cause interp1 to fail)
+            [c, idx, ~] = unique(profiles{i}(lI:uI,4));
+            
             % Calculate the R50
-            M = interp1(profiles{i}(lI:uI,4), ...
-                profiles{i}(lI:uI,3), 0.5 * max(profiles{i}(lI:uI,4)), 'linear');
+            M = interp1(c, profiles{i}(lI+idx,3), 0.5 * ...
+                max(profiles{i}(lI:uI,4)), 'linear');
             data{3,c} = sprintf('%0.1f mm', M);
             
             % Find the index of Dmax
