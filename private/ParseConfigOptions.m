@@ -98,3 +98,4 @@ config.CENTER_REFERENCE = str2double(config.CENTER_REFERENCE);
 % Parse compression option
 config.COMPRESS_REFERENCE = str2double(config.COMPRESS_REFERENCE);
 config.MASK_REFERENCE = str2double(config.MASK_REFERENCE);
+config.ALLOW_DIAGONAL = str2double(config.ALLOW_DIAGONAL);

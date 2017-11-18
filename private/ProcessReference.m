@@ -3,9 +3,9 @@ function ProcessReference(varargin)
 % scans it for DICOM RT PLAN and DOSE files. Once found, this function will 
 % copy them, optionally with RLE (lossless) compression, to the destination 
 % folder. The function can also optionally remove DICOM RT DOSE data away
-% from the IEC axes. Since scan data is not commonly acquired except along
-% the orthogonal axes, this can significantly reduce the file size (in
-% practice by a factor of 15 to 20).
+% from the IEC and/or diagonal axes. Since scan data is not commonly 
+% acquired except along other axes, this can significantly reduce the file 
+% size (in practice by a factor of 15 to 20).
 %
 % This function may optionally be called with an input argument structure 
 % containing the following fields:
@@ -13,7 +13,9 @@ function ProcessReference(varargin)
 %   REFERENCE_PATH: string containing the path to save the processed files
 %   COMPRESS_REFERENCE: boolean indicating whether to compress data
 %   MASK_REFERENCE: boolean indicating whether to remove data points away
-%       from the IEC axes
+%       from the IEC axes (and diagonals, if set below)
+%   ALLOW_DIAGONAL: boolean indicating whether to include diagonal profiles
+%       in masked data
 %   REFERENCE_ISOX: DICOM IEC X position of isocenter, in mm
 %   REFERENCE_ISOY: DICOM IEC Y position of isocenter, in mm
 %   REFERENCE_ISOZ: DICOM IEC Z position of isocenter, in mm
@@ -57,6 +59,7 @@ if nargin == 1 && isfield(varargin{1}, 'REFERENCE_PATH')
     % Store provided compression flag
     compress = varargin{1}.COMPRESS_REFERENCE;
     maskaxis = varargin{1}.MASK_REFERENCE;
+    diag = varargin{1}.ALLOW_DIAGONAL;
     
     % Store reference directory
     dest = config.REFERENCE_PATH;
@@ -75,6 +78,7 @@ else
     % Set default compression options
     compress = 1;
     maskaxis = 1;
+    diag = 1;
     
     % Set default isocenter
     iso = [0 0 0];
@@ -232,10 +236,21 @@ for i = 1:size(dose, 1)
                 info.PixelSpacing(2) + iso(3), ...
                 info.ImagePositionPatient(3) + ...
                 single(info.GridFrameOffsetVector) - iso(2));
+            
+            % If diagonal profiles are allowed
+            if diag == 1
 
-            % Calculate mask for all values greater than 10 mm from an IEC axis
-            mask = uint16(min((abs(meshx) < 10) + (abs(meshy) < 10) + ...
-                (abs(meshz) < 10), 1));
+                % Calculate mask for all values greater than 10 mm from an 
+                % IEC orthogonal axis or along an X/Y diagonal
+                mask = uint16(min((abs(meshx) < 10) + (abs(meshy) < 10) + ...
+                    (abs(meshz) < 10) + (abs(meshx - meshy) < 10), 1));
+            else
+               
+                % Calculate mask for all values greater than 10 mm from an 
+                % IEC orthogonal axis
+                mask = uint16(min((abs(meshx) < 10) + (abs(meshy) < 10) + ...
+                    (abs(meshz) < 10), 1));
+            end
             
             % Store info
             prev = info;
