@@ -1,12 +1,12 @@
 function data = ParseSIcsv(path, names)
-% ParseSIcsv extracts water tank profiles from IBA OmniPro RFA300 ASCII 
-% BDS formatted text files. Each profile is returned an array of position
+% ParseSIcsv extracts water tank profiles from Standard Imaging TEMS 
+% formatted .csv files. Each profile is returned an array of position
 % and signal values. If two or more channels exist in the data, the 
 % function will try to identify which channel is reference and prompt the
 % user whether they want to normalize by it.
 %
 % The following variables are required for proper execution:
-%   path: string containing the path to the TXT files
+%   path: string containing the path to the .csv files
 %   names: string or cell array of strings containing the file(s) to be 
 %       loaded
 %
