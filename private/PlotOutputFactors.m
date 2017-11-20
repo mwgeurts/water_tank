@@ -1,8 +1,39 @@
 function PlotOutputFactors(varargin)
 % PlotOutputFactors is called by WaterTankAnalysis when the user clicks
-% "Plot Output Factors"
-
-
+% "Plot Output Factors". It can also be executed independently. This
+% function will scan a provided directory of DICOM RT Dose files and
+% calculate the output factors as a function of field size. The file size
+% is identified based on the file size (see WaterTankAnalysis wiki
+% documentation for more information). The displayed plot includes a table
+% to allow the user to type in measred values and calculate the relative 
+% difference between TPS and modelled values.  
+% 
+% If a path is not provided as the input argument (varargin{1}), the
+% function will prompt the user to select a folder. Also note, this 
+% function uses the Image Processing Toolbox dicomread() function to load 
+% DICOM data and is required for execution.
+%
+% In addition to plotting output factors, the application will attempt to
+% fit an analytical function first proposed by Sauer and Wilbert, 2007, 
+% "Measurement of output factors for small photon beams", Med. Phys. 34, 
+% 1983?1988. The fitting parameters and their confidence limits are
+% displayed on the displayed figure.
+%
+% Author: Mark Geurts, mark.w.geurts@gmail.com
+% Copyright (C) 2017 University of Wisconsin Board of Regents
+%
+% This program is free software: you can redistribute it and/or modify it 
+% under the terms of the GNU General Public License as published by the  
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+%
+% This program is distributed in the hope that it will be useful, but 
+% WITHOUT ANY WARRANTY; without even the implied warranty of 
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General 
+% Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License along 
+% with this program. If not, see http://www.gnu.org/licenses/.
 
 % Check if MATLAB can find dicominfo (Image Processing Toolbox)
 if exist('dicominfo', 'file') ~= 2
@@ -133,7 +164,7 @@ end
 [eqsq, i] = sort(eqsq);
 data = data(i,:);
 
-% Fit Sauer et al. analytical model to output factors
+% Fit Sauer/Wilbert analytical model to output factors
 try
     i = [0.75 2.3 0.5 0.34 0.12];
     model = fit(eqsq, cell2mat(data(:,2)), 'a*x^b/(c^b+x^b)+d*(1-exp(-e*x))', ...
