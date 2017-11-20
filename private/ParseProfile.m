@@ -34,6 +34,7 @@ options = {
     'SNC IC Profiler (.prm)'
     'SNC IC Profiler (.txt)'
     'Standard Imaging TEMS (.csv)'
+    'Standard Imaging DV1D (.csv)'
 };
 
 % If no input arguments are provided
@@ -333,11 +334,17 @@ switch options{varargin{2}}
     % Standard Imaging TEMS
     case 'Standard Imaging TEMS (.csv)'
         
-        % Execute ParseSIcsv
-        data = ParseSIcsv('', varargin{1});
+        % Execute ParseTEMScsv
+        data = ParseTEMScsv('', varargin{1});
         
         % Assume machine is Tomo
         data.machine{1} = 'TomoTherapy';
+        
+    % Standard Imaging TEMS
+    case 'Standard Imaging DV1D (.csv)'
+        
+        % Execute ParseDV1Dcsv
+        data = ParseDV1Dcsv('', varargin{1});
         
     % RayStation
     case 'RayStation Physics Export (.csv)'
