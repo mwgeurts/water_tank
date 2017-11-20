@@ -1,5 +1,5 @@
-function data = ParseSIcsv(path, names)
-% ParseSIcsv extracts water tank profiles from Standard Imaging TEMS 
+function data = ParseTEMScsv(path, names)
+% ParseTEMScsv extracts water tank profiles from Standard Imaging TEMS 
 % formatted .csv files. Each profile is returned an array of position
 % and signal values. If two or more channels exist in the data, the 
 % function will try to identify which channel is reference and prompt the
