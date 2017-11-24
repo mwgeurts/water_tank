@@ -1,24 +1,25 @@
 function varargout = WaterTankAnalysis(varargin)
-% WATERTANKANALYSIS MATLAB code for WaterTankAnalysis.fig
-%      WATERTANKANALYSIS, by itself, creates a new WATERTANKANALYSIS or raises the existing
-%      singleton*.
+% WaterTankAnalysis opens a user interface that allows the user to load
+% radiotherapy water tank scan data and compare to DICOM dose volumes
+% exported from the treatment planning system. For information on
+% installation, use, and available features, see the GitHub wiki page
+% https://github.com/mwgeurts/water_tank/wiki.
 %
-%      H = WATERTANKANALYSIS returns the handle to a new WATERTANKANALYSIS or the handle to
-%      the existing singleton*.
+% Author: Mark Geurts, mark.w.geurts@gmail.com
+% Copyright (C) 2017 University of Wisconsin Board of Regents
 %
-%      WATERTANKANALYSIS('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in WATERTANKANALYSIS.M with the given input arguments.
+% This program is free software: you can redistribute it and/or modify it 
+% under the terms of the GNU General Public License as published by the  
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
 %
-%      WATERTANKANALYSIS('Property','Value',...) creates a new WATERTANKANALYSIS or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before WaterTankAnalysis_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to WaterTankAnalysis_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
+% This program is distributed in the hope that it will be useful, but 
+% WITHOUT ANY WARRANTY; without even the implied warranty of 
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General 
+% Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License along 
+% with this program. If not, see http://www.gnu.org/licenses/.
 
 % Edit the above text to modify the response to help WaterTankAnalysis
 
@@ -64,7 +65,7 @@ warning('off','all');
 handles.output = hObject;
 
 % Set version handle
-handles.version = '0.9';
+handles.version = '1.0.0';
 set(handles.version_text, 'String', ['Version ', handles.version]);
 
 % Determine path of current application
@@ -683,12 +684,9 @@ PlotOutputFactors(fullfile(pwd, handles.config.REFERENCE_PATH, ...
     .energies{get(handles.energy, 'Value')}.energy, ...
     handles.reference{get(handles.machine, 'Value')}...
     .energies{get(handles.energy, 'Value')}...
-    .ssds{get(handles.ssd, 'Value')}.ssd), ...
+    .ssds{get(handles.ssd, 'Value')}.ssd), handles.config.OUTPUT_FACTOR_DEF, ...
     [handles.config.REFERENCE_ISOX handles.config.REFERENCE_ISOY ...
-    handles.config.REFERENCE_ISOZ], get(handles.convolve, 'Value'), ...
-    handles.detectors{get(handles.detector, 'Value'), 1}, ...
-    handles.reference{get(handles.machine, 'Value')}.energies{...
-    get(handles.energy, 'Value')}.energy);
+    handles.config.REFERENCE_ISOZ]);
     
 % Update handles structure
 guidata(hObject, handles);

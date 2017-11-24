@@ -6,18 +6,39 @@ function PlotOutputFactors(varargin)
 % is identified based on the file size (see WaterTankAnalysis wiki
 % documentation for more information). The displayed plot includes a table
 % to allow the user to type in measred values and calculate the relative 
-% difference between TPS and modelled values.  
+% difference between TPS and modelled values. This function uses the Image 
+% Processing Toolbox dicomread() function to load DICOM data and is 
+% required for execution.
 % 
-% If a path is not provided as the input argument (varargin{1}), the
-% function will prompt the user to select a folder. Also note, this 
-% function uses the Image Processing Toolbox dicomread() function to load 
-% DICOM data and is required for execution.
+% If a path is not provided as the first input argument (varargin{1}), the
+% function will prompt the user to select a folder. The type of Output
+% Factor may optionally be provided in the second input argument 
+% (varargin{2}), and can be either 'dmax' or '10cm'. Finally, if isocenter
+% is defined at a point other than DICOM center, the isocenter coordinates
+% can be specified in IEC X/Y/Z order in mm in the third input argument
+% (varargin{3}).
 %
 % In addition to plotting output factors, the application will attempt to
 % fit an analytical function first proposed by Sauer and Wilbert, 2007, 
 % "Measurement of output factors for small photon beams", Med. Phys. 34, 
 % 1983?1988. The fitting parameters and their confidence limits are
-% displayed on the displayed figure.
+% displayed on the displayed figure. This fit uses the Curve Fitting
+% Toolbox fit() function; if not installed the function will still work but
+% not display a fit.
+%
+% Below are some examples of how to execute this function:
+%
+% % Execute function using default values, and prompt user to select folder
+% PlotOutputFactors();
+%
+% % Execute function using DICOM data in /path/to/DICOM
+% PlotOutputFactors('/path/to/DICOM');
+%
+% % Execute on same files, but this time compute OF at 10cm depth along CAX
+% PlotOutputFactors('/path/to/DICOM', '10cm');
+%
+% % Execute function but with isocenter at [0 80 0].
+% PlotOutputFactors('/path/to/DICOM', [], [0 80 0]);
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
 % Copyright (C) 2017 University of Wisconsin Board of Regents
@@ -49,12 +70,27 @@ if exist('dicominfo', 'file') ~= 2
 end
 
 % If a path was provided
-if nargin >= 1
+if nargin >= 1 && ~isempty(varargin{1})
     path = varargin{1};
     
 % Otherwise ask the user to select one
 else
     path = uigetdir('', 'Select directory to scan for RT Dose files');
+end
+
+% If a type was provided, otherwise default to dmax
+if nargin >= 2 && ~isempty(varargin{2})
+    type = varargin{2};
+else
+    type = 'dmax';
+end
+    
+
+% If reference isocenter was provided
+if nargin >= 3 && ~isempty(varargin{3})
+    iso = varargin{3};
+else
+    iso = [0 0 0];
 end
 
 % Retrieve folder contents
@@ -97,10 +133,39 @@ for i = 1:size(data,1)
     
     % Load DICOM dose
     info = dicominfo(fullfile(path, dicom{s(i),1}));
-    dose = dicomread(info);
+    dose = permute(double(squeeze(dicomread(info))), [2 1 3]) * ...
+        info.DoseGridScaling;
+    [meshx, meshy, meshz] = meshgrid(...
+        info.ImagePositionPatient(2) + (0:single(info.Rows)-1) * ...
+        info.PixelSpacing(2) + iso(3), ...
+        info.ImagePositionPatient(1) + (0:single(info.Columns)-1) * ...
+        info.PixelSpacing(1) - iso(1), ...
+        info.ImagePositionPatient(3) + ...
+        single(info.GridFrameOffsetVector) - iso(2));
     
-    % Compute maximum dose
-    data{i,2} = double(max(max(max(max(dose))))) * info.DoseGridScaling;
+    % Calculate OF based on type
+    switch type
+        
+        % OF defined at dmax along CAX
+        case 'dmax'
+            d = 0:info.PixelSpacing(2):100;
+            pdd = interp3(meshx, meshy, meshz, dose, d, ...
+                zeros(1,length(d)), zeros(1,length(d)), '*linear', 0);
+            data{i,2} = max(pdd);
+        
+        % OF defined at 10 cm depth along CAX
+        case '10cm'
+            data{i,2} = interp3(meshx, meshy, meshz, dose, 100, ...
+                0, 0, '*linear', 0);
+        
+        % Display an error
+        otherwise
+            if exist('Event', 'file') == 2
+                Event('OF type is unknown', 'ERROR');
+            else
+                error('OF type is unknown');
+            end 
+    end
     
     % If the file name follows TomoTherapy notation
     if strcmp(dicom{s(i),2}(1), 'J')
