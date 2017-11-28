@@ -26,7 +26,7 @@ function profiles = SmoothProfiles(varargin)
 options = {
     'None'
     'Moving Average'
-    'Robust Loess 2° Poly Fit' 
+    'Robust LOESS 2° Poly Fit' 
     'Savitzky-Golay'
 };
 
@@ -84,10 +84,10 @@ switch varargin{2}
         % Loop through each profile
         for i = 1:length(profiles)
             
-            % Smooth the measured data, limiting span to 
+            % Smooth the measured data, limiting span
             profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
-                max(3, min(config.SMOOTH_SPAN, floor(0.01 * ...
-                size(profiles{i},1)))), 'moving');
+                round((max(3, min(config.SMOOTH_SPAN, floor(0.02 * ...
+                size(profiles{i},1))))-1)/2)*2+1, 'moving');
         end
         
     % Robust 2nd degree Polynomial Regression filter
@@ -127,8 +127,8 @@ switch varargin{2}
 
             % Smooth the measured data
             profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
-                max(3, min(config.SMOOTH_SPAN, floor(0.01 * ...
-                size(profiles{i},1)))), 'rloess');
+                min(config.SMOOTH_SPAN/size(profiles{i},1), 0.02), ...
+                'rloess');
         end
         
     % Savitzky-Golay filter
@@ -170,8 +170,8 @@ switch varargin{2}
             
             % Smooth the measured data
             profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
-                max(config.SGOLAY_DEGREE+1, min(config.SMOOTH_SPAN, ...
-                floor(0.01 * size(profiles{i},1)))), 'sgolay', ...
+                round((max(config.SGOLAY_DEGREE+1, min(config.SMOOTH_SPAN, ...
+                floor(0.02 * size(profiles{i},1))))-1)/2)*2+1, 'sgolay', ...
                 config.SGOLAY_DEGREE);
         end
 end
