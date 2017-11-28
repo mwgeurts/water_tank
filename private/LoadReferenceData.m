@@ -28,6 +28,7 @@ reference = cell(0);
 
 % Retrieve folder contents of provided path
 machines = dir(path);
+machines = natsort({machines.name}); 
 
 % Initialize folder and total counter
 m = 0;
@@ -37,74 +38,78 @@ c = 0;
 for i = 1:length(machines)
     
     % If the folder content is . or .., skip to next folder in machines
-    if strcmp(machines(i).name, '.') || strcmp(machines(i).name, '..')
+    if strcmp(machines{i}, '.') || strcmp(machines{i}, '..')
         continue
 
     % Otherwise, if the folder content is a subfolder    
-    elseif machines(i).isdir == 1
+    elseif isdir(fullfile(path, machines{i})) == 1
 
         % Increment machine counter
         m = m + 1;
         
         % Add folder name to machines list
-        reference{m}.machine = machines(i).name;
+        reference{m}.machine = machines{i};
         
         % Initialize energy counter
         e = 0;
         
         % Retrieve the subfolder contents
-        energies = dir(fullfile(path, machines(i).name));
+        energies = dir(fullfile(path, machines{i}));
+        energies = natsort({energies.name});
         
         % Look through the subfolder contents
-        for j = 1:size(energies, 1)
+        for j = 1:length(energies)
             
             % If the folder content is . or .., skip to next folder in energies
-            if strcmp(energies(j).name, '.') || strcmp(energies(j).name, '..')
+            if strcmp(energies{j}, '.') || strcmp(energies{j}, '..')
                 continue
 
             % Otherwise, if the folder content is a subfolder    
-            elseif energies(j).isdir == 1
+            elseif isdir(fullfile(path, machines{i}, energies{j})) == 1
                 
                 % Increment energy counter
                 e = e + 1;
 
                 % Add folder name to energy list
-                reference{m}.energies{e}.energy = energies(j).name;
+                reference{m}.energies{e}.energy = energies{j};
         
         		% Initialize SSD counter
         		s = 0;
         
         		% Retrieve the subfolder contents
-                ssds = dir(fullfile(path, machines(i).name, energies(j).name));
+                ssds = dir(fullfile(path, machines{i}, energies{j}));
+                ssds = natsort({ssds.name});
         
         		% Look through the subfolder contents
-				for k = 1:size(ssds, 1)
+				for k = 1:length(ssds)
 			
 					% If the folder content is . or .., skip to next folder in machines
-					if strcmp(ssds(k).name, '.') || strcmp(ssds(k).name, '..')
+					if strcmp(ssds{k}, '.') || strcmp(ssds{k}, '..')
 						continue
 
 					% Otherwise, if the folder content is a subfolder    
-					elseif ssds(k).isdir == 1
+					elseif isdir(fullfile(path, machines{i}, ...
+                            energies{j}, ssds{k})) == 1
         
         				% Increment SSD counter
         				s = s + 1;
         				
         				% Add folder name to SSD list
-                		reference{m}.energies{e}.ssds{s}.ssd = ssds(k).name;
+                		reference{m}.energies{e}.ssds{s}.ssd = ssds{k};
 
 						% Initialize fieldsize counter
 						f = 0;
 
 						% Retrieve the subfolder contents
-						files = dir(fullfile(path, machines(i).name, energies(j).name, ...
-							ssds(k).name));
+						files = dir(fullfile(path, machines{i}, ...
+                            energies{j}, ssds{k}));
+                        files = natsort({files.name});
                 
 						% Look through the subfolder contents
-						for l = 1:size(files, 1)
+						for l = 1:length(files)
 					
 							% Parse file name
-							[~, name, ext] = fileparts(files(l).name);
+							[~, name, ext] = fileparts(files{l});
 					
 							% If file is a .dcm file
 							if strcmpi(ext, '.dcm')
