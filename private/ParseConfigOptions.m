@@ -36,7 +36,7 @@ if fid < 3
 end
 
 % Scan config file contents
-c = textscan(fid, '%s', 'Delimiter', '=');
+c = textscan(fid, '%s', 'Delimiter', '=', 'CommentStyle', '%');
 
 % Close file handle
 fclose(fid);

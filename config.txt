@@ -1,32 +1,159 @@
+% REFERENCE_PATH should point to a folder containing the TPS DICOM RTDOSE 
+% files. The files should be stored within the following subfolder/file
+% name hierarchy: Machine -> Energy -> SSD -> Field Size.dcm
 REFERENCE_PATH      =   ./reference
+
+% DETECTOR_FILE should point to the detector configuration text file. 
+% The file should be a text file where each line contains the detector name
+% then an equal sign followed by the diameter in mm. 
 DETECTOR_FILE       =   ./detectors.txt
+
+% DEFAULT_PATH is the initial path that the "Browse" button will point to.
+% It should be a relative (to this file) or absolute path, or "userpath" in 
+% which case the path will be set to the MATLAB-configured userpath.
 DEFAULT_PATH        =   userpath
+
+% DEFAULT_DETECTOR should be set to the index of the detector that is 
+% selected by default when the application is loaded.
 DEFAULT_DETECTOR    =   9
+
+% DEFAULT_EPOM is the index of the EPOM option that is selected when the 
+% application is loaded. See ShiftProfiles for a list of available options.
+% A value of 1 will default to no EPOM shifting.
 DEFAULT_EPOM        =   1
+
+% DEFAULT_PDI is the index of the PDI to PDD conversion option that is 
+% selected when the application is loaded. See ConvertDepthDose for a list
+% of available options. A value of 1 will default to no PDD conversion.
 DEFAULT_PDI         =   2
+
+% DEFAULT_NORMALIZE is the index of the normalization option that is 
+% selected when the application is loaded. See ScaleProfiles for a list of 
+% available options. A value of 1 will default to no normalization.
 DEFAULT_NORMALIZE   =   4
+
+% DEFAULT_SMOOTH is the index of the smoothing option that is selected when
+% the application is loaded. See SmoothProfiles for a list of available 
+% options. A value of 1 will default to no smoothing.
 DEFAULT_SMOOTH      =   1
+
+% DEFAULT_CENTER is the index of the centering option that is selected when
+% the application is loaded. See CenterProfiles for a list of available 
+% options. A value of 1 will default to no centering.
 DEFAULT_CENTER      =   1
+
+% DEFAULT_CONVOLVE is the index of the convolution option that is selected
+% when the application is loaded. See ConvolveProfiles for a list of 
+% available options. A value of 1 will default to no convolution.
 DEFAULT_CONVOLVE    =   1
+
+% DEFAULT_GAMMA is the default Gamma criteria that will be displayed on the 
+% application interface. The criteria should be listed in XX%/XXmm format, 
+% where the first value is a percentage and the second is the DTA criteria.
 DEFAULT_GAMMA       =   2%/1mm
+
+% DEFAULT_GAMMALOCAL is a boolean indicating whether to default to using a 
+% global (0) or local (0) Gamma evaluation.
 DEFAULT_GAMMALOCAL  =   0
+
+% DEFAULT_MACHINE is the index of the default machine that is selected when
+% the application is loaded. This value should be 1 unless multiple machine
+% subfolders exist within REFERENCE_PATH.
 DEFAULT_MACHINE     =   1
+
+% DEFAULT_ENERGY is the index of the default energy that is selected when
+% the application is loaded. This value should be 1 unless multiple energy
+% subfolders exist within the DEFAULT_MACHINE (specified above) subfolder.
 DEFAULT_ENERGY      =   1
+
+% DEFAULT_SSD is the index of the default SSD that is selected when the 
+% application is loaded. This should be 1 unless multiple SSD subfolders
+% exist within the DEFAULT_MACHINE and DEFAULT_ENERGY subfolders.
 DEFAULT_SSD         =   1
+
+% DEFAULT_FIELDSIZE is the index of the default field size RT DOSE file 
+% that is selected when the application is loaded. This value is relative
+% to the default DEFAULT_MACHINE, DEFAULT_ENERGY, and DEFAULT_SSD values.
 DEFAULT_FIELDSIZE   =   1
+
+% SMOOTH_SPAN is the span value applied when smoothing profiles. This value
+% should be off. When performing a moving average or Savitzky-Golay 
+% smoothing, span is the number of adjacent datapoints that the average is 
+% calculated with. For LOESS smoothing, span is a percentage of the total 
+% number of points. Note that the span is limited to the range of 3 and 2% 
+% of the number of data points in the profile.
 SMOOTH_SPAN         =   15
+
+% SGOLAY_DEGREE is the polynomial degree applied when performing Savitzky-
+% Golay smoothing. This degree value must be less than the span above.
 SGOLAY_DEGREE       =   3
+
+% REFERENCE_ISOX, ISOY, and ISOZ are the IEC coordinates defining isocenter
+% within the reference RTDOSE files, in mm. If using a CT dataset created 
+% from CreateReferenceCT, this will most likely be 0,0,0
 REFERENCE_ISOX      =   0
 REFERENCE_ISOY      =   0
 REFERENCE_ISOZ      =   0
+
+% ASK_REFERENCE_ISO is a boolean indicating whether the user should be 
+% prompted to enter the isocenter each time a dataset is loaded (1) or if
+% the values defined above should be used automatically (0). Setting this 
+% flag to 1 is useful if different reference dose volumes have different 
+% isocenter positions.
 ASK_REFERENCE_ISO   =   0
+
+% ASK_RCAV is a boolean indicating whether the user will be asked to 
+% confirm the chamber cavity radius when performing 0.5 or 0.6*Rcav EPOM 
+% adjustments. The Rcav value will always default to the value within the 
+% detector configuration file defined above.
 ASK_RCAV            =   0
+
+% MATCH_HEADER is a boolean indicating whether the selected machine, 
+% energy, SSD, and field size should be matched to the profile header (if
+% available). The matching is performed using a converging Levenshtein 
+% algorithm. If 0, header matching is not performed.
 MATCH_HEADER        =   1
+
+% MATCH_FILENAME is a boolean indicating whether the selected machine, 
+% energy, SSD, and field size should be matched to the profile filename. 
+% The matching is performed using a converging Levenshtein algorithm. If 0, 
+% filename matching is not performed. If both MATCH_HEADER and 
+% MATCH_FILENAME are enabled and match with different values, the match 
+% with a greater Levenshtein distance will be used.
 MATCH_FILENAME      =   1
+
+% LEVENSHTEIN_THRESH is a threshold that Levenshtein distances calculated 
+% during header and filename matching must be below in order to be applied.
+% Reducing this value will make matching more stringent.
 LEVENSHTEIN_THRESH  =   15
+
+% CENTER_REFERENCE is a boolean indicating whether (1) or not (0) to center 
+% the reference profile in addition to the measured profile when a 
+% centering option is selected. Generally this should be left disabled (0).
 CENTER_REFERENCE    =   0
+
+% PLOT_SAVE_FORMAT is the file format used when exporting the plots. The 
+% following options are available: FIG, M, PNG, JPG, EPS, PDF, BMP, EMF, 
+% PBM, PCX, PGM, PPM, and TIF. See MATLAB's saveas documentation for more 
+% detail.
 PLOT_SAVE_FORMAT    =   PNG
-COMPRESS_REFERENCE  =   1
-MASK_REFERENCE      =   1
-ALLOW_DIAGONAL      =   1
+
+% OUTPUT_FACTOR_DEF determines what depth is used when computing output 
+% factors. Available options are dmax or 10cm.
 OUTPUT_FACTOR_DEF   =   10cm
+
+% COMPRESS_REFERENCE is a boolean indicating whether (1) or not (0) to 
+% apply RLE compression when importing reference data.  
+COMPRESS_REFERENCE  =   1
+
+% MASK_REFERENCE is a boolean indicating whether (1) or not (0) to remove
+% reference dose voxels that do not lie along the transverse/sagittal/
+% coronal or diagonal axes during reference dose import. This feature is 
+% used with COMPRESS_REFERENCE to reduce the size of the reference dose 
+% library.
+MASK_REFERENCE      =   1
+
+% ALLOW_DIAGONAL is a boolean indicating whether (1) or not (0) to include
+% diagonal profiles in the processed reference data. This setting is only
+% used when COMPRESS_REFERENCE and MASK_REFERENCE are both enabled.
+ALLOW_DIAGONAL      =   1
