@@ -65,7 +65,7 @@ warning('off','all');
 handles.output = hObject;
 
 % Set version handle
-handles.version = '1.0.0';
+handles.version = '1.0.1';
 set(handles.version_text, 'String', ['Version ', handles.version]);
 
 % Determine path of current application
