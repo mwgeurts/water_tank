@@ -95,16 +95,16 @@ for f = 1:length(names)
             
             % Scan charge table
             l = fgetl(fid);
-            while ~feof(l) && ~isempty(l)
+            while ~feof(fid) && ~isempty(l)
                 
                 % Split line
                 t = strsplit(l, ',');
                 
                 % Store electrometer info & firmware
-                data.inputs{f,1:2} = cell(t{3}, t{5});
-                data.serial{f,1:2} = cell(t{4}, t{6});
+                data.inputs(f,1:2) = {t{3} t{5}};
+                data.serial(f,1:2) = {t{4} t{6}};
                 data.firmware{f} = t{7};
-                data.range{f,1:2} = cell(t{14}, t{15});
+                data.range(f,1:2) = {t{14} t{15}};
                 data.bias(f,1:4) = [str2double(t{16}) str2double(t{17}) ...
                     str2double(t{18}) str2double(t{19})];
                 data.type{f} = t{20};
