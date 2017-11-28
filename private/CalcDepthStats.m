@@ -20,7 +20,7 @@ function data = CalcDepthStats(varargin)
 % with this program. If not, see http://www.gnu.org/licenses/.
 
 % If this is an electron energy, return R50s
-if nargin == 0 || contains(varargin{1}, 'e', 'IgnoreCase', true)
+if nargin == 0 || ~contains(varargin{1}, 'e', 'IgnoreCase', true)
 
     % Initialize data table
     data = {
@@ -103,7 +103,8 @@ for i = 1:length(profiles)
             data{3,c} = sprintf('%0.1f%%', M);
             
             % Find the index of Dmax
-            uIr = find(profiles{i}(:,5) == max(profiles{i}(:,5)), 1, 'first');
+            uIr = find(profiles{i}(:,5) == ...
+                max(profiles{i}(:,5)), 1, 'first');
 
             % Find the index of 5% of Dmax
             lIr = find(profiles{i}(:,5) > 0.05 * ...
@@ -125,15 +126,16 @@ for i = 1:length(profiles)
         else
             
             % Remove duplicate points (they will cause interp1 to fail)
-            [c, idx, ~] = unique(profiles{i}(lI:uI,4));
+            [u, idx, ~] = unique(profiles{i}(lI:uI,4));
             
             % Calculate the R50
-            M = interp1(c, profiles{i}(lI+idx,3), 0.5 * ...
+            M = interp1(u, profiles{i}(lI+idx-1,3), 0.5 * ...
                 max(profiles{i}(lI:uI,4)), 'linear');
             data{3,c} = sprintf('%0.1f mm', M);
             
             % Find the index of Dmax
-            uIr = find(profiles{i}(:,5) == max(profiles{i}(:,5)), 1, 'first');
+            uIr = find(profiles{i}(:,5) == ...
+                max(profiles{i}(:,5)), 1, 'first');
 
             % Find the index of 5% of Dmax
             lIr = find(profiles{i}(:,5) > 0.05 * ...
@@ -141,7 +143,8 @@ for i = 1:length(profiles)
             
             % Calculate the Reference R50
             R = interp1(profiles{i}(lIr:uIr,5), ...
-                profiles{i}(lIr:uIr,3), 0.5 * max(profiles{i}(lIr:uIr,5)), 'linear');
+                profiles{i}(lIr:uIr,3), 0.5 * ...
+                max(profiles{i}(lIr:uIr,5)), 'linear');
             data{4,c} = sprintf('%0.1f mm', R);
             
             % Calculate the R50 difference
