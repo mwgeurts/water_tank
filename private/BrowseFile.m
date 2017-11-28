@@ -104,19 +104,19 @@ if iscell(name) || sum(name ~= 0)
         
         % Log result
         Event(sprintf(['Profile header matched machine index %i with ', ...
-            'Levenshtein distance of %i'], a1(1), ld1));
+            'Levenshtein distance of %i'], a1(end), ld1));
         
         % Set machine name
-        set(handles.machine, 'Value', a1(1));
+        set(handles.machine, 'Value', a1(end));
         
     elseif ld2 < ld1 && ld2 < handles.config.LEVENSHTEIN_THRESH
         
         % Log result
         Event(sprintf(['File name matched machine index %i with ', ...
-            'Levenshtein distance of %i'], a2(1), ld2));
+            'Levenshtein distance of %i'], a2(end), ld2));
         
         % Set machine name
-        set(handles.machine, 'Value', a2(1));
+        set(handles.machine, 'Value', a2(end));
     end
     
     % Update energy list
@@ -167,19 +167,19 @@ if iscell(name) || sum(name ~= 0)
         
         % Log result
         Event(sprintf(['Profile header matched energy index %i with ', ...
-            'Levenshtein distance of %i'], a1(1), ld1));
+            'Levenshtein distance of %i'], a1(end), ld1));
         
         % Set energy
-        set(handles.energy, 'Value', a1(1));
+        set(handles.energy, 'Value', a1(end));
         
     elseif ld2 < ld1 && ld2 < handles.config.LEVENSHTEIN_THRESH
         
         % Log result
         Event(sprintf(['File name matched energy index %i with ', ...
-            'Levenshtein distance of %i'], a2(1), ld2));
+            'Levenshtein distance of %i'], a2(end), ld2));
         
         % Set energy
-        set(handles.energy, 'Value', a2(1));
+        set(handles.energy, 'Value', a2(end));
     end
     
     % Update SSD list
@@ -227,19 +227,19 @@ if iscell(name) || sum(name ~= 0)
         
         % Log result
         Event(sprintf(['Profile header matched SSD index %i with ', ...
-            'Levenshtein distance of %i'], a1(1), ld1));
+            'Levenshtein distance of %i'], a1(end), ld1));
         
         % Set SSD
-        set(handles.ssd, 'Value', a1(1));
+        set(handles.ssd, 'Value', a1(end));
         
     elseif ld2 < ld1 && ld2 < handles.config.LEVENSHTEIN_THRESH
         
         % Log result
         Event(sprintf(['File name matched SSD index %i with ', ...
-            'Levenshtein distance of %i'], a2(1), ld2));
+            'Levenshtein distance of %i'], a2(end), ld2));
         
         % Set SSD
-        set(handles.ssd, 'Value', a2(1));
+        set(handles.ssd, 'Value', a2(end));
     end
     
     % Update field size list
@@ -280,7 +280,7 @@ if iscell(name) || sum(name ~= 0)
             parts{i} = strrep(parts{i}, 'x', ' x ');
             [x, y] = strnearest(parts{i}, ...
                 get(handles.fieldsize, 'String'), 'case');
-            if y < ld2
+            if y < ld2 && length(x) < 4
                 a2 = x;
                 ld2 = y;
             end
@@ -294,19 +294,19 @@ if iscell(name) || sum(name ~= 0)
         
         % Log result
         Event(sprintf(['Profile header matched field size index %i with ', ...
-            'Levenshtein distance of %i'], a1(1), ld1));
+            'Levenshtein distance of %i'], a1(end), ld1));
         
         % Set field size
-        set(handles.fieldsize, 'Value', a1(1));
+        set(handles.fieldsize, 'Value', a1(end));
         
     elseif ld2 < ld1 && ld2 < handles.config.LEVENSHTEIN_THRESH
         
         % Log result
         Event(sprintf(['File name matched field size index %i with ', ...
-            'Levenshtein distance of %i'], a2(1), ld2));
+            'Levenshtein distance of %i'], a2(end), ld2));
         
         % Set field size
-        set(handles.fieldsize, 'Value', a2(1));
+        set(handles.fieldsize, 'Value', a2(end));
         
     end
     
@@ -323,10 +323,10 @@ if iscell(name) || sum(name ~= 0)
             
             % Log result
             Event(sprintf(['Profile header matched detector index %i with ', ...
-                'Levenshtein distance of %i'], a1(1), ld1));
+                'Levenshtein distance of %i'], a1(end), ld1));
 
             % Set field size
-            set(handles.detector, 'Value', a1(1));
+            set(handles.detector, 'Value', a1(end));
         end
     end
     
