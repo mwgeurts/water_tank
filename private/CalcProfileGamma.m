@@ -60,7 +60,7 @@ for i = 1:length(profiles)
             dta, 'local', local, 'cpu', 1, 'res', 20), ...
             profiles{i}(:,1), '*linear', 0)';
 
-    % Otherwise, if Y changes, this is an Y profile
+    % Otherwise, if Y changes, this is a Y profile
     elseif profiles{i}(1,2) ~= profiles{i}(2,2)
 
         % Define CalcGamma reference structure
@@ -82,7 +82,7 @@ for i = 1:length(profiles)
             dta, 'local', local, 'cpu', 1, 'res', 20), ...
             profiles{i}(:,2), '*linear', 0)';
         
-    % Otherwise, if Z changes, this is an depth profile
+    % Otherwise, if Z changes, this is a depth profile
     elseif profiles{i}(1,3) ~= profiles{i}(2,3)
 
         % Define CalcGamma reference structure
