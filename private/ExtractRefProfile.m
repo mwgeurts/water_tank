@@ -60,6 +60,12 @@ if exist('storedfile', 'var') == 0 || ~strcmp(storedfile, file)
         info.ImagePositionPatient(3) + ...
         single(info.GridFrameOffsetVector) - iso(2));
 
+    % Normalize data to Dmax along CAX
+    ref = ref ./ max(interp3(meshx, meshy, meshz, ref, ...
+        info.ImagePositionPatient(2) + (0:single(info.Rows)-1) * ...
+        info.PixelSpacing(1) + iso(3), single(ones(1, info.Rows)) * iso(1), ...
+        single(ones(1, info.Rows)) * iso(2), '*linear', 0));
+    
     % Persistently store name of current file
     storedfile = file;
 end
@@ -69,8 +75,7 @@ for i = 1:length(profile)
     
     % Interpolate reference profile to same coordinates as profile
     profile{i} = horzcat(profile{i}, interp3(meshx, meshy, meshz, ref, ...
-        profile{i}(:,3), profile{i}(:,1), profile{i}(:,2), '*linear', 0) / ...
-        max(max(max(ref))));
+        profile{i}(:,3), profile{i}(:,1), profile{i}(:,2), '*linear', 0));
 end
 
 % Log completion
