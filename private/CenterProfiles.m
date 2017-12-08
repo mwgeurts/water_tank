@@ -101,43 +101,12 @@ switch varargin{2}
             Event('Centering reference profiles by FWHM');
         end
         
-        % Loop through each profile
-        for i = 1:length(profiles)
-        
-            % If X changes, this is an X profile
-            if profiles{i}(1,1) ~= profiles{i}(2,1)
-                
-                % Shift measured profile by offset
-                profiles{i}(:,1) = profiles{i}(:,1) - ...
-                    FWXM(profiles{i}(:,1), profiles{i}(:,4), 0.5);
-                
-                % If center reference flag is set
-                if size(profiles{i},2) >= 5 && nargin >= 3 && varargin{3} == 1
-                    
-                    % Re-interpolate reference with to center it
-                    [~, ~, profiles{i}(:,5)] = FWXM(profiles{i}(:,1), ...
-                        profiles{i}(:,5), 0.5);
-                end
-
-            % Otherwise, if Y changes, this is an Y profile
-            elseif profiles{i}(1,2) ~= profiles{i}(2,2)
-                
-                % Shift measured profile by offset
-                profiles{i}(:,2) = profiles{i}(:,2) - ...
-                    FWXM(profiles{i}(:,2), profiles{i}(:,4), 0.5);
-                
-                % If center reference flag is set
-                if size(profiles{i},2) >= 5 && nargin >= 3 && varargin{3} == 1
-                    
-                    % Re-interpolate reference with to center it
-                    [~, ~, profiles{i}(:,5)] = FWXM(profiles{i}(:,2), ...
-                        profiles{i}(:,5), 0.5);
-                end
-            end
-        end 
-        
-        % Clear temporary variables
-        clear i;
+        % Execute FWCenter
+        if nargin >= 3
+            profiles = FWCenter(profiles, 0.5, varargin{3});
+        else
+            profiles = FWCenter(profiles, 0.5);
+        end
         
     % FWQM
     case 4
@@ -151,43 +120,12 @@ switch varargin{2}
             Event('Centering reference profiles by FWHM');
         end
 
-        % Loop through each profile
-        for i = 1:length(profiles)
-        
-            % If X changes, this is an X profile
-            if profiles{i}(1,1) ~= profiles{i}(2,1)
-                
-                % Shift measured profile by offset
-                profiles{i}(:,1) = profiles{i}(:,1) - ...
-                    FWXM(profiles{i}(:,1), profiles{i}(:,4), 0.25);
-                
-                % If center reference flag is set
-                if size(profiles{i},2) >= 5 && nargin >= 3 && varargin{3} == 1
-                    
-                    % Re-interpolate reference with to center it
-                    [~, ~, profiles{i}(:,5)] = FWXM(profiles{i}(:,1), ...
-                        profiles{i}(:,5), 0.25);
-                end
-
-            % Otherwise, if Y changes, this is an Y profile
-            elseif profiles{i}(1,2) ~= profiles{i}(2,2)
-                
-                % Shift measured profile by offset
-                profiles{i}(:,2) = profiles{i}(:,2) - ...
-                    FWXM(profiles{i}(:,2), profiles{i}(:,4), 0.25);
-                
-                % If center reference flag is set
-                if size(profiles{i},2) >= 5 && nargin >= 3 && varargin{3} == 1
-                    
-                    % Re-interpolate reference with to center it
-                    [~, ~, profiles{i}(:,5)] = FWXM(profiles{i}(:,2), ...
-                        profiles{i}(:,5), 0.25);
-                end
-            end
-        end 
-        
-        % Clear temporary variables
-        clear i;
+        % Execute FWCenter
+        if nargin >= 3
+            profiles = FWCenter(profiles, 0.25, varargin{3});
+        else
+            profiles = FWCenter(profiles, 0.25);
+        end
         
     % FWXM
     case 5
@@ -202,7 +140,8 @@ switch varargin{2}
         
         % Prompt user to enter fractional value or percentage
         frac = inputdlg(['Enter fractional value or percentage to center ', ...
-            'profiles on:'], 'Enter Fraction', 1, {sprintf('%0.2f', frac)});
+            'profiles on:'], 'Enter Fraction', 1, ...
+            {sprintf('%0.2f', frac)});
         
         % If the user clicked cancel, do not shift
         if isempty(frac)
@@ -229,43 +168,12 @@ switch varargin{2}
                 frac));
         end
 
-        % Loop through each profile
-        for i = 1:length(profiles)
-        
-            % If X changes, this is an X profile
-            if profiles{i}(1,1) ~= profiles{i}(2,1)
-                
-                % Shift measured profile by offset
-                profiles{i}(:,1) = profiles{i}(:,1) - ...
-                    FWXM(profiles{i}(:,1), profiles{i}(:,4), frac);
-                
-                % If center reference flag is set
-                if size(profiles{i},2) >= 5 && nargin >= 3 && varargin{3} == 1
-                    
-                    % Re-interpolate reference with to center it
-                    [~, ~, profiles{i}(:,5)] = FWXM(profiles{i}(:,1), ...
-                        profiles{i}(:,5), frac);
-                end
-
-            % Otherwise, if Y changes, this is an Y profile
-            elseif profiles{i}(1,2) ~= profiles{i}(2,2)
-                
-                % Shift measured profile by offset
-                profiles{i}(:,2) = profiles{i}(:,2) - ...
-                    FWXM(profiles{i}(:,2), profiles{i}(:,4), frac);
-                
-                % If center reference flag is set
-                if size(profiles{i},2) >= 5 && nargin >= 3 && varargin{3} == 1
-                    
-                    % Re-interpolate reference with to center it
-                    [~, ~, profiles{i}(:,5)] = FWXM(profiles{i}(:,2), ...
-                        profiles{i}(:,5), frac);
-                end
-            end
-        end 
-        
-        % Clear temporary variables
-        clear i;
+        % Execute FWCenter
+        if nargin >= 3
+            profiles = FWCenter(profiles, frac, varargin{3});
+        else
+            profiles = FWCenter(profiles, frac);
+        end
         
     % Integral Area
     case 6
@@ -285,8 +193,22 @@ switch varargin{2}
         % Loop through each profile
         for i = 1:length(profiles)
         
-            % If X changes, this is an X profile
-            if profiles{i}(1,1) ~= profiles{i}(2,1)
+            % If X and Y changes, this is a diagonal profile
+            if (max(profiles{i}(:,1)) - min(profiles{i}(:,1))) > 1 && ...
+                    (max(profiles{i}(:,2)) - min(profiles{i}(:,2))) > 1
+            
+                % Find index of half cumulative sum
+                idx = find(cumsum(profiles{i}(:,4)) > ...
+                    sum(profiles{i}(:,4)) * 0.5, 1, 'first');
+                
+                % Shift X profile by offset
+                profiles{i}(:,1) = profiles{i}(:,1) - profiles{i}(idx,1);
+                
+                % Shift Y profile by offset
+                profiles{i}(:,2) = profiles{i}(:,2) - profiles{i}(idx,2);
+                
+            % If only X changes, this is an X profile
+            elseif (max(profiles{i}(:,1)) - min(profiles{i}(:,1))) > 1
                 
                 % Find index of half cumulative sum
                 idx = find(cumsum(profiles{i}(:,4)) > ...
@@ -295,8 +217,8 @@ switch varargin{2}
                 % Shift measured profile by offset
                 profiles{i}(:,1) = profiles{i}(:,1) - profiles{i}(idx,1);
                 
-            % Otherwise, if Y changes, this is an Y profile
-            elseif profiles{i}(1,2) ~= profiles{i}(2,2)
+            % Otherwise, if only Y changes, this is an Y profile
+            elseif (max(profiles{i}(:,2)) - min(profiles{i}(:,2))) > 1
                 
                 % Find index of half cumulative sum
                 idx = find(cumsum(profiles{i}(:,4)) > ...

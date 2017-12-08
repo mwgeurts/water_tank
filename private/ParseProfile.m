@@ -121,107 +121,11 @@ switch options{varargin{2}}
         % Execute ParseSNCprm
         raw = ParseSNCprm('', varargin{1});
         
-        % Correct profiles using AnalyzeProfilerFields
-        processed = AnalyzeProfilerFields(raw);
+        % Execute ExtractSNC subfunction
+        data = ExtractSNC(data, raw);
         
-        % Merge raw and processed data into return structure
-        f = fieldnames(raw);
-        for i = 1:length(f)
-            data.(f{i}) = raw.(f{i});
-        end
-        f = fieldnames(processed);
-        for i = 1:length(f)
-            data.(f{i}) = processed.(f{i});
-        end
-        
-        % Store machine as combination of model, S/N
-        if isfield(data, 'mmodel')
-            if iscell(data.mmodel)
-                data.machine{1} = data.mmodel{1};
-            else
-                data.machine{1} = data.mmodel;
-            end
-        else
-            data.machine{1} = '';
-        end
-        if isfield(data, 'mserial')
-            if iscell(data.mserial)
-                data.machine{1} = [data.machine{1}, ' ', data.mserial{1}];
-            else
-                data.machine{1} = [data.machine{1}, ' ', data.mserial];
-            end
-        end
-        
-        % Store energy
-        if isfield(data, 'menergy')
-            if iscell(data.mmodel)
-                data.energy{1} = data.menergy{1};
-            else
-                data.energy{1} = data.menergy;
-            end
-        end
-        
-        % Store SSD
-        if isfield(data, 'dssd')
-            if iscell(data.dssd)
-                data.ssd{1} = data.dssd{1};
-            else
-                data.ssd{1} = data.dssd;
-            end
-        end
-        
-        % Ask user for buildup
-        b = str2double(inputdlg(['Enter additional buildup on ', ...
-            'IC Profiler (inherent 9 mm is already added) in mm:'], ...
-            'Enter Buildup', 1, {sprintf('%0.1f', 10 * data.dbuildup(1))}));
-        
-        % If user clicked cancel, default back to zero
-        if isempty(b)
-            b = 0;
-        end
-        
-        % Loop through IEC X profiles
-        for i = 1:size(processed.xdata,1)-1
-            
-            % Add cell
-            data.profiles{length(data.profiles)+1} = ...
-                zeros(size(processed.xdata, 2),4);
-            
-            % Add X values
-            data.profiles{length(data.profiles)}(:,1) = ...
-                10 * processed.xdata(1,:)';
-            
-            % Set depth to 0.9 cm (Gao et al) plus buildup
-            data.profiles{length(data.profiles)}(:,3) = repmat(9 + b, ...
-                size(processed.xdata, 2), 1);
-            
-            % Add corrected dose
-            data.profiles{length(data.profiles)}(:,4) = ...
-                processed.xdata(1+i,:)';
-        end
-        
-        % Loop through IEC Y profiles
-        for i = 1:size(processed.xdata,1)-1
-            
-            % Add cell
-            data.profiles{length(data.profiles)+1} = ...
-                zeros(size(processed.ydata, 2),4);
-            
-            % Add Y values
-            data.profiles{length(data.profiles)}(:,2) = ...
-                10 * processed.ydata(1,:)';
-            
-            % Set depth to 0.9 cm (Gao et al) plus buildup
-            data.profiles{length(data.profiles)}(:,3) = repmat(9 + b, ...
-                size(processed.ydata, 2), 1);
-            
-            % Add corrected dose
-            data.profiles{length(data.profiles)}(:,4) = ...
-                processed.ydata(1+i,:);
-        end
-        
-        % Clear temporary variables
-        clear f i b raw processed;
+        % Clear temporary variable
+        clear raw;
    
     % IC Profiler TXT
     case 'SNC IC Profiler (.txt)'
@@ -229,107 +133,11 @@ switch options{varargin{2}}
         % Execute ParseSNCtxt
         raw = ParseSNCtxt('', varargin{1});
         
-        % Correct profiles using AnalyzeProfilerFields
-        processed = AnalyzeProfilerFields(raw);
+        % Execute ExtractSNC subfunction
+        data = ExtractSNC(data, raw);
         
-        % Merge raw and processed data into return structure
-        f = fieldnames(raw);
-        for i = 1:length(f)
-            data.(f{i}) = raw.(f{i});
-        end
-        f = fieldnames(processed);
-        for i = 1:length(f)
-            data.(f{i}) = processed.(f{i});
-        end
-        
-        % Store machine as combination of model, S/N
-        if isfield(data, 'mmodel')
-            if iscell(data.mmodel)
-                data.machine{1} = data.mmodel{1};
-            else
-                data.machine{1} = data.mmodel;
-            end
-        else
-            data.machine{1} = '';
-        end
-        if isfield(data, 'mserial')
-            if iscell(data.mserial)
-                data.machine{1} = [data.machine{1}, ' ', data.mserial{1}];
-            else
-                data.machine{1} = [data.machine{1}, ' ', data.mserial];
-            end
-        end
-        
-        % Store energy
-        if isfield(data, 'menergy')
-            if iscell(data.mmodel)
-                data.energy{1} = data.menergy{1};
-            else
-                data.energy{1} = data.menergy;
-            end
-        end
-        
-        % Store SSD
-        if isfield(data, 'dssd')
-            if iscell(data.dssd)
-                data.ssd{1} = data.dssd{1};
-            else
-                data.ssd{1} = data.dssd;
-            end
-        end
-        
-        % Ask user for buildup
-        b = str2double(inputdlg(['Enter additional buildup on ', ...
-            'IC Profiler (inherent 9 mm is already added) in mm:'], ...
-            'Enter Buildup', 1, {sprintf('%0.1f', 10 * data.dbuildup(1))}));
-        
-        % If user clicked cancel, default back to zero
-        if isempty(b)
-            b = 0;
-        end
-        
-        % Loop through IEC X profiles
-        for i = 1:size(processed.xdata,1)-1
-            
-            % Add cell
-            data.profiles{length(data.profiles)+1} = ...
-                zeros(size(processed.xdata, 2),4);
-            
-            % Add X values
-            data.profiles{length(data.profiles)}(:,1) = ...
-                10 * processed.xdata(1,:)';
-            
-            % Set depth to 0.9 cm (Gao et al) plus buildup
-            data.profiles{length(data.profiles)}(:,3) = repmat(9 + b, ...
-                size(processed.xdata, 2), 1);
-            
-            % Add corrected dose
-            data.profiles{length(data.profiles)}(:,4) = ...
-                processed.xdata(1+i,:)';
-        end
-        
-        % Loop through IEC Y profiles
-        for i = 1:size(processed.xdata,1)-1
-            
-            % Add cell
-            data.profiles{length(data.profiles)+1} = ...
-                zeros(size(processed.ydata, 2),4);
-            
-            % Add Y values
-            data.profiles{length(data.profiles)}(:,2) = ...
-                10 * processed.ydata(1,:)';
-            
-            % Set depth to 0.9 cm (Gao et al) plus buildup
-            data.profiles{length(data.profiles)}(:,3) = repmat(9 + b, ...
-                size(processed.ydata, 2), 1);
-            
-            % Add corrected dose
-            data.profiles{length(data.profiles)}(:,4) = ...
-                processed.ydata(1+i,:);
-        end
-        
-        % Clear temporary variables
-        clear f i b raw processed;
+        % Clear temporary variable
+        clear raw;
         
     % Standard Imaging TEMS
     case 'Standard Imaging TEMS (.csv)'

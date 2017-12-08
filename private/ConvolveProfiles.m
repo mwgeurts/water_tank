@@ -77,6 +77,10 @@ switch varargin{2}
                     'or the chamber is not in the list available for this ', ...
                     'deconvolution. Profiles will not be deconvolved.']);
             end
+            h = warndlg(['The provided energy and chamber were not provided ', ...
+                    'or the chamber is not in the list available for this ', ...
+                    'deconvolution. Profiles will not be deconvolved.']);
+            uiwait(h);
             return;
         end
         
@@ -106,71 +110,42 @@ switch varargin{2}
         % Loop through each profile
         for i = 1:length(profiles)
             
-            % If X changes, this is an X profile
-            if profiles{i}(1,1) ~= profiles{i}(2,1)
-                
+            % If X and Y changes, this is a diagonal profile
+            if (max(profiles{i}(:,1)) - min(profiles{i}(:,1))) > 1 && ...
+                    (max(profiles{i}(:,2)) - min(profiles{i}(:,2))) > 1
+            
                 % Interpolate data to be equally spaced at 0.1 mm
-                x = profiles{i}(1,1):0.1*sign(profiles{i}(end,1)-...
-                    profiles{i}(1,1)):profiles{i}(end,1);
-                p = interp1(profiles{i}(:,1), profiles{i}(:,5), x, ...
-                    'linear', 0);
-                g = 1/(latstd * sqrt(2 * pi)) * exp(-(x-mean(x)).^2 / ...
-                    (2 * (latstd) ^ 2));
+                x = sqrt(profiles{i}(:,1).^2 + profiles{i}(:,2).^2) .* ...
+                    sign(profiles{i}(:,1));
                 
-                % Convolve using lateral model (assumes detector cylinder
-                % is parallel to IEC Y axis)
-                z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), ...
-                    length(x)*2+1);
+                % Execute NormConvolve using lateral model (assumes 
+                % detector cylinder is perpendicular to scan direction)
+                profiles{i}(:,5) = NormConvolve(x, profiles{i}(:,5), ...
+                    latstd, 0.1);
 
-                % Extract the profile from the convolved, padded value
-                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) ...
-                    + floor(length(x)/2)-1) * max(p)/max(z), ...
-                    profiles{i}(:,1), 'linear', 0) .* ...
-                    single(profiles{i}(:,5) > 0);
+            % If only X changes, this is an X profile
+            elseif (max(profiles{i}(:,1)) - min(profiles{i}(:,1))) > 1
                 
-            % Otherwise, if Y changes, this is an Y profile
-            elseif profiles{i}(1,2) ~= profiles{i}(2,2)
+                % Execute NormConvolve using lateral model (assumes 
+                % detector cylinder is perpendicular to scan direction)
+                profiles{i}(:,5) = NormConvolve(profiles{i}(:,1), ...
+                    profiles{i}(:,5), latstd, 0.1);
                 
-                % Interpolate data to be equally spaced at 0.1 mm
-                x = profiles{i}(1,2):0.1*sign(profiles{i}(end,2)-...
-                    profiles{i}(1,2)):profiles{i}(end,2);
-                p = interp1(profiles{i}(:,2), profiles{i}(:,5), x, ...
-                    'linear', 0);
-                g = 1/(longstd * sqrt(2 * pi)) * exp(-(x-mean(x)).^2 / ...
-                    (2 * (longstd) ^ 2));
+            % Otherwise, if only Y changes, this is a Y profile
+            elseif (max(profiles{i}(:,2)) - min(profiles{i}(:,2))) > 1
                 
-                % Convolve using longitudinal model (assumes detector cylinder
-                % is parallel to IEC Y axis)
-                z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), ...
-                    length(x)*2+1);
-
-                % Extract the profile from the convolved, padded value
-                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) ...
-                    + floor(length(x)/2)-1) * max(p)/max(z), ...
-                    profiles{i}(:,2), 'linear', 0) .* ...
-                    single(profiles{i}(:,5) > 0);
+                % Execute NormConvolve using longitudinal model (assumes 
+                % detector cylinder is perpendicular to scan direction)
+                profiles{i}(:,5) = NormConvolve(profiles{i}(:,2), ...
+                    profiles{i}(:,5), longstd, 0.1);
                 
-            % Otherwise, if Z changes, this is an depth profile
-            elseif profiles{i}(1,3) ~= profiles{i}(2,3) 
+            % Otherwise, if Z changes, this is a depth profile
+            elseif (max(profiles{i}(:,3)) - min(profiles{i}(:,3))) > 1
                 
-                % Interpolate data to be equally spaced at 0.1 mm
-                x = profiles{i}(1,3)+100:0.1*sign(profiles{i}(end,3)-...
-                    profiles{i}(1,3)):profiles{i}(end,3);
-                p = interp1(profiles{i}(:,3), profiles{i}(:,5), x, ...
-                    'linear', 'extrap');
-                g = 1/(latstd * sqrt(2 * pi)) * exp(-(x-mean(x)).^2 / ...
-                    (2 * (latstd) ^ 2));
-                
-                % Convolve using lateral model (assumes detector cylinder
-                % is parallel to IEC Y or X axis)
-                z = ifft(fft(p, length(x)*2+1) .* fft(g, length(x)*2+1), ...
-                    length(x)*2+1);
-
-                % Extract the profile from the convolved, padded value
-                profiles{i}(:,5) = interp1(x, z(floor(length(x)/2):length(x) ...
-                    + floor(length(x)/2)-1) * max(p)/max(z), ...
-                    profiles{i}(:,3), 'linear', 0) .* ...
-                    single(profiles{i}(:,5) > 0);
+                % Execute NormConvolve using lateral model (assumes 
+                % detector cylinder is perpendicular to scan direction)
+                profiles{i}(:,5) = NormConvolve(profiles{i}(:,3), ...
+                    profiles{i}(:,5), latstd, 0.1);
             end
         end
 end

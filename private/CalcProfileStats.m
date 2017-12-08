@@ -50,15 +50,29 @@ c = 1;
 % Loop through profiles
 for i = 1:length(profiles)
     
-    % If this is an X or Y profile
-    if profiles{i}(1,1) ~= profiles{i}(2,1) || ...
-            profiles{i}(1,2) ~= profiles{i}(2,2)
+    % If this is an X, Y, or diagonal profile
+    if (max(profiles{i}(:,1)) - min(profiles{i}(:,1))) > 1 || ...
+            (max(profiles{i}(:,2)) - min(profiles{i}(:,2))) > 1
         
         % Increment counter
         c = c + 1;
         
         % List the axis and store the axis
-        if profiles{i}(1,1) ~= profiles{i}(2,1)
+        if (max(profiles{i}(:,1)) - min(profiles{i}(:,1))) > 1 && ...
+                (max(profiles{i}(:,2)) - min(profiles{i}(:,2))) > 1
+            
+            % Set positive or negative diagonal based on X/Y product
+            if mean(profiles{i}(:,1) .* profiles{i}(:,2)) > 0
+                data{1,c} = 'PDIAG';
+            else 
+                data{1,c} = 'NDIAG';
+            end
+            
+            % Store x axis as square root
+            x = sqrt(profiles{i}(:,1).^2 + profiles{i}(:,2).^2) .* ...
+                sign(profiles{i}(:,1));
+            
+        elseif (max(profiles{i}(:,1)) - min(profiles{i}(:,1))) > 1
             data{1,c} = 'IEC X';
             x = profiles{i}(:,1);
         else
@@ -123,19 +137,26 @@ for i = 1:length(profiles)
             interp1(x, profiles{i}(:,4), 0, 'linear')) * 100);
 
         % Calculate Areal Symmetry
-        data{5,c} = sprintf('%0.2f%%', (sum(profiles{i}(range(1):floor((lI + I + uI)/2),4)) - ...
-            sum(interp1(x, profiles{i}(:,4), -x(range(1):floor((lI + I + uI)/2)), 'linear'))) / ...
-            (sum(profiles{i}(range(1):floor((lI + I + uI)/2),4)) + sum(interp1(x, profiles{i}(:,4), ...
-            -x(range(1):floor((lI + I + uI)/2)), 'linear'))) * 200);
+        data{5,c} = sprintf('%0.2f%%', ...
+            (trapz(x(range(1):floor((lI + I + uI)/2)), ...
+            profiles{i}(range(1):floor((lI + I + uI)/2),4)) - ...
+            trapz(x(ceil((lI + I + uI)/2):range(end)), ...
+            profiles{i}(ceil((lI + I + uI)/2):range(end),4))) / ...
+            (trapz(x(range(1):floor((lI + I + uI)/2)), ...
+            profiles{i}(range(1):floor((lI + I + uI)/2),4)) + ...
+            trapz(x(ceil((lI + I + uI)/2):range(end)), ...
+            profiles{i}(ceil((lI + I + uI)/2):range(end),4))) * 200);
 
         % Store FWHM
         data{6,c} = fwhm;
  
         % Find reference highest lower index just below half maximum
-        lI = find(profiles{i}(1:I,5) < 0.5 * max(profiles{i}(:,5)), 1, 'last');
+        lI = find(profiles{i}(1:I,5) < 0.5 * ...
+            max(profiles{i}(:,5)), 1, 'last');
 
         % Find reference lowest upper index just above half maximum
-        uI = find(profiles{i}(I:end,5) < 0.5 * max(profiles{i}(:,5)), 1, 'first');
+        uI = find(profiles{i}(I:end,5) < 0.5 * ...
+            max(profiles{i}(:,5)), 1, 'first');
 
         % Calculate reference FWHM
         try

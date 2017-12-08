@@ -44,6 +44,14 @@ set(handles.filepath, 'String', '');
 % Disable export button while data is cleared
 set(handles.saveplots, 'Enable', 'off');
 
+% Reset and Hide plot options
+set(handles.optionx, 'Value', 1);
+set(handles.optionx, 'visible', 'off');
+set(handles.optiony, 'Value', 2);
+set(handles.optiony, 'visible', 'off');
+set(handles.optionz, 'Value', 3);
+set(handles.optionz, 'visible', 'off');
+
 % Hide plots
 set(allchild(handles.iecx), 'visible', 'off'); 
 set(handles.iecx, 'visible', 'off');

@@ -69,7 +69,7 @@ c = 1;
 for i = 1:length(profiles)
     
     % If this is a Z profile
-    if profiles{i}(1,3) ~= profiles{i}(2,3)
+    if (max(profiles{i}(:,3)) - min(profiles{i}(:,3))) > 1
         
         % Increment counter
         c = c + 1;

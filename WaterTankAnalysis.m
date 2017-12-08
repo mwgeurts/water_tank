@@ -23,7 +23,7 @@ function varargout = WaterTankAnalysis(varargin)
 
 % Edit the above text to modify the response to help WaterTankAnalysis
 
-% Last Modified by GUIDE v2.5 13-Nov-2017 19:11:22
+% Last Modified by GUIDE v2.5 07-Dec-2017 11:52:45
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 0;
@@ -65,7 +65,7 @@ warning('off','all');
 handles.output = hObject;
 
 % Set version handle
-handles.version = '1.0.2';
+handles.version = '1.1.0';
 set(handles.version_text, 'String', ['Version ', handles.version]);
 
 % Determine path of current application
@@ -611,7 +611,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), ...
     set(hObject,'BackgroundColor','white');
 end
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function ssd_Callback(hObject, ~, handles)
 % hObject    handle to ssd (see GCBO)
@@ -691,3 +690,74 @@ PlotOutputFactors(fullfile(pwd, handles.config.REFERENCE_PATH, ...
 % Update handles structure
 guidata(hObject, handles);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function optionx_Callback(hObject, ~, handles)
+% hObject    handle to optionx (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Execute PlotProfiles()
+handles = PlotProfiles(handles);
+
+% Update handles structure
+guidata(hObject, handles);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function optionx_CreateFcn(hObject, ~, ~)
+% hObject    handle to optionx (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Popupmenu controls usually have a white background on Windows.
+if ispc && isequal(get(hObject,'BackgroundColor'), ...
+        get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function optiony_Callback(hObject, ~, handles)
+% hObject    handle to optiony (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Execute PlotProfiles()
+handles = PlotProfiles(handles);
+
+% Update handles structure
+guidata(hObject, handles);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function optiony_CreateFcn(hObject, ~, ~)
+% hObject    handle to optiony (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Popupmenu controls usually have a white background on Windows.
+if ispc && isequal(get(hObject,'BackgroundColor'), ...
+        get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function optionz_Callback(hObject, ~, handles)
+% hObject    handle to optionz (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Execute PlotProfiles()
+handles = PlotProfiles(handles);
+
+% Update handles structure
+guidata(hObject, handles);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function optionz_CreateFcn(hObject, ~, ~)
+% hObject    handle to optionz (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Popupmenu controls usually have a white background on Windows.
+if ispc && isequal(get(hObject,'BackgroundColor'), ...
+        get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

@@ -57,34 +57,34 @@ switch varargin{2}
             'according to TG-51']);
         
         % Loop through each profile
-        for j = 1:length(profiles)
+        for i = 1:length(profiles)
         
             % If Z changes, this is an depth profile
-            if profiles{j}(1,3) ~= profiles{j}(2,3)
+            if (max(profiles{i}(:,3)) - min(profiles{i}(:,3))) > 1
 
                 % Find index of I50
-                I = find(profiles{j}(:,4) > 0.5 * ...
-                    max(profiles{j}(:,4)), 1, 'first');
+                I50 = find(profiles{i}(:,4) > 0.5 * ...
+                    max(profiles{i}(:,4)), 1, 'first');
                 
                 % Compute R50 in cm
-                R = 1.029 * interp1(profiles{j}(I-1:I+2,4), ...
-                    profiles{j}(I-1:I+2,3), 0.5 * max(profiles{j}(:,4)), ...
+                R50 = 1.029 * interp1(profiles{i}(I50-1:I50+2,4), ...
+                    profiles{i}(I50-1:I50+2,3), 0.5 * max(profiles{i}(:,4)), ...
                     'linear')/10 - 0.06;
                 
                 % Find range of indices to apply correction (0.02 to 1.2)
-                lI = find(profiles{j}(:,3) / (10 * R) < 1.2, 1, 'first');
-                uI = find(profiles{j}(:,3) / (10 * R) > 0.02, 1, 'last');
+                lI = find(profiles{i}(:,3) / (10 * R50) < 1.2, 1, 'first');
+                uI = find(profiles{i}(:,3) / (10 * R50) > 0.02, 1, 'last');
                 
                 % Scale depth profile by Burns et al. empirical stopping
                 % power ratio fit
-                profiles{j}(lI:uI,4) = profiles{j}(lI:uI,4) .* (1.0752 - ...
-                    0.50867 * log(R) + 0.08867 * log(R)^2 - 0.08402 * ...
-                    profiles{j}(lI:uI,3)/(10 * R)) ./ (1 - 0.42806 * log(R) ...
-                    + 0.064627 * log(R)^2 + 0.003085 * log(R)^3 - 0.12460 * ...
-                    profiles{j}(lI:uI,3)/(10 * R));
+                profiles{i}(lI:uI,4) = profiles{i}(lI:uI,4) .* (1.0752 - ...
+                    0.50867 * log(R50) + 0.08867 * log(R50)^2 - 0.08402 * ...
+                    profiles{i}(lI:uI,3)/(10 * R50)) ./ (1 - 0.42806 * log(R50) ...
+                    + 0.064627 * log(R50)^2 + 0.003085 * log(R50)^3 - 0.12460 * ...
+                    profiles{i}(lI:uI,3)/(10 * R50));
             end
         end 
         
         % Clear temporary variables
-        clear j I R;
+        clear i I50 R50;
 end

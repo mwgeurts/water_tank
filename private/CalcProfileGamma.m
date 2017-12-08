@@ -35,74 +35,110 @@ if exist('CalcGamma', 'file') ~= 2
         'ERROR');
 end
 
+% Define resolution
+res = 10;
+
 % Loop through each profile
 for i = 1:length(profiles)
-   
-    % If X changes, this is an X profile
-    if profiles{i}(1,1) ~= profiles{i}(2,1)
+    
+    % If X and Y changes, this is a diagonal profile
+    if (max(profiles{i}(:,1)) - min(profiles{i}(:,1))) > 1 && ...
+            (max(profiles{i}(:,2)) - min(profiles{i}(:,2))) > 1
+        
+        % Define CalcGamma reference structure
+        reference.start = sqrt(profiles{i}(1,1)^2 + profiles{i}(1,2)^2) * ...
+            sign(profiles{i}(1,1));
+        reference.width = min(abs(diff(sqrt(profiles{i}(:,1).^2 + ...
+            profiles{i}(:,2).^2)))) * sign(profiles{i}(end,1) - ...
+            profiles{i}(1,1));
+        reference.data = interp1(sqrt(profiles{i}(:,1).^2 + ...
+            profiles{i}(:,2).^2) .* sign(profiles{i}(:,1)), ...
+            profiles{i}(:,5), reference.start:reference.width:...
+            sqrt(profiles{i}(end,1)^2 + profiles{i}(end,2)^2) * ...
+            sign(profiles{i}(end,1)), 'linear');
+        
+        % Define CalcGamma target structure
+        target.start = reference.start;
+        target.width = reference.width;
+        target.data = interp1(sqrt(profiles{i}(:,1).^2 + ...
+            profiles{i}(:,2).^2) .* sign(profiles{i}(:,1)), ...
+            profiles{i}(:,4), reference.start:reference.width:...
+            sqrt(profiles{i}(end,1)^2 + profiles{i}(end,2)^2) * ...
+            sign(profiles{i}(end,1)), 'linear');
+        
+        % Execute CalcGamma, appending the result
+        profiles{i}(:,6) = interp1(reference.start:reference.width:...
+            sqrt(profiles{i}(end,1)^2 + profiles{i}(end,2)^2) * ...
+            sign(profiles{i}(end,1)), CalcGamma(reference, target, percent, ...
+            dta, 'local', local, 'cpu', 1, 'res', res), ...
+            sqrt(profiles{i}(:,1).^2 + profiles{i}(:,2).^2) .* ...
+            sign(profiles{i}(:,1)), 'linear', 0)';
+                
+    % If only X changes, this is an X profile
+    elseif (max(profiles{i}(:,1)) - min(profiles{i}(:,1))) > 1
 
         % Define CalcGamma reference structure
         reference.start = profiles{i}(1,1);
         reference.width = min(abs(diff(profiles{i}(:,1)))) * ...
             sign(profiles{i}(end,1)-profiles{i}(1,1));
         reference.data = interp1(profiles{i}(:,1), profiles{i}(:,5), ...
-            reference.start:reference.width:profiles{i}(end,1), '*linear');
+            reference.start:reference.width:profiles{i}(end,1), 'linear');
         
         % Define CalcGamma target structure
         target.start = reference.start;
         target.width = reference.width;
         target.data = interp1(profiles{i}(:,1), profiles{i}(:,4), ...
-            reference.start:reference.width:profiles{i}(end,1), '*linear');
+            reference.start:reference.width:profiles{i}(end,1), 'linear');
         
         % Execute CalcGamma, appending the result
         profiles{i}(:,6) = interp1(reference.start:reference.width:...
             profiles{i}(end,1), CalcGamma(reference, target, percent, ...
-            dta, 'local', local, 'cpu', 1, 'res', 20), ...
-            profiles{i}(:,1), '*linear', 0)';
+            dta, 'local', local, 'cpu', 1, 'res', res), ...
+            profiles{i}(:,1), 'linear', 0)';
 
-    % Otherwise, if Y changes, this is a Y profile
-    elseif profiles{i}(1,2) ~= profiles{i}(2,2)
+    % Otherwise, if only Y changes, this is a Y profile
+    elseif (max(profiles{i}(:,2)) - min(profiles{i}(:,2))) > 1
 
         % Define CalcGamma reference structure
         reference.start = profiles{i}(1,2);
         reference.width = min(abs(diff(profiles{i}(:,2)))) * ...
             sign(profiles{i}(end,2)-profiles{i}(1,2));
         reference.data = interp1(profiles{i}(:,2), profiles{i}(:,5), ...
-            reference.start:reference.width:profiles{i}(end,2), '*linear');
+            reference.start:reference.width:profiles{i}(end,2), 'linear');
         
         % Define CalcGamma target structure
         target.start = reference.start;
         target.width = reference.width;
         target.data = interp1(profiles{i}(:,2), profiles{i}(:,4), ...
-            reference.start:reference.width:profiles{i}(end,2), '*linear');
+            reference.start:reference.width:profiles{i}(end,2), 'linear');
         
         % Execute CalcGamma, appending the result
         profiles{i}(:,6) = interp1(reference.start:reference.width:...
             profiles{i}(end,2), CalcGamma(reference, target, percent, ...
-            dta, 'local', local, 'cpu', 1, 'res', 20), ...
-            profiles{i}(:,2), '*linear', 0)';
+            dta, 'local', local, 'cpu', 1, 'res', res), ...
+            profiles{i}(:,2), 'linear', 0)';
         
     % Otherwise, if Z changes, this is a depth profile
-    elseif profiles{i}(1,3) ~= profiles{i}(2,3)
+    elseif (max(profiles{i}(:,3)) - min(profiles{i}(:,3))) > 1
 
         % Define CalcGamma reference structure
         reference.start = profiles{i}(1,3);
         reference.width = min(abs(diff(profiles{i}(:,3)))) * ...
             sign(profiles{i}(end,3)-profiles{i}(1,3));
         reference.data = interp1(profiles{i}(:,3), profiles{i}(:,5), ...
-            reference.start:reference.width:profiles{i}(end,3), '*linear');
+            reference.start:reference.width:profiles{i}(end,3), 'linear');
         
         % Define CalcGamma target structure
         target.start = reference.start;
         target.width = reference.width;
         target.data = interp1(profiles{i}(:,3), profiles{i}(:,4), ...
-            reference.start:reference.width:profiles{i}(end,3), '*linear');
+            reference.start:reference.width:profiles{i}(end,3), 'linear');
         
         % Execute CalcGamma, appending the result
         profiles{i}(:,6) = interp1(reference.start:reference.width:...
             profiles{i}(end,3), CalcGamma(reference, target, percent, ...
-            dta, 'local', local, 'cpu', 1, 'res', 20), ...
-            profiles{i}(:,3), '*linear', 0)';
+            dta, 'local', local, 'cpu', 1, 'res', res), ...
+            profiles{i}(:,3), 'linear', 0)';
     end
 
     % Clear temporary variables

@@ -41,243 +41,584 @@ end
 % Set figure axes colors
 set(gcf,'defaultAxesColorOrder',[0 0 0; 0 0 0]);
 
+% Define available GUI plot axes and their respective dropdown menus
+plots = {
+    'iecx'  'optionx'
+    'iecy'  'optiony'
+    'iecz'  'optionz'
+};
+
 %% IEC X
-if nargin < 2
+% Loop through each plot
+for p = 1:size(plots, 1)
     
-    % Enable axes and set focus
-    set(allchild(handles.iecx),'visible','on'); 
-    set(handles.iecx,'visible','on');
-    axes(handles.iecx);
-    cla reset;
-end
+    % If this plot is selected
+    if nargin < 2 && get(handles.(plots{p,2}), 'Value') == 1 
+        
+        % Enable axes and set focus
+        set(handles.(plots{p,2}),'visible','on');
+        set(allchild(handles.(plots{p,1})),'visible','on'); 
+        set(handles.(plots{p,1}),'visible','on');
+        axes(handles.(plots{p,1})); %#ok<*LAXES>
+        cla reset;
+      
+    % Otherwise, if this plot was not selected (but still plotting to GUI)
+    % then skip ahead
+    elseif nargin < 2
+        continue
+    end
 
-% Initialize counter
-c = 0;
+    % Initialize counter
+    c = 0;
 
-% Loop through each profile
-for i = 1:length(handles.processed)
-    
-    % If X changes, this is an X profile
-    if handles.processed{i}(1,1) ~= handles.processed{i}(2,1)
-    
-        % Increment counter
-        c = c + 1;
-        
-        % Plot measured profile
-        yyaxis left;
-        plot(handles.processed{i}(:,1), handles.processed{i}(:,4), '-', ...
-            'Color', cmap(c,:));
+    % Loop through each profile
+    for i = 1:length(handles.processed)
 
-        % Hold remaining plots
-        if c == 1
-            xlim([min(handles.processed{i}(:,1)) ...
-                max(handles.processed{i}(:,1))]);
-            hold on;
-        end
-        
-        % Plot reference profile
-        plot(handles.processed{i}(:,1), handles.processed{i}(:,5), '--', ...
-            'Color', cmap(c,:));
-        
-        % Plot Gamma
-        yyaxis right;
-        if c == 1
-            hold off;
-        end
-        plot(handles.processed{i}(:,1), handles.processed{i}(:,6), ':', ...
-            'Color', cmap(c,:));
-        
-        % Hold remaining plots
-        if c == 1
-            hold on;
+        % If X changes and Y does not, this is an X profile
+        if (max(handles.processed{i}(:,1)) - ...
+                min(handles.processed{i}(:,1))) > 1 && ...
+                (max(handles.processed{i}(:,2)) - ...
+                min(handles.processed{i}(:,2))) < 1
+
+            % Increment counter
+            c = c + 1;
+
+            % Plot measured profile
+            yyaxis left;
+            plot(handles.processed{i}(:,1), handles.processed{i}(:,4), '-', ...
+                'Color', cmap(c,:));
+
+            % Hold remaining plots
+            if c == 1
+                xlim([min(handles.processed{i}(:,1)) ...
+                    max(handles.processed{i}(:,1))]);
+                ylim([0 ceil(max(handles.processed{i}(:,4)-0.125)/0.25+1)*0.25]);
+                hold on;
+            end
+
+            % Plot reference profile
+            plot(handles.processed{i}(:,1), handles.processed{i}(:,5), '--', ...
+                'Color', cmap(c,:));
+
+            % Plot Gamma
+            yyaxis right;
+            if c == 1
+                hold off;
+            end
+            plot(handles.processed{i}(:,1), handles.processed{i}(:,6), ':', ...
+                'Color', cmap(c,:));
+
+            % Hold remaining plots
+            if c == 1
+                hold on;
+            end
         end
     end
-end
 
-% Finish plot and set formatting
-hold off;
-grid on;
-box on;
-xlabel('IEC X Axis Position (mm)');
-yyaxis left;
-zoom on;
-if get(handles.normalize, 'Value') > 1
-    ylabel('Relative Dose');
-    ylim([0 1.2]);
-else
-    ylabel('Signal');
-end
-yyaxis right;
-ylabel('Gamma');
-if c > 0
-    legend('Measured', 'Reference');
+    % Finish plot and set formatting
+    hold off;
+    grid on;
+    box on;
     
-    % If saving the plot to a file
+    % Add X axis label
+    xlabel('IEC X Axis Position (mm)');
+    
+    % Add left Y axis label
+    yyaxis left;
+    zoom on;
+    if get(handles.normalize, 'Value') > 1
+        ylabel('Relative Dose');
+    else
+        ylabel('Signal');
+    end
+    
+    % Add right Y axis label
+    yyaxis right;
+    ylabel('Gamma');
+    
+    % If at least one dataset was plotted
+    if c > 0
+        
+        % Add a legend
+        legend('Measured', 'Reference');
+
+        % If saving the plot to a file
+        if nargin == 2
+            Event(['Saving IECX plot to ', fullfile(varargin{1}, ['IECX.', ...
+                lower(handles.config.PLOT_SAVE_FORMAT)])]);
+            saveas(f, fullfile(varargin{1}, ['IECX.', ...
+                lower(handles.config.PLOT_SAVE_FORMAT)]));
+            break
+        end
+    end
+    
+    % If file was saved, break to next plot type
     if nargin == 2
-        Event(['Saving IECX plot to ', fullfile(varargin{1}, ['IECX.', ...
-            lower(handles.config.PLOT_SAVE_FORMAT)])]);
-        saveas(f, fullfile(varargin{1}, ['IECX.', ...
-            lower(handles.config.PLOT_SAVE_FORMAT)]));
+        break;
     end
 end
 
 %% IEC Y
-if nargin < 2
+% Loop through each plot
+for p = 1:size(plots, 1)
     
-    % Enable axes and set focus
-    set(allchild(handles.iecy),'visible','on'); 
-    set(handles.iecy,'visible','on');
-    axes(handles.iecy);
-    cla reset;
-end
+    % If this plot is selected
+    if nargin < 2 && get(handles.(plots{p,2}), 'Value') == 2 
+        
+        % Enable axes and set focus
+        set(handles.(plots{p,2}),'visible','on');
+        set(allchild(handles.(plots{p,1})),'visible','on'); 
+        set(handles.(plots{p,1}),'visible','on');
+        axes(handles.(plots{p,1}));
+        cla reset;
+      
+    % Otherwise, if this plot was not selected (but still plotting to GUI)
+    % then skip ahead
+    elseif nargin < 2
+        continue
+    end
 
-% Initialize counter
-c = 0;
+    % Initialize counter
+    c = 0;
 
-% Loop through each profile
-for i = 1:length(handles.processed)
-    
-    % If Y changes, this is an Y profile
-    if handles.processed{i}(1,2) ~= handles.processed{i}(2,2)
-    
-        % Increment counter
-        c = c + 1;
-        
-        % Plot measured profile
-        yyaxis left;
-        plot(handles.processed{i}(:,2), handles.processed{i}(:,4), '-', ...
-            'Color', cmap(c,:));
-        
-        % Hold remaining plots
-        if c == 1
-            xlim([min(handles.processed{i}(:,2)) ...
-                max(handles.processed{i}(:,2))]);
-            hold on;
-        end
+    % Loop through each profile
+    for i = 1:length(handles.processed)
 
-        % Plot reference profile
-        plot(handles.processed{i}(:,2), handles.processed{i}(:,5), '--', ...
-            'Color', cmap(c,:));
-        
-        % Plot Gamma
-        yyaxis right;
-        if c == 1
-            hold off;
-        end
-        plot(handles.processed{i}(:,2), handles.processed{i}(:,6), ':', ...
-            'Color', cmap(c,:));
-        
-        % Hold remaining plots
-        if c == 1
-            hold on;
+        % If Y changes and X does not, this is a Y profile
+        if (max(handles.processed{i}(:,1)) - ...
+                min(handles.processed{i}(:,1))) < 1 && ...
+                (max(handles.processed{i}(:,2)) - ...
+                min(handles.processed{i}(:,2))) > 1
+
+            % Increment counter
+            c = c + 1;
+
+            % Plot measured profile
+            yyaxis left;
+            plot(handles.processed{i}(:,2), handles.processed{i}(:,4), '-', ...
+                'Color', cmap(c,:));
+
+            % Hold remaining plots
+            if c == 1
+                xlim([min(handles.processed{i}(:,2)) ...
+                    max(handles.processed{i}(:,2))]);
+                ylim([0 ceil(max(handles.processed{i}(:,4)-0.125)/0.25+1)*0.25]);
+                hold on;
+            end
+
+            % Plot reference profile
+            plot(handles.processed{i}(:,2), handles.processed{i}(:,5), '--', ...
+                'Color', cmap(c,:));
+
+            % Plot Gamma
+            yyaxis right;
+            if c == 1
+                hold off;
+            end
+            plot(handles.processed{i}(:,2), handles.processed{i}(:,6), ':', ...
+                'Color', cmap(c,:));
+
+            % Hold remaining plots
+            if c == 1
+                hold on;
+            end
         end
     end
-end
 
-% Finish plot and set formatting
-hold off;
-grid on;
-box on;
-xlabel('IEC Y Axis Position (mm)');
-yyaxis left;
-zoom on;
-if get(handles.normalize, 'Value') > 1
-    ylabel('Relative Dose');
-    ylim([0 1.2]);
-else
-    ylabel('Signal');
-end
-yyaxis right;
-ylabel('Gamma');
-if c > 0
-    legend('Measured', 'Reference');
+    % Finish plot and set formatting
+    hold off;
+    grid on;
+    box on;
     
-    % If saving the plot to a file
+    % Add X axis label
+    xlabel('IEC Y Axis Position (mm)');
+    
+    % Add left Y axis label
+    yyaxis left;
+    zoom on;
+    if get(handles.normalize, 'Value') > 1
+        ylabel('Relative Dose');
+    else
+        ylabel('Signal');
+    end
+    
+    % Add right Y axis label
+    yyaxis right;
+    ylabel('Gamma');
+    
+    % If at least one dataset was plotted
+    if c > 0
+        
+        % Add a legend
+        legend('Measured', 'Reference');
+
+        % If saving the plot to a file
+        if nargin == 2
+            Event(['Saving IECY plot to ', fullfile(varargin{1}, ['IECY.', ...
+                lower(handles.config.PLOT_SAVE_FORMAT)])]);
+            saveas(f, fullfile(varargin{1}, ['IECY.', ...
+                lower(handles.config.PLOT_SAVE_FORMAT)]));
+            break
+        end
+    end
+    
+    % If file was saved, break to next plot type
     if nargin == 2
-        Event(['Saving IECY plot to ', fullfile(varargin{1}, ['IECY.', ...
-            lower(handles.config.PLOT_SAVE_FORMAT)])]);
-        saveas(f, fullfile(varargin{1}, ['IECY.', ...
-            lower(handles.config.PLOT_SAVE_FORMAT)]));
+        break;
     end
 end
 
 %% IEC Z
-if nargin < 2
-
-    % Enable axes and set focus
-    set(allchild(handles.iecz),'visible','on'); 
-    set(handles.iecz,'visible','on');
-    axes(handles.iecz);
-    cla reset;
-end
-
-% Initialize counter
-c = 0;
-
-% Loop through each profile
-for i = 1:length(handles.processed)
+% Loop through each plot
+for p = 1:size(plots, 1)
     
-    % If Z changes, this is a depth profile
-    if handles.processed{i}(1,3) ~= handles.processed{i}(2,3)
-    
-        % Increment counter
-        c = c + 1;
+    % If this plot is selected
+    if nargin < 2 && get(handles.(plots{p,2}), 'Value') == 3
         
-        % Plot measured profile
-        yyaxis left;
-        plot(handles.processed{i}(:,3), handles.processed{i}(:,4), '-', ...
-            'Color', cmap(c,:));
-        
-        % Hold remaining plots
-        if c == 1
-            xlim([min(handles.processed{i}(:,3)) ...
-                max(handles.processed{i}(:,3))]);
-            hold on;
-        end
+        % Enable axes and set focus
+        set(handles.(plots{p,2}),'visible','on');
+        set(allchild(handles.(plots{p,1})),'visible','on'); 
+        set(handles.(plots{p,1}),'visible','on');
+        axes(handles.(plots{p,1}));
+        cla reset;
+      
+    % Otherwise, if this plot was not selected (but still plotting to GUI)
+    % then skip ahead
+    elseif nargin < 2
+        continue
+    end
 
-        % Plot reference profile
-        plot(handles.processed{i}(:,3), handles.processed{i}(:,5), '--', ...
-            'Color', cmap(c,:));
-        
-        % Plot Gamma
-        yyaxis right;
-        if c == 1
-            hold off;
+    % Initialize counter
+    c = 0;
+
+    % Loop through each profile
+    for i = 1:length(handles.processed)
+
+        % If Z changes, this is a depth profile
+        if (max(handles.processed{i}(:,3)) - ...
+                min(handles.processed{i}(:,3))) > 1
+
+            % Increment counter
+            c = c + 1;
+
+            % Plot measured profile
+            yyaxis left;
+            plot(handles.processed{i}(:,3), handles.processed{i}(:,4), '-', ...
+                'Color', cmap(c,:));
+
+            % Hold remaining plots
+            if c == 1
+                xlim([min(handles.processed{i}(:,3)) ...
+                    max(handles.processed{i}(:,3))]);
+                ylim([0 ceil(max(handles.processed{i}(:,4)-0.125)/0.25+1)*0.25]);
+                hold on;
+            end
+
+            % Plot reference profile
+            plot(handles.processed{i}(:,3), handles.processed{i}(:,5), '--', ...
+                'Color', cmap(c,:));
+
+            % Plot Gamma
+            yyaxis right;
+            if c == 1
+                hold off;
+            end
+            plot(handles.processed{i}(:,3), handles.processed{i}(:,6), ':', ...
+                'Color', cmap(c,:));
+
+            % Hold remaining plots
+            if c == 1
+                hold on;
+            end
         end
-        plot(handles.processed{i}(:,3), handles.processed{i}(:,6), ':', ...
-            'Color', cmap(c,:));
+    end
+
+    % Finish plot and set formatting
+    hold off;
+    grid on;
+    box on;
+    
+    % Add X axis label
+    xlabel('Depth (mm)');
+    
+    % Add left Y axis label
+    yyaxis left;
+    zoom on;
+    if get(handles.normalize, 'Value') > 1
+        ylabel('Relative Dose');
+    else
+        ylabel('Signal');
+    end
+    
+    % Add right Y axis label
+    yyaxis right;
+    ylabel('Gamma');
+    
+    % If at least one dataset was plotted
+    if c > 0
         
-        % Hold remaining plots
-        if c == 1
-            hold on;
+        % Add a legend
+        legend('Measured', 'Reference');
+
+        % If saving the plot to a file
+        if nargin == 2
+            Event(['Saving IECZ plot to ', fullfile(varargin{1}, ['IECZ.', ...
+                lower(handles.config.PLOT_SAVE_FORMAT)])]);
+            saveas(f, fullfile(varargin{1}, ['IECZ.', ...
+                lower(handles.config.PLOT_SAVE_FORMAT)]));
+            break
         end
+    end
+    
+    % If file was saved, break to next plot type
+    if nargin == 2
+        break;
     end
 end
 
-% Finish plot and set formatting
-hold off;
-grid on;
-box on;
-xlabel('Depth (mm)');
-yyaxis left;
-zoom on;
-if get(handles.normalize, 'Value') > 1
-    ylabel('Relative Dose');
-    ylim([0 1.2]);
-else
-    ylabel('Signal');
-end
-yyaxis right;
-ylabel('Gamma');
-if c > 0
-    legend('Measured', 'Reference');
+%% Positive Diagonal
+% Loop through each plot
+for p = 1:size(plots, 1)
     
-    % If saving the plot to a file
+    % If this plot is selected
+    if nargin < 2 && get(handles.(plots{p,2}), 'Value') == 4
+        
+        % Enable axes and set focus
+        set(handles.(plots{p,2}),'visible','on');
+        set(allchild(handles.(plots{p,1})),'visible','on'); 
+        set(handles.(plots{p,1}),'visible','on');
+        axes(handles.(plots{p,1}));
+        cla reset;
+      
+    % Otherwise, if this plot was not selected (but still plotting to GUI)
+    % then skip ahead
+    elseif nargin < 2
+        continue
+    end
+
+    % Initialize counter
+    c = 0;
+
+    % Loop through each profile
+    for i = 1:length(handles.processed)
+
+        % If X and Y both change and their product is positive
+        if (max(handles.processed{i}(:,1)) - ...
+                min(handles.processed{i}(:,1))) > 1 && ...
+                (max(handles.processed{i}(:,2)) - ...
+                min(handles.processed{i}(:,2))) > 1 && ...
+                mean(handles.processed{i}(:,1) .* ...
+                handles.processed{i}(:,2)) > 0
+
+            % Increment counter
+            c = c + 1;
+
+            % Plot measured profile
+            yyaxis left;
+            plot(sqrt(handles.processed{i}(:,1).^2 + ...
+                handles.processed{i}(:,2).^2) .* ...
+                sign(handles.processed{i}(:,1)), ...
+                handles.processed{i}(:,4), '-', 'Color', cmap(c,:));
+
+            % Hold remaining plots
+            if c == 1
+                xlim([min(sqrt(handles.processed{i}(:,1).^2 + ...
+                    handles.processed{i}(:,2).^2) .* ...
+                    sign(handles.processed{i}(:,1))) ...
+                    max(sqrt(handles.processed{i}(:,1).^2 + ...
+                    handles.processed{i}(:,2).^2) .* ...
+                    sign(handles.processed{i}(:,1)))]);
+                ylim([0 ceil(max(handles.processed{i}(:,4)-0.125)/0.25+1)*0.25]);
+                hold on;
+            end
+
+            % Plot reference profile
+            plot(sqrt(handles.processed{i}(:,1).^2 + ...
+                handles.processed{i}(:,2).^2) .* ...
+                sign(handles.processed{i}(:,1)), ...
+                handles.processed{i}(:,5), '--', 'Color', cmap(c,:));
+
+            % Plot Gamma
+            yyaxis right;
+            if c == 1
+                hold off;
+            end
+            plot(sqrt(handles.processed{i}(:,1).^2 + ...
+                handles.processed{i}(:,2).^2) .* ...
+                sign(handles.processed{i}(:,1)), ...
+                handles.processed{i}(:,6), ':', 'Color', cmap(c,:));
+
+            % Hold remaining plots
+            if c == 1
+                hold on;
+            end
+        end
+    end
+
+    % Finish plot and set formatting
+    hold off;
+    grid on;
+    box on;
+    
+    % Add X axis label
+    xlabel('Positive Diagonal Position (mm)');
+    
+    % Add left Y axis label
+    yyaxis left;
+    zoom on;
+    if get(handles.normalize, 'Value') > 1
+        ylabel('Relative Dose');
+    else
+        ylabel('Signal');
+    end
+    
+    % Add right Y axis label
+    yyaxis right;
+    ylabel('Gamma');
+    
+    % If at least one dataset was plotted
+    if c > 0
+        
+        % Add a legend
+        legend('Measured', 'Reference');
+
+        % If saving the plot to a file
+        if nargin == 2
+            Event(['Saving Positive Diagonal plot to ', ...
+                fullfile(varargin{1}, ['PDIAG.', ...
+                lower(handles.config.PLOT_SAVE_FORMAT)])]);
+            saveas(f, fullfile(varargin{1}, ['PDIAG.', ...
+                lower(handles.config.PLOT_SAVE_FORMAT)]));
+            break
+        end
+    end
+    
+    % If file was saved, break to next plot type
     if nargin == 2
-        Event(['Saving IECZ plot to ', fullfile(varargin{1}, ['IECZ.', ...
-            lower(handles.config.PLOT_SAVE_FORMAT)])]);
-        saveas(f, fullfile(varargin{1}, ['IECZ.', ...
-            lower(handles.config.PLOT_SAVE_FORMAT)]));
+        break;
+    end
+end
+
+%% Negative Diagonal
+% Loop through each plot
+for p = 1:size(plots, 1)
+    
+    % If this plot is selected
+    if nargin < 2 && get(handles.(plots{p,2}), 'Value') == 5
+        
+        % Enable axes and set focus
+        set(handles.(plots{p,2}),'visible','on');
+        set(allchild(handles.(plots{p,1})),'visible','on'); 
+        set(handles.(plots{p,1}),'visible','on');
+        axes(handles.(plots{p,1}));
+        cla reset;
+      
+    % Otherwise, if this plot was not selected (but still plotting to GUI)
+    % then skip ahead
+    elseif nargin < 2
+        continue
+    end
+
+    % Initialize counter
+    c = 0;
+
+    % Loop through each profile
+    for i = 1:length(handles.processed)
+
+        % If X and Y both change and their product is negative
+        if (max(handles.processed{i}(:,1)) - ...
+                min(handles.processed{i}(:,1))) > 1 && ...
+                (max(handles.processed{i}(:,2)) - ...
+                min(handles.processed{i}(:,2))) > 1 && ...
+                mean(handles.processed{i}(:,1) .* ...
+                handles.processed{i}(:,2)) < 0
+
+            % Increment counter
+            c = c + 1;
+
+            % Plot measured profile
+            yyaxis left;
+            plot(sqrt(handles.processed{i}(:,1).^2 + ...
+                handles.processed{i}(:,2).^2) .* ...
+                sign(handles.processed{i}(:,1)), ...
+                handles.processed{i}(:,4), '-', 'Color', cmap(c,:));
+
+            % Hold remaining plots
+            if c == 1
+                xlim([min(sqrt(handles.processed{i}(:,1).^2 + ...
+                    handles.processed{i}(:,2).^2) .* ...
+                    sign(handles.processed{i}(:,1))) ...
+                    max(sqrt(handles.processed{i}(:,1).^2 + ...
+                    handles.processed{i}(:,2).^2) .* ...
+                    sign(handles.processed{i}(:,1)))]);
+                ylim([0 ceil(max(handles.processed{i}(:,4)-0.125)/0.25+1)*0.25]);
+                hold on;
+            end
+
+            % Plot reference profile
+            plot(sqrt(handles.processed{i}(:,1).^2 + ...
+                handles.processed{i}(:,2).^2) .* ...
+                sign(handles.processed{i}(:,1)), ...
+                handles.processed{i}(:,5), '--', 'Color', cmap(c,:));
+
+            % Plot Gamma
+            yyaxis right;
+            if c == 1
+                hold off;
+            end
+            plot(sqrt(handles.processed{i}(:,1).^2 + ...
+                handles.processed{i}(:,2).^2) .* ...
+                sign(handles.processed{i}(:,1)), ...
+                handles.processed{i}(:,6), ':', 'Color', cmap(c,:));
+
+            % Hold remaining plots
+            if c == 1
+                hold on;
+            end
+        end
+    end
+
+    % Finish plot and set formatting
+    hold off;
+    grid on;
+    box on;
+    
+    % Add X axis label
+    xlabel('Negative Diagonal Position (mm)');
+    
+    % Add left Y axis label
+    yyaxis left;
+    zoom on;
+    if get(handles.normalize, 'Value') > 1
+        ylabel('Relative Dose');
+    else
+        ylabel('Signal');
+    end
+    
+    % Add right Y axis label
+    yyaxis right;
+    ylabel('Gamma');
+    
+    % If at least one dataset was plotted
+    if c > 0
+        
+        % Add a legend
+        legend('Measured', 'Reference');
+
+        % If saving the plot to a file
+        if nargin == 2
+            Event(['Saving Negative Diagonal plot to ', ...
+                fullfile(varargin{1}, ['NDIAG.', ...
+                lower(handles.config.PLOT_SAVE_FORMAT)])]);
+            saveas(f, fullfile(varargin{1}, ['NDIAG.', ...
+                lower(handles.config.PLOT_SAVE_FORMAT)]));
+            break
+        end
+    end
+    
+    % If file was saved, break to next plot type
+    if nargin == 2
+        break;
     end
 end
 

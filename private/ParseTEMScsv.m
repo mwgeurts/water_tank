@@ -428,7 +428,7 @@ end
 % Loop through each profile
 for i = 1:length(data.profiles)
 
-    % If signal is negative ()negative bias), flip it
+    % If signal is negative (negative bias), flip it
     if mean(data.profiles{i}(:,4)) < 0
         
         % Log event
@@ -454,7 +454,7 @@ for i = 1:length(data.profiles)
     end
     
     % If depth changes (i.e. PDD), sort descending
-    if data.profiles{i}(2,3) ~= data.profiles{i}(1,3)
+    if (max(data.profiles{i}(:,3)) - min(data.profiles{i}(:,3))) > 1
         
         % Log event
         if exist('Event', 'file') == 2

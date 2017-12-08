@@ -44,7 +44,8 @@ end
 
 % If no cavity is provided, return unshifted data
 if varargin{2} > 2 && nargin < 3
-    Event('EPOM shift could not be applied because Rcav is not provided');
+    Event('EPOM shift could not be applied because Rcav is not provided', ...
+        'WARN');
     varargin{2} = 1;
 end
 
