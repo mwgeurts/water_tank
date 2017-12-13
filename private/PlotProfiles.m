@@ -116,6 +116,7 @@ for p = 1:size(plots, 1)
     end
 
     % Finish plot and set formatting
+    set(gca, 'fontsize', 9);
     hold off;
     grid on;
     box on;
@@ -226,6 +227,7 @@ for p = 1:size(plots, 1)
     end
 
     % Finish plot and set formatting
+    set(gca, 'fontsize', 9);
     hold off;
     grid on;
     box on;
@@ -334,6 +336,7 @@ for p = 1:size(plots, 1)
     end
 
     % Finish plot and set formatting
+    set(gca, 'fontsize', 9);
     hold off;
     grid on;
     box on;
@@ -456,6 +459,7 @@ for p = 1:size(plots, 1)
     end
 
     % Finish plot and set formatting
+    set(gca, 'fontsize', 9);
     hold off;
     grid on;
     box on;
@@ -579,6 +583,7 @@ for p = 1:size(plots, 1)
     end
 
     % Finish plot and set formatting
+    set(gca, 'fontsize', 9);
     hold off;
     grid on;
     box on;
