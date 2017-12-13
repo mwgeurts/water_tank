@@ -157,22 +157,26 @@ end
 % If configuration options were provided
 if nargin >= 3 && isstruct(varargin{3}) && isfield(varargin{3}, ...
         'BUILDUP_DAMPER') && isfield(varargin{3}, ...
-        'LEVENBERG_ITERS')
+        'LEVENBERG_ITERS') && isfield(varargin{3}, ...
+        'RMSE_FIT_THRESH')
     
     % Use provided damper
     d = varargin{3}.BUILDUP_DAMPER;
     iter = varargin{3}.LEVENBERG_ITERS;
+    thresh = varargin{3}.RMSE_FIT_THRESH;
 else
     
     % Otherwise use default damper value of 1.15 and 500 iterations
     d = 1.15;
     iter = 500;
+    thresh = 0.003;
 end
 
 % Log action
 if exist('Event', 'file') == 2
     Event(sprintf('Buildup damper set to %0.3f', d));
     Event(sprintf('Number of pertubation iterations set to %i', iter));
+    Event(sprintf('Iteration threshold set to %0.4f', thresh));
 end
 
 %% Fit models
@@ -280,8 +284,8 @@ for i = 1:length(profiles)
                             models{c} = fit;
                         end
                         
-                        % If the RMS error is less than 0.002, break
-                        if fit.RMSE < 0.003
+                        % If the RMS error is less than the threshold
+                        if fit.RMSE < thresh
                             
                             % Log action
                             if exist('Event', 'file') == 2
@@ -337,7 +341,7 @@ for i = 1:length(profiles)
                 
                 % Define initial values
                 source = [2 2 0.05 0.0014 0.000016 0.00000025 ...
-                    profiles{i}(d0,3) -8.4 0.12 1.4 2 2];
+                    profiles{i}(d0,3)*2 -8.4 0.12 1.4 2 2];
                 
                 % Set optimization options
                 opts = statset('nlinfit');
@@ -386,8 +390,8 @@ for i = 1:length(profiles)
                             models{c} = fit;
                         end
                         
-                        % If the RMS error is less than 0.003, break
-                        if fit.RMSE < 0.003
+                        % If the RMS error is less than the threshold
+                        if fit.RMSE < thresh
                             
                             % Log action
                             if exist('Event', 'file') == 2

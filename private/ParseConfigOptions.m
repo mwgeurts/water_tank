@@ -103,3 +103,4 @@ config.ALLOW_DIAGONAL = str2double(config.ALLOW_DIAGONAL);
 % Parse PDD model options
 config.BUILDUP_DAMPER = str2double(config.BUILDUP_DAMPER);
 config.LEVENBERG_ITERS = str2double(config.LEVENBERG_ITERS);
+config.RMSE_FIT_THRESH = str2double(config.RMSE_FIT_THRESH);

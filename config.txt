@@ -161,6 +161,8 @@ ALLOW_DIAGONAL      =   1
 % BUILDUP_DAMPER and LEVENBERG_ITERS are used during PDD model fitting. 
 % BUILDUP_DAMPER sets the power in the buildup term used during photon 
 % fitting, while LEVENBERG_ITERS sets how many random pertubations of the 
-% initial fitting parameters are applied.
+% initial fitting parameters are applied. RMSE_FIT_THRESH defines the RMS
+% threshold below which the iterations are stopped.
 BUILDUP_DAMPER      =   1.15
 LEVENBERG_ITERS     =   500
+RMSE_FIT_THRESH     =   0.003
