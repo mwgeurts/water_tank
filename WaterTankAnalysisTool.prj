@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="1129268765" file="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank/WaterTankAnalysisTool.prj" location="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank" name="WaterTankAnalysisTool" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="2245464056" file="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank/WaterTankAnalysisTool.prj" location="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank" name="WaterTankAnalysisTool" target="target.mlapps" target-name="Package App">
     <param.appname>WaterTankAnalysisTool</param.appname>
     <param.authnamewatermark>Mark Geurts</param.authnamewatermark>
     <param.email>mark.w.geurts@gmail.com</param.email>
@@ -13,7 +13,7 @@ treatment planning system. The tool includes basic processing steps including sh
 data for effective point of measurement, centering, smoothing, normalization, detector 
 convolution, and converting depth-ionization to depth-dose curves.</param.description>
     <param.screenshot />
-    <param.version>1.1.0</param.version>
+    <param.version>1.2.1</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Curve Fitting Toolbox</item>
@@ -49,7 +49,6 @@ convolution, and converting depth-ionization to depth-dose curves.</param.descri
       <file>${MATLAB_ROOT}/toolbox/local/userpath.m</file>
       <file>${PROJECT_ROOT}/Event.m</file>
       <file>${PROJECT_ROOT}/WaterTankAnalysis.fig</file>
-      <file>${PROJECT_ROOT}/gamma/CalcGamma.m</file>
       <file>${PROJECT_ROOT}/private/AddSubModulePaths.m</file>
       <file>${PROJECT_ROOT}/private/BrowseFile.m</file>
       <file>${PROJECT_ROOT}/private/CalcDepthStats.m</file>
@@ -63,6 +62,7 @@ convolution, and converting depth-ionization to depth-dose curves.</param.descri
       <file>${PROJECT_ROOT}/private/ExtractSNC.m</file>
       <file>${PROJECT_ROOT}/private/FWCenter.m</file>
       <file>${PROJECT_ROOT}/private/FWXM.m</file>
+      <file>${PROJECT_ROOT}/private/FitDepthModel.m</file>
       <file>${PROJECT_ROOT}/private/InitializeMenus.m</file>
       <file>${PROJECT_ROOT}/private/LoadReferenceData.m</file>
       <file>${PROJECT_ROOT}/private/LoadVersionInfo.m</file>
@@ -89,9 +89,6 @@ convolution, and converting depth-ionization to depth-dose curves.</param.descri
       <file>${PROJECT_ROOT}/private/UpdateResults.m</file>
       <file>${PROJECT_ROOT}/private/natsort.m</file>
       <file>${PROJECT_ROOT}/private/strnearest.m</file>
-      <file>${PROJECT_ROOT}/snc_extract/AnalyzeProfilerFields.m</file>
-      <file>${PROJECT_ROOT}/snc_extract/ParseSNCprm.m</file>
-      <file>${PROJECT_ROOT}/snc_extract/ParseSNCtxt.m</file>
     </fileset.depfun>
     <fileset.resources />
     <fileset.package />
