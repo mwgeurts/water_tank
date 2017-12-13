@@ -233,12 +233,12 @@ for i = 1:length(profiles)
                 uI = find(profiles{i}(:,3) > 0, 1, 'last');
             
                 % Define initial values
-                source = [1 5e-3 -1e-5 5e-8 -5e-11 1 0.1];
+                source = [1.087 3.3e-3 -1.6e-5 5.9e-8 -7.7e-11 0.65 0.14];
                 
                 % Set optimization options
                 opts = statset('nlinfit');
                 opts.RobustWgtFun = '';
-                opts.MaxIter = 200;
+                opts.MaxIter = 100;
 
                 % Initialize return array
                 models{c} = [];
@@ -281,7 +281,7 @@ for i = 1:length(profiles)
                         end
                         
                         % If the RMS error is less than 0.002, break
-                        if fit.RMSE < 0.002
+                        if fit.RMSE < 0.003
                             
                             % Log action
                             if exist('Event', 'file') == 2
@@ -358,7 +358,8 @@ for i = 1:length(profiles)
                     if j == 1
                         s = source;
                     else
-                        s = source + source .* (rand(1, length(source)) - 0.5) * 2;
+                        s = source + source .* (rand(1, ...
+                            length(source)) - 0.5) * 4;
                     end
                     
                     % Execute fitting in try/catch in case Inf/NaN is found
@@ -385,8 +386,8 @@ for i = 1:length(profiles)
                             models{c} = fit;
                         end
                         
-                        % If the RMS error is less than 0.002, break
-                        if fit.RMSE < 0.002
+                        % If the RMS error is less than 0.003, break
+                        if fit.RMSE < 0.003
                             
                             % Log action
                             if exist('Event', 'file') == 2
@@ -432,6 +433,9 @@ fig = figure('Position', [100 100 1020 500], 'MenuBar', 'none', 'Name', ...
     'PDD Models');
 
 % Create results table
+if isempty(results)
+    results{1,1} = 'No depth profiles were identified';
+end
 uitable('Data', results, 'ColumnName', names, 'Position', ...
     [30 125 475 340], 'RowName', [], 'ColumnEditable', logical(zeros(1, ...
     size(results,2))), 'Units', 'normalized'); %#ok<LOGL>
