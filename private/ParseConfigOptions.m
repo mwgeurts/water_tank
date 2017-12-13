@@ -95,7 +95,11 @@ config.LEVENSHTEIN_THRESH = str2double(config.LEVENSHTEIN_THRESH);
 % Parse center reference flag
 config.CENTER_REFERENCE = str2double(config.CENTER_REFERENCE);
 
-% Parse compression option
+% Parse compression options
 config.COMPRESS_REFERENCE = str2double(config.COMPRESS_REFERENCE);
 config.MASK_REFERENCE = str2double(config.MASK_REFERENCE);
 config.ALLOW_DIAGONAL = str2double(config.ALLOW_DIAGONAL);
+
+% Parse PDD model options
+config.BUILDUP_DAMPER = str2double(config.BUILDUP_DAMPER);
+config.LEVENBERG_ITERS = str2double(config.LEVENBERG_ITERS);

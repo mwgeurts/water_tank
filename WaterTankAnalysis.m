@@ -23,7 +23,7 @@ function varargout = WaterTankAnalysis(varargin)
 
 % Edit the above text to modify the response to help WaterTankAnalysis
 
-% Last Modified by GUIDE v2.5 07-Dec-2017 11:52:45
+% Last Modified by GUIDE v2.5 07-Dec-2017 18:36:09
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 0;
@@ -761,3 +761,17 @@ if ispc && isequal(get(hObject,'BackgroundColor'), ...
         get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function pddmodel_Callback(hObject, ~, handles)
+% hObject    handle to pddmodel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Execute FitDepthModel() using current depth profiles, energy, and config 
+FitDepthModel(handles.processed, handles.reference{get(handles.machine, ...
+    'Value')}.energies{get(handles.energy, 'Value')}.energy, ...
+    handles.config);
+    
+% Update handles structure
+guidata(hObject, handles);

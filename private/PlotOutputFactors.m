@@ -233,7 +233,8 @@ data = data(i,:);
 try
     i = [0.75 2.3 0.5 0.34 0.12];
     model = fit(eqsq, cell2mat(data(:,2)), 'a*x^b/(c^b+x^b)+d*(1-exp(-e*x))', ...
-        'Start', i, 'Lower', 0.1*i, 'Upper', 10*i, 'Robust','Bisquare');
+        'Start', i, 'Lower', 0.1*i, 'Upper', 10*i, 'Robust', 'Bisquare', ...
+        'Display', 'Iter');
     for i = 1:size(data,1)
         data{i,3} = feval(model, eqsq(i));
     end
