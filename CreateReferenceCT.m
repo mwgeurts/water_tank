@@ -1,7 +1,31 @@
+% Create Reference CT DICOM Dataset
+%
+% This script generates a homogeneous phantom CT (0 HU) padded by empty 
+% voxels. The DICOM origin is set to the top (anterior) center of the
+% image. The image size and dimensions are specified below. The resulting
+% DICOM images are saved to the current directory using the format
+% ct_###.dcm.
+%
+% Author: Mark Geurts, mark.w.geurts@gmail.com
+% Copyright (C) 2017 University of Wisconsin Board of Regents
+%
+% This program is free software: you can redistribute it and/or modify it 
+% under the terms of the GNU General Public License as published by the  
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+%
+% This program is distributed in the hope that it will be useful, but 
+% WITHOUT ANY WARRANTY; without even the implied warranty of 
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General 
+% Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License along 
+% with this program. If not, see http://www.gnu.org/licenses/.
+
 % Turn off warnings
 warning('off','all')
 
-% Declare image [X;Y;Z] size and resolution (in mm)
+% Declare image size and resolution (in mm), IEC [X;Z;Y]
 size = [651;401;651];
 res = [1;1;1];
 
@@ -24,10 +48,10 @@ info.AcquisitionDate = datestr(now, 'yyyymmdd');
 info.AcquisitionTime = datestr(now, 'HHMMSS');
 info.ImageType = 'ORIGINAL\PRIMARY\AXIAL';
 info.Manufacturer = ['MATLAB ', version];
-info.ManufacturerModelName = 'CreateCT';
+info.ManufacturerModelName = 'CreateReferenceCT';
 info.SoftwareVersion = '1.0';
 info.SeriesDescription = 'Uniform Phantom';
-info.PatientName = 'ZZUWQA Water Phantom';
+info.PatientName = 'Water Phantom';
 info.PatientID = datestr(now, 'yyyymmdd');
 info.SliceThickness = res(3);
 info.StudyInstanceUID = dicomuid;
@@ -36,7 +60,7 @@ info.FrameOfReferenceUID = dicomuid;
 info.PatientPosition = 'HFS';
 info.ImageOrientationPatient = [1;0;0;0;1;0];
 info.ImagePositionPatient = [   -((size(1)-1)*res(1))/2;
-                                0;
+                                -res(2)/2;
                                 ((size(3)-1)*res(3))/2];
 info.ImagesInAcquisition = size(3);
 info.SamplesPerPixel = 1;
@@ -62,7 +86,7 @@ for i = 1:info.ImagesInAcquisition
     info.InstanceNumber = i;
     
     % Write CT image
-    dicomwrite(uint16(ones(size(2), size(1)) * 1024), ...
-        sprintf('./ct_%03i.dcm', i), info, 'CompressionMode', 'None', ...
-        'CreateMode', 'Create', 'Endian', 'ieee-le');
+    dicomwrite(uint16(padarray(ones(size(2)-2, size(1)-2) * 1024, [1 1], ...
+        0, 'both')),  sprintf('./ct_%03i.dcm', i), info, 'CompressionMode', ...
+        'None', 'CreateMode', 'Create', 'Endian', 'ieee-le');
 end
