@@ -33,6 +33,7 @@ options = {
     'RayStation Physics Export (.csv)'
     'SNC IC Profiler (.prm)'
     'SNC IC Profiler (.txt)'
+    'SNC Water Tank (.sncxml)'
     'Standard Imaging TEMS (.csv)'
     'Standard Imaging DV1D (.csv)'
 };
@@ -113,6 +114,75 @@ switch options{varargin{2}}
             elseif size(data.(n{i}),2) == length(str)
                 data.(n{i}) = data.(n{i})(:,sel);
             end
+        end
+        
+    % SNC Water Tank XML
+    case 'SNC Water Tank (.sncxml)'
+        
+        % Execute ParseSNCxml
+        data = ParseSNCxml('', varargin{1});
+        
+        % Loop through profiles and generate selection menu
+        str = cell(1, length(data.Scans));
+        for i = 1:length(data.Scans)
+            
+            % Set description based on orientation, depth
+            str{i} = [strtrim(data.Scans{i}.Layers{1}.Scan), ', ', ...
+                data.Scans{i}.Layers{1}.Details];
+        end
+        
+        % Open dialog box to allow user to select files
+        [sel, ok] = listdlg('PromptString','Select which profiles to load:',...
+                'SelectionMode', 'multiple', 'ListString',str, ...
+                'InitialValue', 1:length(str), 'Name', 'Select Profiles', ...
+                'ListSize', [400 300]);
+        
+        % If user clicked cancel, use defaults
+        if ok == 0
+            sel = 1:length(str);
+        end
+        
+        % Create profiles array of selected results, converting to mm
+        data.profiles = cell(1, length(sel));
+        for i = 1:length(sel)
+            data.profiles{i} = horzcat(...
+                data.Scans{sel(i)}.Layers{1}.Readings.X * 10, ...
+                data.Scans{sel(i)}.Layers{1}.Readings.Y * 10, ...
+                data.Scans{sel(i)}.Layers{1}.Readings.Z * 10, ...
+                data.Scans{sel(i)}.Layers{1}.Readings.RelativeDose);
+        end
+        
+        % Set machine, energy, etc. using Radiation Device and first
+        % selected scan (these fields are used later to match with the
+        % correct reference dose volume)
+        for i = 1:length(data.RadiationDevices)
+            if strcmp(data.RadiationDevices{i}.UniqueId, ...
+                    data.Scans{sel(1)}.RadiationDevice)
+                data.machine{1} = data.RadiationDevices{i}.Name;
+                break;
+            end
+        end
+        data.energy{1} = data.Scans{sel(1)}.Energy;
+        data.ssd(1) = data.Scans{sel(1)}.SourceSurfaceDistance;
+        
+        % Set collimator size based on MLC (if set), otherwise Jaws,
+        % otherwise assume symmetric field size based on X/Y
+        if ~isnan(data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorX1)
+            data.colllimator(1,1:4) = ...
+                [data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorX1
+                data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorX2 
+                data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorY1 
+                data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorY2] * 10;
+        elseif ~isnan(data.Scans{sel(1)}.FieldSize.JawsX1)
+            data.colllimator(1,1:4) = [data.Scans{sel(1)}.FieldSize.JawsX1
+                data.Scans{sel(1)}.FieldSize.JawsX2 
+                data.Scans{sel(1)}.FieldSize.JawsY1
+                data.Scans{sel(1)}.FieldSize.JawsY2] * 10;
+        elseif ~isnan(data.Scans{sel(1)}.FieldSize.X)
+            data.colllimator(1,1:4) = [-data.Scans{sel(1)}.FieldSize.X/2 
+                data.Scans{sel(1)}.FieldSize.X/2 
+                -data.Scans{sel(1)}.FieldSize.Y/2 
+                data.Scans{sel(1)}.FieldSize.Y/2] * 10;
         end
         
     % IC Profiler PRM
