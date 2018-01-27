@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="213007937" file="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank/WaterTankAnalysisTool.prj" location="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank" name="WaterTankAnalysisTool" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="1659567069" file="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank/WaterTankAnalysisTool.prj" location="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank" name="WaterTankAnalysisTool" target="target.mlapps" target-name="Package App">
     <param.appname>WaterTankAnalysisTool</param.appname>
     <param.authnamewatermark>Mark Geurts</param.authnamewatermark>
     <param.email>mark.w.geurts@gmail.com</param.email>
@@ -13,7 +13,7 @@ treatment planning system. The tool includes basic processing steps including sh
 data for effective point of measurement, centering, smoothing, normalization, detector 
 convolution, and converting depth-ionization to depth-dose curves.</param.description>
     <param.screenshot />
-    <param.version>1.2.3</param.version>
+    <param.version>1.2.4</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Curve Fitting Toolbox</item>
@@ -73,6 +73,7 @@ convolution, and converting depth-ionization to depth-dose curves.</param.descri
       <file>${PROJECT_ROOT}/private/ParseDetectorFile.m</file>
       <file>${PROJECT_ROOT}/private/ParseIBArfb.m</file>
       <file>${PROJECT_ROOT}/private/ParseIBAtxt.m</file>
+      <file>${PROJECT_ROOT}/private/ParsePTWmcc.m</file>
       <file>${PROJECT_ROOT}/private/ParseProfile.m</file>
       <file>${PROJECT_ROOT}/private/ParseRScsv.m</file>
       <file>${PROJECT_ROOT}/private/ParseTEMScsv.m</file>

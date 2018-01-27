@@ -30,6 +30,7 @@ function data = ParseProfile(varargin)
 options = {
     'OmniPro RFA300 ASCII BDS (.txt, .asc)'
     'OmniPro V6 RFB (.rfb)'
+    'PTW MEPHYSTO ASCII (.mcc)'
     'RayStation Physics Export (.csv)'
     'SNC IC Profiler (.prm)'
     'SNC IC Profiler (.txt)'
@@ -116,6 +117,39 @@ switch options{varargin{2}}
             end
         end
         
+    % PTW mcc
+    case 'PTW MEPHYSTO ASCII (.mcc)'
+        
+        % Execute ParsePTWmcc
+        data = ParsePTWmcc('', varargin{1});
+        
+        % Store linac to machine
+        if isfield(data, 'linac')
+            data.machine = data.linac;
+        end
+        
+        % Update SSD to be in cm
+        if isfield(data, 'ssd')
+            data.ssd = data.ssd / 10;
+        end
+        
+        % Update energy to be a cell, based on modality
+        if isfield(data, 'energy') && isfield(data, 'modality')
+            if contains(data.modality{1}, 'X')
+                data.energy = cell({sprintf('%0.0f MV', data.energy(1))});
+            else
+                data.energy = cell({sprintf('%0.0f MeV', data.energy(1))});
+            end
+        end
+        
+        % Create collimator based on field values
+        if isfield(data, 'field_inplane') && isfield(data, 'field_crossplane')
+            data.collimator(1,1:4) = [-data.field_crossplane(1)/20 
+                data.field_crossplane(1)/20  
+                -data.field_inplane(1)/20  
+                data.field_inplane(1)/20 ] * 10;
+        end
+        
     % SNC Water Tank XML
     case 'SNC Water Tank (.sncxml)'
         
@@ -172,17 +206,58 @@ switch options{varargin{2}}
                 [data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorX1
                 data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorX2 
                 data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorY1 
-                data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorY2] * 10;
+                data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorY2];
         elseif ~isnan(data.Scans{sel(1)}.FieldSize.JawsX1)
             data.colllimator(1,1:4) = [data.Scans{sel(1)}.FieldSize.JawsX1
                 data.Scans{sel(1)}.FieldSize.JawsX2 
                 data.Scans{sel(1)}.FieldSize.JawsY1
-                data.Scans{sel(1)}.FieldSize.JawsY2] * 10;
+                data.Scans{sel(1)}.FieldSize.JawsY2];
         elseif ~isnan(data.Scans{sel(1)}.FieldSize.X)
             data.colllimator(1,1:4) = [-data.Scans{sel(1)}.FieldSize.X/2 
                 data.Scans{sel(1)}.FieldSize.X/2 
                 -data.Scans{sel(1)}.FieldSize.Y/2 
-                data.Scans{sel(1)}.FieldSize.Y/2] * 10;
+                data.Scans{sel(1)}.FieldSize.Y/2];
+        end
+        
+        % Loop through each profile
+        for i = 1:length(data.profiles)
+
+            % If signal is negative (negative bias), flip it
+            if mean(data.profiles{i}(:,4)) < 0
+
+                % Log event
+                if exist('Event', 'file') == 2
+                    Event('Inverting negative signal (positive bias)');
+                end
+
+                % Store negative value
+                data.profiles{i}(:,4) = -data.profiles{i}(:,4);
+            end
+
+            % If depth is negative (given by a negative mean value), flip
+            % the dimension so that depths are down
+            if mean(data.profiles{i}(:,3)) < 0
+
+                % Log event
+                if exist('Event', 'file') == 2
+                    Event('Flipping IEC Z axis (positive down)');
+                end
+
+                % Store negative value
+                data.profiles{i}(:,3) = -data.profiles{i}(:,3);
+            end
+
+            % If depth changes (i.e. PDD), sort descending
+            if (max(data.profiles{i}(:,3)) - min(data.profiles{i}(:,3))) > 1
+
+                % Log event
+                if exist('Event', 'file') == 2
+                    Event('Sorting depth profile by descending IEC Z value');
+                end
+
+                % Store sorted table in descending order
+                data.profiles{i} = flip(sortrows(data.profiles{i}, 3), 1);
+            end
         end
         
     % IC Profiler PRM
