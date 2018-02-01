@@ -132,6 +132,10 @@ LEVENSHTEIN_THRESH  =   15
 % centering option is selected. Generally this should be left disabled (0).
 CENTER_REFERENCE    =   0
 
+% BREM_METHOD is a string defining how the bremsstrahlung tail is defined 
+% for electron PDDs. The options are LINEAR_FIT or LAST_VALUE
+BREM_METHOD         =   LINEAR_FIT
+
 % PLOT_SAVE_FORMAT is the file format used when exporting the plots. The 
 % following options are available: FIG, M, PNG, JPG, EPS, PDF, BMP, EMF, 
 % PBM, PCX, PGM, PPM, and TIF. See MATLAB's saveas documentation for more 

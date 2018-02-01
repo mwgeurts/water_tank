@@ -75,8 +75,8 @@ for i = 1:length(profiles)
         c = c + 1;
         
         % Calculate Dmax
-        data{1,c} = sprintf('%0.1f mm', profiles{i}(find(profiles{i}(:,4) == ...
-            max(profiles{i}(:,4)), 1, 'first'),3));
+        data{1,c} = sprintf('%0.1f mm', mean(profiles{i}(profiles{i}(:,4) ...
+            == max(profiles{i}(:,4)),3)));
         
         % Calculate Reference Dmax
         data{2,c} = sprintf('%0.1f mm', profiles{i}(find(profiles{i}(:,5) == ...
@@ -150,15 +150,35 @@ for i = 1:length(profiles)
             % Calculate the R50 difference
             data{5,c} = sprintf('%0.1f mm', M - R);
             
-            % Calculate Rp
-            I = find(profiles{i}(lI:uI,4) < 0.5 * max(profiles{i}(:,4)), 1, 'last');
-            Rp = interp1(u, profiles{i}(lI+idx-1,3), 0.5 * ...
-                max(profiles{i}(lI:uI,4))) - (0.5 * max(profiles{i}(:,4)) - ...
-                min(profiles{i}(:,4))) ...
-                * mean(diff(profiles{i}(lI+I-3:lI+I+3,3))) / ...
-                mean(diff(profiles{i}(lI+I-3:lI+I+3,4)));
-            [~, lI] = min(abs(profiles{i}(:,3) - Rp));
+            % If sufficient data exists to estimate bremsstrahlung tail
+            if nargin > 2 && isfield(varargin{3}, 'BREM_METHOD') && ...
+                    strcmp('LINEAR_FIT', varargin{3}.BREM_METHOD) && lIr > 3
+                
+                % Fit bremsstrahlung tail to linear model
+                b = fit(profiles{i}(1:lIr,3), profiles{i}(1:lIr,4), 'poly1', ...
+                    'Weights', max(profiles{i}(1:lIr,4)) - ...
+                    profiles{i}(1:lIr,4));
+                b = coeffvalues(b);
+            
+            % Otherwise, assume bremsstrahlung equals the last datapoint
+            else
+                b = [0 profiles{i}(1,4)];
+            end
+            
+            % Calculate Rp (the tangent slope is averaged over 1 mm to
+            % reduce the dependence on noise)
+            [~, I] = max(abs(diff(profiles{i}(lIr:uIr,4)) ./ ...
+                diff(profiles{i}(lIr:uIr,3))));
+            xl = find(profiles{i}(:,3) < ...
+                profiles{i}(lIr+I,3) + 0.5, 1, 'first');
+            xr = find(profiles{i}(:,3) < ...
+                profiles{i}(lIr+I,3) - 0.5, 1, 'first');
+            p = polyfit(profiles{i}(xl:xr+1,3), profiles{i}(xl:xr+1,4), 1);
+            Rp = roots(p-b);
             data{6,c} = sprintf('%0.1f mm', Rp);
+            
+            % Update lower index to use Rp
+            [~, lI] = min(abs(profiles{i}(:,3) - Rp));
         end
 
         % Calculate RMS error
