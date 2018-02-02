@@ -36,7 +36,7 @@ for i = 1:length(profiles)
 
         % Compute center
         c = FWXM(sqrt(profiles{i}(:,1).^2 + profiles{i}(:,2).^2) .* ...
-            sign(profiles{i}(:,1)), profiles{i}(:,4), x);
+            sign(profiles{i}(:,2)), profiles{i}(:,4), x);
 
         % Shift X by sine
         profiles{i}(:,1) = profiles{i}(:,1) - c * sin(a);
