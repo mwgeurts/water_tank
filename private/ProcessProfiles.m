@@ -121,7 +121,7 @@ if isfield(handles, 'data') && ~isempty(handles.data)
     if ~isempty(regexpi(handles.reference{get(handles.machine, ...
             'Value')}.energies{get(handles.energy, 'Value')}.energy, 'e'))
         handles.processed = ConvertDepthDose(handles.processed, ...
-            get(handles.pdi, 'Value'));
+            get(handles.pdi, 'Value'), handles.config, rcav);
     end
     
     % Update waitbar
