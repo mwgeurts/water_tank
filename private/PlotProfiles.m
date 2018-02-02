@@ -86,7 +86,7 @@ for p = 1:size(plots, 1)
             % Plot measured profile
             yyaxis left;
             plot(handles.processed{i}(:,1), handles.processed{i}(:,4), '-', ...
-                'Color', cmap(c,:));
+                'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Hold remaining plots
             if c == 1
@@ -98,7 +98,7 @@ for p = 1:size(plots, 1)
 
             % Plot reference profile
             plot(handles.processed{i}(:,1), handles.processed{i}(:,5), '--', ...
-                'Color', cmap(c,:));
+                'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Plot Gamma
             yyaxis right;
@@ -106,7 +106,7 @@ for p = 1:size(plots, 1)
                 hold off;
             end
             plot(handles.processed{i}(:,1), handles.processed{i}(:,6), ':', ...
-                'Color', cmap(c,:));
+                'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Hold remaining plots
             if c == 1
@@ -197,7 +197,7 @@ for p = 1:size(plots, 1)
             % Plot measured profile
             yyaxis left;
             plot(handles.processed{i}(:,2), handles.processed{i}(:,4), '-', ...
-                'Color', cmap(c,:));
+                'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Hold remaining plots
             if c == 1
@@ -209,7 +209,7 @@ for p = 1:size(plots, 1)
 
             % Plot reference profile
             plot(handles.processed{i}(:,2), handles.processed{i}(:,5), '--', ...
-                'Color', cmap(c,:));
+                'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Plot Gamma
             yyaxis right;
@@ -217,7 +217,7 @@ for p = 1:size(plots, 1)
                 hold off;
             end
             plot(handles.processed{i}(:,2), handles.processed{i}(:,6), ':', ...
-                'Color', cmap(c,:));
+                'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Hold remaining plots
             if c == 1
@@ -306,7 +306,7 @@ for p = 1:size(plots, 1)
             % Plot measured profile
             yyaxis left;
             plot(handles.processed{i}(:,3), handles.processed{i}(:,4), '-', ...
-                'Color', cmap(c,:));
+                'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Hold remaining plots
             if c == 1
@@ -318,7 +318,7 @@ for p = 1:size(plots, 1)
 
             % Plot reference profile
             plot(handles.processed{i}(:,3), handles.processed{i}(:,5), '--', ...
-                'Color', cmap(c,:));
+                'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Plot Gamma
             yyaxis right;
@@ -326,7 +326,7 @@ for p = 1:size(plots, 1)
                 hold off;
             end
             plot(handles.processed{i}(:,3), handles.processed{i}(:,6), ':', ...
-                'Color', cmap(c,:));
+                'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Hold remaining plots
             if c == 1
@@ -421,7 +421,7 @@ for p = 1:size(plots, 1)
             plot(sqrt(handles.processed{i}(:,1).^2 + ...
                 handles.processed{i}(:,2).^2) .* ...
                 sign(handles.processed{i}(:,1)), ...
-                handles.processed{i}(:,4), '-', 'Color', cmap(c,:));
+                handles.processed{i}(:,4), '-', 'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Hold remaining plots
             if c == 1
@@ -439,7 +439,7 @@ for p = 1:size(plots, 1)
             plot(sqrt(handles.processed{i}(:,1).^2 + ...
                 handles.processed{i}(:,2).^2) .* ...
                 sign(handles.processed{i}(:,1)), ...
-                handles.processed{i}(:,5), '--', 'Color', cmap(c,:));
+                handles.processed{i}(:,5), '--', 'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Plot Gamma
             yyaxis right;
@@ -449,7 +449,7 @@ for p = 1:size(plots, 1)
             plot(sqrt(handles.processed{i}(:,1).^2 + ...
                 handles.processed{i}(:,2).^2) .* ...
                 sign(handles.processed{i}(:,1)), ...
-                handles.processed{i}(:,6), ':', 'Color', cmap(c,:));
+                handles.processed{i}(:,6), ':', 'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Hold remaining plots
             if c == 1
@@ -545,7 +545,7 @@ for p = 1:size(plots, 1)
             plot(sqrt(handles.processed{i}(:,1).^2 + ...
                 handles.processed{i}(:,2).^2) .* ...
                 sign(handles.processed{i}(:,1)), ...
-                handles.processed{i}(:,4), '-', 'Color', cmap(c,:));
+                handles.processed{i}(:,4), '-', 'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Hold remaining plots
             if c == 1
@@ -563,7 +563,7 @@ for p = 1:size(plots, 1)
             plot(sqrt(handles.processed{i}(:,1).^2 + ...
                 handles.processed{i}(:,2).^2) .* ...
                 sign(handles.processed{i}(:,1)), ...
-                handles.processed{i}(:,5), '--', 'Color', cmap(c,:));
+                handles.processed{i}(:,5), '--', 'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Plot Gamma
             yyaxis right;
@@ -573,7 +573,7 @@ for p = 1:size(plots, 1)
             plot(sqrt(handles.processed{i}(:,1).^2 + ...
                 handles.processed{i}(:,2).^2) .* ...
                 sign(handles.processed{i}(:,1)), ...
-                handles.processed{i}(:,6), ':', 'Color', cmap(c,:));
+                handles.processed{i}(:,6), ':', 'Color', cmap(mod(c-1, size(cmap,1))+1,:));
 
             % Hold remaining plots
             if c == 1
