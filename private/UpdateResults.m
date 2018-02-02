@@ -49,7 +49,7 @@ if isfield(handles, 'processed') && ~isempty(handles.processed)
 
     % Execute CalcDepthStats()
     set(handles.zstats, 'data', CalcDepthStats(handles.reference{...
-        get(handles.machine, 'Value')}.energies{get(...
-        handles.energy, 'Value')}.energy, handles.processed));
+        get(handles.machine, 'Value')}.energies{get(handles.energy, ...
+        'Value')}.energy, handles.processed, handles.config));
     
 end
