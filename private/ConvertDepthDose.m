@@ -26,6 +26,8 @@ options = {
     'None'
     'AAPM TG-25'
     'AAPM TG-51'
+    'DIN 6800-2'
+    'IAEA TRS-398'
 };
 
 % If no input arguments are provided
@@ -81,7 +83,7 @@ switch varargin{2}
                 Event(sprintf(['Removed %i duplicate signal values for R50 ', ...
                     'interpolation'], uI - lI - length(u) + 1));
 
-                % Calculate I50
+                % Calculate I50 in cm
                 I50 = interp1(u, profiles{i}(lI+idx-1,3), 0.5 * ...
                     max(profiles{i}(lI:uI,4)), 'linear')/10;
                 Event(sprintf('I50 = %0.2f cm', I50));
@@ -239,5 +241,159 @@ switch varargin{2}
         end 
         
         % Clear temporary variables
-        clear i I50 R50 lI uI u idx b E I meshe meshr p Rp tablev xl xr;
+        clear i I50 R50 lI uI u idx b E I meshd meshe meshr p Rp tablev ...
+            tableii xl xr;
+        
+    % DIN 6800-2
+    case 4
+        
+        % Start with raw profile
+        profiles = varargin{1};
+        
+        % Log action
+        Event(['Converting electron beam ionization to dose ', ...
+            'according to DIN 6800-2']);
+        
+        % Loop through each profile
+        for i = 1:length(profiles)
+        
+            % If Z changes, this is an depth profile
+            if (max(profiles{i}(:,3)) - min(profiles{i}(:,3))) > 1
+
+                % Find the index of Dmax
+                uI = find(profiles{i}(:,4) == ...
+                    max(profiles{i}(:,4)), 1, 'first');
+
+                % Find the index of 5% of Dmax
+                lI = find(profiles{i}(:,4) > 0.05 * ...
+                    max(profiles{i}(:,4)), 1, 'first');
+                
+                % Remove duplicate points (they will cause interp1 to fail)
+                [u, idx, ~] = unique(profiles{i}(lI:uI,4));
+                Event(sprintf(['Removed %i duplicate signal values for R50 ', ...
+                    'interpolation'], uI - lI - length(u) + 1));
+
+                % Calculate I50 in cm
+                I50 = interp1(u, profiles{i}(lI+idx-1,3), 0.5 * ...
+                    max(profiles{i}(lI:uI,4)), 'linear')/10;
+                Event(sprintf('I50 = %0.2f cm', I50));
+                
+                % Compute R50 in cm
+                if I50 <= 100
+                    Event('I50 < 10 cm, using 1.029 * I50 - 0.06');
+                    R50 = 1.029 * I50 - 0.06;
+                else
+                    Event('I50 > 10 cm, using 1.059 * I50 - 0.37');
+                    R50 = 1.059 * I50 - 0.37;
+                end
+                Event(sprintf('R50 = %0.2f cm', R50));
+                
+                % Find range of indices to apply correction (0.02 to 1.2)
+                lI = find(profiles{i}(:,3) / (10 * R50) < 1.2, 1, 'first');
+                uI = find(profiles{i}(:,3) / (10 * R50) > 0.02, 1, 'last');
+                Event(sprintf('2%% to 120%% R50 index range = [%i %i]', ...
+                    lI, uI));
+
+                % Scale depth profile by Burns et al. empirical stopping
+                % power ratio fit
+                Event('Applying Burns empirical stopping power ratio model');
+                profiles{i}(lI:uI,4) = profiles{i}(lI:uI,4) .* (1.0752 - ...
+                    0.50867 * log(R50) + 0.08867 * log(R50)^2 - 0.08402 * ...
+                    profiles{i}(lI:uI,3)/(10 * R50)) ./ (1 - 0.42806 * log(R50) ...
+                    + 0.064627 * log(R50)^2 + 0.003085 * log(R50)^3 - 0.12460 * ...
+                    profiles{i}(lI:uI,3)/(10 * R50)); 
+                
+                % If a cavity radius is provided and within range
+                if nargin > 3 && isnumeric(varargin{4})
+                
+                    % Log action
+                    Event(sprintf(['Calculating Prepl assuming cylindrical ', ...
+                        'chamber with radius = %0.3f cm'], varargin{4}/10));
+                    
+                    % Calculate Prepl from fitted equation
+                    profiles{i}(:,4) = profiles{i}(:,4) .* (1 - ...
+                        0.02155 * varargin{4}/10 * exp(-0.2525 * R50 * ...
+                        max(1 - profiles{i}(:,3)/(1.271 * R50 - 0.23), 0)));
+                    
+                % Otherwise Rcav is invalid
+                else
+                    Event(['Rcav is not specified or out of range; ', ...
+                        'Prepl will not be applied'], 'WARN');
+                end
+            end
+        end
+        
+        % Clear temporary variables
+        clear i I50 R50 lI uI u idx;
+        
+    % IAEA TRS-398
+    case 5
+        
+        % Start with raw profile
+        profiles = varargin{1};
+        
+        % Log action
+        Event(['Converting electron beam ionization to dose ', ...
+            'according to IAEA TRS-398']);
+        
+        % Loop through each profile
+        for i = 1:length(profiles)
+        
+            % If Z changes, this is an depth profile
+            if (max(profiles{i}(:,3)) - min(profiles{i}(:,3))) > 1
+
+                % Find the index of Dmax
+                uI = find(profiles{i}(:,4) == ...
+                    max(profiles{i}(:,4)), 1, 'first');
+
+                % Find the index of 5% of Dmax
+                lI = find(profiles{i}(:,4) > 0.05 * ...
+                    max(profiles{i}(:,4)), 1, 'first');
+                
+                % Remove duplicate points (they will cause interp1 to fail)
+                [u, idx, ~] = unique(profiles{i}(lI:uI,4));
+                Event(sprintf(['Removed %i duplicate signal values for R50 ', ...
+                    'interpolation'], uI - lI - length(u) + 1));
+
+                % Calculate I50 in cm
+                I50 = interp1(u, profiles{i}(lI+idx-1,3), 0.5 * ...
+                    max(profiles{i}(lI:uI,4)), 'linear')/10;
+                Event(sprintf('I50 = %0.2f cm', I50));
+                
+                % Compute R50 in cm
+                if I50 <= 100
+                    Event('I50 < 10 cm, using 1.029 * I50 - 0.06');
+                    R50 = 1.029 * I50 - 0.06;
+                else
+                    Event('I50 > 10 cm, using 1.059 * I50 - 0.37');
+                    R50 = 1.059 * I50 - 0.37;
+                end
+                Event(sprintf('R50 = %0.2f cm', R50));
+                
+                % Find range of indices to apply correction (0.02 to 1.2)
+                lI = find(profiles{i}(:,3) / (10 * R50) < 1.2, 1, 'first');
+                uI = find(profiles{i}(:,3) / (10 * R50) > 0.02, 1, 'last');
+                Event(sprintf('2%% to 120%% R50 index range = [%i %i]', ...
+                    lI, uI));
+
+                % Scale depth profile by Burns et al. empirical stopping
+                % power ratio fit
+                Event('Applying Burns empirical stopping power ratio model');
+                profiles{i}(lI:uI,4) = profiles{i}(lI:uI,4) .* (1.0752 - ...
+                    0.50867 * log(R50) + 0.08867 * log(R50)^2 - 0.08402 * ...
+                    profiles{i}(lI:uI,3)/(10 * R50)) ./ (1 - 0.42806 * log(R50) ...
+                    + 0.064627 * log(R50)^2 + 0.003085 * log(R50)^3 - 0.12460 * ...
+                    profiles{i}(lI:uI,3)/(10 * R50)); 
+                
+                % If a cavity radius is provided, this is a cylindrical
+                % chamber
+                if nargin > 3 && isnumeric(varargin{4}) && varargin{4} > 1
+                    Event(['IAEA TRS-398 does not recommend using ', ...
+                        'cylindrical chambers for electron beams'], 'WARN');
+                end
+            end
+        end
+        
+        % Clear temporary variables
+        clear i I50 R50 lI uI u idx;
 end
