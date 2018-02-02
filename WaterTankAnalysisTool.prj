@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="1659567069" file="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank/WaterTankAnalysisTool.prj" location="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank" name="WaterTankAnalysisTool" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="4202608304" file="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank/WaterTankAnalysisTool.prj" location="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank" name="WaterTankAnalysisTool" target="target.mlapps" target-name="Package App">
     <param.appname>WaterTankAnalysisTool</param.appname>
     <param.authnamewatermark>Mark Geurts</param.authnamewatermark>
     <param.email>mark.w.geurts@gmail.com</param.email>
@@ -7,13 +7,9 @@
     <param.icon />
     <param.icons />
     <param.summary>Water tank scan data to DICOM RT Dose comparison tool</param.summary>
-    <param.description>The Water Tank Analysis Tool is a standalone GUI written in MATLAB that can be used to 
-compare radiotherapy water tank scan data to DICOM RT Dose volumes exported from the 
-treatment planning system. The tool includes basic processing steps including shifting 
-data for effective point of measurement, centering, smoothing, normalization, detector 
-convolution, and converting depth-ionization to depth-dose curves.</param.description>
+    <param.description>The Water Tank Analysis Tool is a standalone GUI written in MATLAB that can be used to compare radiotherapy water tank scan data to DICOM RT Dose volumes exported from the treatment planning system. The tool includes basic processing steps including shifting data for effective point of measurement, centering, smoothing, normalization, detector convolution, and converting depth-ionization to depth-dose curves.</param.description>
     <param.screenshot />
-    <param.version>1.2.4</param.version>
+    <param.version>1.2.5</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Curve Fitting Toolbox</item>
@@ -77,6 +73,7 @@ convolution, and converting depth-ionization to depth-dose curves.</param.descri
       <file>${PROJECT_ROOT}/private/ParseProfile.m</file>
       <file>${PROJECT_ROOT}/private/ParseRScsv.m</file>
       <file>${PROJECT_ROOT}/private/ParseTEMScsv.m</file>
+      <file>${PROJECT_ROOT}/private/ParseW2CAD.m</file>
       <file>${PROJECT_ROOT}/private/PlotOutputFactors.m</file>
       <file>${PROJECT_ROOT}/private/PlotProfiles.m</file>
       <file>${PROJECT_ROOT}/private/ProcessProfiles.m</file>
@@ -153,7 +150,7 @@ convolution, and converting depth-ionization to depth-dose curves.</param.descri
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>10.13.2</osver>
+      <osver>10.13.3</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>maci64</arch>
