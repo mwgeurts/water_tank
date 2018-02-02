@@ -25,7 +25,7 @@ DEFAULT_EPOM        =   1
 % DEFAULT_PDI is the index of the PDI to PDD conversion option that is 
 % selected when the application is loaded. See ConvertDepthDose for a list
 % of available options. A value of 1 will default to no PDD conversion.
-DEFAULT_PDI         =   2
+DEFAULT_PDI         =   3
 
 % DEFAULT_NORMALIZE is the index of the normalization option that is 
 % selected when the application is loaded. See ScaleProfiles for a list of 
