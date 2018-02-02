@@ -180,12 +180,12 @@ for i = 1:length(profiles)
             
             % If sufficient data exists to estimate bremsstrahlung tail
             if nargin > 2 && isfield(varargin{3}, 'BREM_METHOD') && ...
-                    strcmp('LINEAR_FIT', varargin{3}.BREM_METHOD) && lIr > 3
+                    strcmp('LINEAR_FIT', varargin{3}.BREM_METHOD) && lI > 3
                 
                 % Fit bremsstrahlung tail to linear model
-                b = fit(profiles{i}(1:lIr,3), profiles{i}(1:lIr,4), 'poly1', ...
-                    'Weights', max(profiles{i}(1:lIr,4)) - ...
-                    profiles{i}(1:lIr,4));
+                b = fit(profiles{i}(1:lI,3), profiles{i}(1:lI,4), 'poly1', ...
+                    'Weights', max(profiles{i}(1:lI,4)) - ...
+                    profiles{i}(1:lI,4));
                 b = coeffvalues(b);
                 Event(sprintf(['Bremsstrahlung modeled from ', ...
                     'linear fit = [%g %g]'], b));
@@ -199,12 +199,12 @@ for i = 1:length(profiles)
             
             % Calculate Rp (the tangent slope is averaged over +/- 1 mm to
             % reduce the dependence on noise)
-            [~, I] = max(abs(diff(profiles{i}(lIr:uIr,4)) ./ ...
-                diff(profiles{i}(lIr:uIr,3))));
+            [~, I] = max(abs(diff(profiles{i}(lI:uI,4)) ./ ...
+                diff(profiles{i}(lI:uI,3))));
             xl = find(profiles{i}(:,3) < ...
-                profiles{i}(lIr+I,3) + 2, 1, 'first');
+                profiles{i}(lI+I,3) + 2, 1, 'first');
             xr = find(profiles{i}(:,3) < ...
-                profiles{i}(lIr+I,3) - 2, 1, 'first');
+                profiles{i}(lI+I,3) - 2, 1, 'first');
             p = polyfit(profiles{i}(xl:xr+1,3), profiles{i}(xl:xr+1,4), 1);
             Event(sprintf('Rp tangent fit coefficients = [%g %g]', p));
             Rp = roots(p-b);
