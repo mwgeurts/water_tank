@@ -28,6 +28,7 @@ function data = ParseProfile(varargin)
 
 % Specify options and order
 options = {
+    'Eclipse w2CAD (.asc)'
     'OmniPro RFA300 ASCII BDS (.txt, .asc)'
     'OmniPro V6 RFB (.rfb)'
     'PTW MEPHYSTO ASCII (.mcc)'
@@ -337,6 +338,79 @@ switch options{varargin{2}}
                 data.(n{i}) = data.(n{i})(:,sel);
             end
         end
+     
+    % Eclipse w2CAD
+    case 'Eclipse w2CAD (.asc)'
+        
+        % Execute ParseW2CAD
+        data = ParseW2CAD('', varargin{1});
+        
+        % Loop through profiles and generate selection menu
+        str = cell(1, length(data.profiles));
+        for i = 1:length(data.profiles)
+            
+            % If axis, field, and depth exists
+            if isfield(data, 'axis') && length(data.axis) >= i && ...
+                    isfield(data, 'field') && size(data.field,1) >= i && ...
+                    isfield(data, 'depth') && length(data.depth) >= i && ...
+                    data.depth(i) > 0
+                
+                % Set description based on orientation, depth, field size
+                str{i} = sprintf('%s Profile: %0.1f cm, %0.0fx%0.0f', ...
+                    data.axis{i}, data.depth(i), data.field(i,1), ...
+                    data.field(i,2));
+             
+            % If only axis and field exists
+            elseif isfield(data, 'axis') && length(data.axis) >= i && ...
+                    isfield(data, 'field') && size(data.field,1) >= i
+                
+                % Set description based on orientation, field size
+                str{i} = sprintf('%s Profile: %0.0fx%0.0f', ...
+                    data.axis{i}, data.field(i,1), ...
+                    data.field(i,2));
+               
+            % If type and field exists
+            elseif isfield(data, 'type') && length(data.type) >= i && ...
+                    isfield(data, 'field') && size(data.field,1) >= i
+                
+                % Set description based on orientation, field size
+                str{i} = sprintf('%s: %0.0fx%0.0f', ...
+                    data.type{i}, data.field(i,1), ...
+                    data.field(i,2));
+              
+            % Otherwise, use a generic name
+            else
+                str{i} = sprintf('Profile %i', i);
+            end
+            
+            % Create collimator field based on field values
+            data.collimator(i,1:4) = [-data.field(i, 1)/2 
+                                       data.field(i, 1)/2  
+                                      -data.field(i, 2)/2  
+                                       data.field(i, 2)/2];
+        end
+        
+        % Open dialog box to allow user to select files
+        [sel, ok] = listdlg('PromptString','Select which profiles to load:',...
+                'SelectionMode', 'multiple', 'ListString',str, ...
+                'InitialValue', 1:length(str), 'Name', 'Select Profiles', ...
+                'ListSize', [400 300]);
+        
+        % If user clicked cancel, use defaults
+        if ok == 0
+            sel = 1:length(str);
+        end
+        
+        % Remove unselected profiles
+        n = fieldnames(data);
+        for i = 1:length(n)
+            if size(data.(n{i}),1) == length(str)
+                data.(n{i}) = data.(n{i})(sel,:);
+            elseif size(data.(n{i}),2) == length(str)
+                data.(n{i}) = data.(n{i})(:,sel);
+            end
+        end
+
 end
 
 % Log number of profiles
