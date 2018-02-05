@@ -24,7 +24,8 @@ Once installed, edit the config file `REFERENCE_PATH` option to point the tool t
 containing DICOM RT DOSE files exported from the treatment planning system. The files 
 must be stored in the following folder and file naming scheme. The tool will use the 
 machine, energy, SSD, and field size to auto-match loaded scan profiles to the correct 
-reference dataset.
+reference dataset. The MATLAB App package includes a few TrueBeam 6 MV open fields 
+calculated in RayStation for demonstration purposes.
 
 ```
 Machine Name
