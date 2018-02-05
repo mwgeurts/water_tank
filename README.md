@@ -1,13 +1,13 @@
-## Water Tank Analysis Tool
+## Water Tank TPS Comparison Tool
 
 by Mark Geurts <mark.w.geurts@gmail.com>
 <br>Copyright &copy; 2017, University of Wisconsin Board of Regents
 
 ## Description
 
-The Water Tank Analysis Tool is a standalone GUI written in MATLAB&reg; that can be used
-to compare radiotherapy water tank scan data to DICOM RT Dose volumes exported from the 
-treatment planning system. The tool includes basic processing steps including shifting 
+The Water Tank TPS Comparison Tool is a standalone GUI written in MATLAB&reg; that can be 
+used to compare radiotherapy water tank scan data to DICOM RT Dose volumes exported from  
+the treatment planning system. The tool includes basic processing steps including shifting 
 data for effective point of measurement, centering, smoothing, normalization, detector 
 convolution, and converting depth-ionization to depth-dose curves. A Gamma evaluation 
 can be applied to compare the measured to reference profiles. MATLAB is a registered 
