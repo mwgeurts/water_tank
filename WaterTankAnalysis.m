@@ -65,7 +65,7 @@ warning('off','all');
 handles.output = hObject;
 
 % Set version handle
-handles.version = '1.2.5';
+handles.version = '1.2.6';
 set(handles.version_text, 'String', ['Version ', handles.version]);
 
 % Determine path of current application
@@ -177,13 +177,16 @@ if ~isempty(path) && ~isnumeric(path)
     % Call PlotProfiles() with path
     handles = PlotProfiles(handles, path);
     
+    % Save statistics to file
+    SaveStatistics(handles, fullfile(path, ['Report.', ...
+        lower(handles.config.TABLE_SAVE_FORMAT)]));
+    
     % Log completion
-    Event(sprintf('Plot export completed successfully in %0.3f seconds', ...
-        toc(t)));
+    Event(sprintf('Export completed successfully in %0.3f seconds', toc(t)));
 end
 
 % Clear temporary variables
-clear path t;
+clear path t arr;
 
 % Update handles structure
 guidata(hObject, handles);

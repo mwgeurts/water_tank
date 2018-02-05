@@ -142,6 +142,11 @@ BREM_METHOD         =   LINEAR_FIT
 % detail.
 PLOT_SAVE_FORMAT    =   PNG
 
+% TABLE_SAVE_FORMAT is the file format used when exporting the statistics 
+% tables. The following options are available: TXT, DAT, CSV, XLS, XLSM, 
+% XLSX, XLSB. See MATLAB's writetable documentation for more detail.
+TABLE_SAVE_FORMAT   =   XLS
+
 % OUTPUT_FACTOR_DEF determines what depth is used when computing output 
 % factors. Available options are dmax or 10cm.
 OUTPUT_FACTOR_DEF   =   10cm
