@@ -56,7 +56,8 @@ end
 try
 
     % Re-sample data to be equally spaced at resolution r
-    xi = x(1)-s:r*sign(x(end)-x(1)):x(end)+s;
+    xi = x(1)-2*s*sign(x(end)-x(1)):r*sign(x(end)-x(1)):...
+        x(end)+2*s*sign(x(end)-x(1));
     p = interp1(x, y, xi, 'linear', 'extrap');
 
     % Calculate Gaussian distribution given standard deviation s and 
