@@ -178,7 +178,7 @@ for f = 1:length(names)
                         data.modality{i} = 'Cobalt';
                         if length(t{1}) > 2
                             data.energy{i} = ...
-                                [regexprep(t{1}{3}, '.0', ''), ' MeV'];
+                                [regexprep(t{1}{3}, '\.0', ''), ' MeV'];
                         end
                         
                     % If photons    
@@ -186,7 +186,7 @@ for f = 1:length(names)
                         data.modality{i} = 'Photon';
                         if length(t{1}) > 2
                             data.energy{i} = ...
-                                [regexprep(t{1}{3}, '.0', ''), ' MV'];
+                                [regexprep(t{1}{3}, '\.0', ''), ' MV'];
                         end
                         
                     % If electrons    
@@ -194,7 +194,7 @@ for f = 1:length(names)
                         data.modality{i} = 'Electron';
                         if length(t{1}) > 2
                             data.energy{i} = ...
-                                [regexprep(t{1}{3}, '.0', ''), ' MeV'];
+                                [regexprep(t{1}{3}, '\.0', ''), ' MeV'];
                         end
                         
                     % If undefined    
@@ -225,6 +225,13 @@ for f = 1:length(names)
                 case 'BRD'
                     if length(t{1}) > 1
                         data.refdist(i) = str2double(t{1}{2})/10;
+                    end
+                    
+                % Store field size    
+                case 'FSZ'
+                    if length(t{1}) > 2 
+                        data.field(i,1:2) = [str2double(t{1}{2})/10
+                            str2double(t{1}{2})/10];
                     end
                     
                 % Store field shape    
@@ -340,6 +347,9 @@ for f = 1:length(names)
     % Close file
     fclose(fid);
 end
+
+% Remove empty profiles
+data.profiles = data.profiles(~cellfun('isempty',data.profiles));
 
 % Loop through each profile
 for i = 1:length(data.profiles)
