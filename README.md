@@ -1,7 +1,7 @@
 ## Water Tank TPS Comparison Tool
 
 by Mark Geurts <mark.w.geurts@gmail.com>
-<br>Copyright &copy; 2017, University of Wisconsin Board of Regents
+<br>Copyright &copy; 2018, University of Wisconsin Board of Regents
 
 ## Description
 
