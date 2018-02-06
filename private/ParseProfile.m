@@ -65,6 +65,66 @@ switch options{varargin{2}}
         % Execute ParseIBAtxt
         data = ParseIBAtxt('', varargin{1});
         
+        % Loop through profiles and generate selection menu
+        str = cell(1, length(data.profiles));
+        def = [];
+        for i = 1:length(data.profiles)
+            
+            % If profile type is CProfileCurv or CDepthDoseCurv, select it 
+            % by default
+            if isfield(data, 'profiletype') && ...
+                    strcmp(data.profiletype{i}, 'CProfileCurv') || ...
+                    strcmp(data.profiletype{i}, 'CDepthDoseCurv')
+                def(length(def)+1) = i; %#ok<AGROW>
+            end
+            
+            % Set description based on orientation, depth
+            if data.profiles{i}(2,1) ~= data.profiles{i}(1,1)
+                s = sprintf('IEC X %0.1f cm depth', data.profiles{i}(1,3)/10);
+            elseif data.profiles{i}(2,2) ~= data.profiles{i}(1,2)
+                s = sprintf('IEC Y %0.1f cm depth', data.profiles{i}(1,3)/10);
+            elseif data.profiles{i}(2,3) ~= data.profiles{i}(1,3)
+                s = 'IEC Z (depth dose)';
+            end
+            if isfield(data, 'field')
+                str{i} = sprintf('%s: %s %s %0.0fx%0.0f %s', ...
+                    data.profiletype{i}, data.energy{i}, data.modality{i}, ...
+                    data.field(i,1), data.field(i,2), s);
+                
+                % Create collimator field based on field values
+                data.collimator(i,1:4) = [-data.field(i, 1)/2 
+                                           data.field(i, 1)/2  
+                                          -data.field(i, 2)/2  
+                                           data.field(i, 2)/2];
+            else
+                str{i} = sprintf('%s: %s %s %s', data.profiletype{i}, ...
+                    data.energy{i}, data.modality{i}, s);
+            end
+            
+            
+        end
+        
+         % Open dialog box to allow user to select files
+        [sel, ok] = listdlg('PromptString','Select which profiles to load:',...
+                'SelectionMode', 'multiple', 'ListString', str, ...
+                'InitialValue', def, 'Name', 'Select Profiles', ...
+                'ListSize', [400 300]);
+        
+        % If user clicked cancel, select default
+        if ok == 0
+            sel = def;
+        end
+        
+        % Remove unselected profiles
+        n = fieldnames(data);
+        for i = 1:length(n)
+            if size(data.(n{i}),1) == length(str)
+                data.(n{i}) = data.(n{i})(sel,:);
+            elseif size(data.(n{i}),2) == length(str)
+                data.(n{i}) = data.(n{i})(:,sel);
+            end
+        end
+        
     % OmniPro RFB
     case 'OmniPro V6 RFB (.rfb)'
         
@@ -85,9 +145,9 @@ switch options{varargin{2}}
             
             % Set description based on orientation, depth
             if data.profiles{i}(2,1) ~= data.profiles{i}(1,1)
-                s = sprintf('IEC X %0.1f cm depth', data.profiles{i}(1,3));
+                s = sprintf('IEC X %0.1f cm depth', data.profiles{i}(1,3)/10);
             elseif data.profiles{i}(2,2) ~= data.profiles{i}(1,2)
-                s = sprintf('IEC Y %0.1f cm depth', data.profiles{i}(1,3));
+                s = sprintf('IEC Y %0.1f cm depth', data.profiles{i}(1,3)/10);
             elseif data.profiles{i}(2,3) ~= data.profiles{i}(1,3)
                 s = 'IEC Z (depth dose)';
             end
@@ -99,7 +159,7 @@ switch options{varargin{2}}
         
         % Open dialog box to allow user to select files
         [sel, ok] = listdlg('PromptString','Select which profiles to load:',...
-                'SelectionMode', 'multiple', 'ListString',str, ...
+                'SelectionMode', 'multiple', 'ListString', str, ...
                 'InitialValue', def, 'Name', 'Select Profiles', ...
                 'ListSize', [400 300]);
         
