@@ -23,15 +23,16 @@ function handles = BrowseFile(handles)
 s = get(handles.format, 'String');
 t = regexp(s{get(handles.format, 'Value')}, '\((.+)\)', 'tokens');
 if ~isempty(t)
-    types = strsplit(t{end}{1}, ', ')';
+    types = strsplit(t{end}{1}, ', ');
+    types = ['*', strjoin(horzcat(lower(types), upper(types)), ';*')];
 else
     types = '*.*';
 end
 
 % Request the user to select the profile
 Event('UI window opened to select file');
-[name, path] = uigetfile(types, ['Select the ', ...
-    s{get(handles.format, 'Value')}, 'profiles to load'], ...
+[name, path] = uigetfile({types, s{get(handles.format, 'Value')}}, ...
+    ['Select the ', s{get(handles.format, 'Value')}, 'profiles to load'], ...
     handles.config.DEFAULT_PATH, 'MultiSelect', 'on');
 clear s t types;
 
