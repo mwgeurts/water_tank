@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="1514146757" file="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank/WaterTankAnalysisTool.prj" location="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank" name="WaterTankAnalysisTool" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="1547766195" file="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank/WaterTankAnalysisTool.prj" location="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank" name="WaterTankAnalysisTool" target="target.mlapps" target-name="Package App">
     <param.appname>WaterTankAnalysisTool</param.appname>
     <param.authnamewatermark>Mark Geurts</param.authnamewatermark>
     <param.email>mark.w.geurts@gmail.com</param.email>
@@ -9,7 +9,7 @@
     <param.summary>Water tank scan data to DICOM RT Dose comparison tool</param.summary>
     <param.description>The Water Tank Analysis Tool is a standalone GUI written in MATLAB that can be used to compare radiotherapy water tank scan data to DICOM RT Dose volumes exported from the treatment planning system. The tool includes basic processing steps including shifting data for effective point of measurement, centering, smoothing, normalization, detector convolution, and converting depth-ionization to depth-dose curves.</param.description>
     <param.screenshot />
-    <param.version>1.2.7</param.version>
+    <param.version>1.2.8</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Curve Fitting Toolbox</item>
@@ -63,6 +63,7 @@
       <file>${PROJECT_ROOT}/private/InitializeMenus.m</file>
       <file>${PROJECT_ROOT}/private/LoadReferenceData.m</file>
       <file>${PROJECT_ROOT}/private/LoadVersionInfo.m</file>
+      <file>${PROJECT_ROOT}/private/LorentzConvolve.m</file>
       <file>${PROJECT_ROOT}/private/NormConvolve.m</file>
       <file>${PROJECT_ROOT}/private/ParseConfigOptions.m</file>
       <file>${PROJECT_ROOT}/private/ParseDV1Dcsv.m</file>
