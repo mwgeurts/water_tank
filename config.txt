@@ -53,7 +53,7 @@ DEFAULT_CONVOLVE    =   1
 DEFAULT_GAMMA       =   2%/1mm
 
 % DEFAULT_GAMMALOCAL is a boolean indicating whether to default to using a 
-% global (0) or local (0) Gamma evaluation.
+% global (1) or local (0) Gamma evaluation.
 DEFAULT_GAMMALOCAL  =   0
 
 % DEFAULT_MACHINE is the index of the default machine that is selected when
@@ -77,7 +77,7 @@ DEFAULT_SSD         =   1
 DEFAULT_FIELDSIZE   =   1
 
 % SMOOTH_SPAN is the span value applied when smoothing profiles. This value
-% should be off. When performing a moving average or Savitzky-Golay 
+% should be odd. When performing a moving average or Savitzky-Golay 
 % smoothing, span is the number of adjacent datapoints that the average is 
 % calculated with. For LOESS smoothing, span is a percentage of the total 
 % number of points. Note that the span is limited to the range of 3 and 2% 
