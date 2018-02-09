@@ -99,7 +99,6 @@ for f = 1:length(names)
             switch t{1}{1}
                 case 'MSR'
                     data.msr = str2double(t{1}{2});
-                    data.profiles = cell(1, data.msr);
                 case 'SYS'
                     data.bds = t{1}{3};
             end
@@ -313,7 +312,7 @@ for f = 1:length(names)
                     end
                     
                 % Store end coordinates in mm
-                 case 'EDS'
+                case 'EDS'
                     if length(t{1}) > 1
                         data.end(i,1) = str2double(t{1}{2});
                     end
@@ -347,9 +346,6 @@ for f = 1:length(names)
     % Close file
     fclose(fid);
 end
-
-% Remove empty profiles
-data.profiles = data.profiles(~cellfun('isempty',data.profiles));
 
 % Loop through each profile
 for i = 1:length(data.profiles)
