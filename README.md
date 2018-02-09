@@ -5,7 +5,7 @@ by Mark Geurts <mark.w.geurts@gmail.com>
 
 ## Description
 
-The Water Tank TPS Comparison Tool is a standalone GUI written in MATLAB&reg; that can be used to compare radiotherapy water tank scan data to DICOM RT Dose volumes exported from the treatment planning system, such as during [AAPM MPPG 5.a validation](http://dx.doi.org/10.1002/acm2.12015). The tool includes basic processing steps including shifting data for effective point of measurement, centering, smoothing, normalization, detector convolution, and converting depth-ionization to depth-dose curves. A Gamma evaluation can be applied to compare the measured to reference profiles. MATLAB is a registered trademark of MathWorks Inc. 
+The Water Tank TPS Comparison Tool is a standalone GUI written in MATLAB&reg; that can be used to compare radiotherapy water tank scan data to DICOM RT Dose volumes exported from the treatment planning system, such as during [AAPM MPPG 5.a validation](https://doi.org/10.1120/jacmp.v16i5.5768). The tool includes basic processing steps including shifting data for effective point of measurement, centering, smoothing, normalization, detector convolution, and converting depth-ionization to depth-dose curves. A Gamma evaluation can be applied to compare the measured to reference profiles. MATLAB is a registered trademark of MathWorks Inc. 
 
 ## Installation
 
