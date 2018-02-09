@@ -73,6 +73,9 @@ info.BitsStored = 16;
 info.HighBit = 15;
 info.PixelRepresentation = 0;
 
+% Create padded image
+img = uint16(padarray(ones(size(2)-2, size(1)-2) * 1024, [1 1], 0, 'both'));
+
 % Loop through CT Images
 for i = 1:info.ImagesInAcquisition
     
@@ -86,7 +89,6 @@ for i = 1:info.ImagesInAcquisition
     info.InstanceNumber = i;
     
     % Write CT image
-    dicomwrite(uint16(padarray(ones(size(2)-2, size(1)-2) * 1024, [1 1], ...
-        0, 'both')),  sprintf('./ct_%03i.dcm', i), info, 'CompressionMode', ...
+    dicomwrite(img,  sprintf('./ct_%03i.dcm', i), info, 'CompressionMode', ...
         'None', 'CreateMode', 'Create', 'Endian', 'ieee-le');
 end
