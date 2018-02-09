@@ -138,7 +138,7 @@ switch varargin{2}
                 % Apply TG-25 stopping power ratios
                 if varargin{2} == 2
                     
-                    % Specify Table V from TG-25 (0 MeV is extrapolated)
+                    % Specify Table II from TG-25 (0 MeV is extrapolated)
                     tableii = ...
                        [0.902 0.904 0.912 0.928 0.940 0.955 0.961 0.969 0.977 0.986 0.997 1.003 1.011 1.029 1.040 1.059 1.078 1.097 1.116
                         0.902 0.905 0.913 0.929 0.941 0.955 0.962 0.969 0.978 0.987 0.998 1.005 1.012 1.030 1.042 1.061 1.081 1.101 1.124
