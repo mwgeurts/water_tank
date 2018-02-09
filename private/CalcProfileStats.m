@@ -23,7 +23,7 @@ function data = CalcProfileStats(varargin)
 data = {
     'Axis'
     'Depth'
-    'Flatness'
+    'TG-45 Flatness'
     'Varian Symmetry'
     'Area Symmetry'
     'FWHM' 
@@ -125,7 +125,7 @@ for i = 1:length(profiles)
             floor((lI + I + uI)/2 + abs(I + uI - lI) * 0.4);
         center = round(interp1(x, 1:length(x), 0, 'linear'));
         
-        % Calculate Flatness
+        % Calculate AAPM TG-45 Flatness
         data{3,c} = sprintf('%0.2f%%', (max(profiles{i}(range,4)) - ...
             min(profiles{i}(range,4)))/(max(profiles{i}(range,4)) + ...
             min(profiles{i}(range,4))) * 100);
