@@ -1,9 +1,9 @@
-function y = NormConvolve(x, y, s, r)
-% NormConvolve performs a normal-distribution convolution on a dataset
+function y = LorentzConvolve(x, y, l, r)
+% LorentzConvolve performs a Lorentz function convolution on a dataset
 % using Fourier Transforms. The provided x/y data is first re-sampled to
-% the resolution provided by r, then convolved against a normal
-% distribution centered on x with standard deviation s. The inputs s and r
-% are optional; s will default to 1 and r will default to the average
+% the resolution provided by r, then convolved against a Lorentz
+% distribution centered on x with lambda value l. The inputs l and r
+% are optional; l will default to 1 and r will default to the average
 % resolution across x.
 %
 % The following examples illustrate use of this function:
@@ -12,14 +12,11 @@ function y = NormConvolve(x, y, s, r)
 % x = 1:10;
 % y = rand(1, 10);
 %
-% % Convolve y with a normal distribution
-% y2 = NormConvolve(x, y);
-%
-% % Re-convolve using a standard deviation of 2
-% y2 = NormConvolve(x, y, 2);
+% % Convolve using a Lorentz distribution with lambda = 2
+% y2 = LorentzConvolve(x, y, 2);
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
-% Copyright (C) 2017 University of Wisconsin Board of Regents
+% Copyright (C) 2018 University of Wisconsin Board of Regents
 %
 % This program is free software: you can redistribute it and/or modify it 
 % under the terms of the GNU General Public License as published by the  
@@ -37,14 +34,14 @@ function y = NormConvolve(x, y, s, r)
 % If at least two args are not provided, fail
 if nargin < 2
     if exist('Event', 'file') == 2
-        Event('NormConvolve requires at least two inputs, x and y', 'ERROR');
+        Event('LorentzConvolve requires at least two inputs, x and y', 'ERROR');
     else
-        error('NormConvolve requires at least two inputs, x and y');
+        error('LorentzConvolve requires at least two inputs, x and y');
     end
     
 % Otherwise, if s is not provided    
 elseif nargin == 2
-    s = 1;
+    l = 1;
 end
     
 % If r is not provided, use minimum difference
@@ -56,14 +53,12 @@ end
 try
 
     % Re-sample data to be equally spaced at resolution r
-    xi = x(1)-2*s*sign(x(end)-x(1)):r*sign(x(end)-x(1)):...
-        x(end)+2*s*sign(x(end)-x(1));
+    xi = x(1)-2*l*sign(x(end)-x(1)):r*sign(x(end)-x(1)):...
+        x(end)+2*l*sign(x(end)-x(1));
     p = interp1(x, y, xi, 'linear', 'extrap');
 
-    % Calculate Gaussian distribution given standard deviation s and 
-    % centered on x
-    g = 1/(s * sqrt(2 * pi)) * exp(-(xi-mean(xi)).^2 / ...
-        (2 * s ^ 2));
+    % Calculate Lorentzian distribution given lambda l and centered on x
+    g = l ./ (pi * ((xi-mean(xi)).^2 + l^2)); 
 
     % Convolve data
     z = ifft(fft(p, length(xi)*2+1) .* fft(g, length(xi)*2+1), ...
