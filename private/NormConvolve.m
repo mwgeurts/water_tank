@@ -1,10 +1,11 @@
-function y = NormConvolve(x, y, s, r)
+function y = NormConvolve(x, y, s, r, t)
 % NormConvolve performs a normal-distribution convolution on a dataset
 % using Fourier Transforms. The provided x/y data is first re-sampled to
 % the resolution provided by r, then convolved against a normal
-% distribution centered on x with standard deviation s. The inputs s and r
-% are optional; s will default to 1 and r will default to the average
-% resolution across x.
+% distribution centered on x with standard deviation s and truncated at a 
+% distance t. The inputs s, r, and t are optional; s will default to 1, 
+% r will default to the average resolution across x, and t will default to
+% Inf (no truncation)
 %
 % The following examples illustrate use of this function:
 %
@@ -52,6 +53,11 @@ if nargin < 4
     r = min(abs(diff(x)));
 end
 
+% If t is not provided, use Inf (no truncation)
+if nargin < 5
+    t = Inf;
+end
+
 % Perform in try-catch statement, returning original value if error occurs
 try
 
@@ -64,6 +70,9 @@ try
     % centered on x
     g = 1/(s * sqrt(2 * pi)) * exp(-(xi-mean(xi)).^2 / ...
         (2 * s ^ 2));
+    
+    % Truncate g
+    g(abs(xi-mean(xi)) > t) = 0;
 
     % Convolve data
     z = ifft(fft(p, length(xi)*2+1) .* fft(g, length(xi)*2+1), ...
