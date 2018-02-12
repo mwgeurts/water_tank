@@ -469,27 +469,27 @@ switch varargin{2}
     % Herrup et al analytical truncated Gaussian
     case 6
         
-        % Define list of standard deviation parameters (diameter, height)
+        % Define list of detector heights
         parameters = {
-            'PTW 31014 PinPoint'        2.0     5.0
-            'PTW 31015 PinPoint'        2.9     5.0
-            'PTW 31016 PinPoint 3D'     2.9     2.9
-            'PTW 31010 SemiFlex'        5.5     6.5
-            'PTW 31013 SemiFlex'        5.5     16.25
-            'IBA CC01'                  2.0     3.6
-            'IBA CC04'                  4.0     3.6
-            'IBA CC08'                  6.0     4.0
-            'IBA CC13'                  6.0     5.8
-            'Standard Imaging A1'       4.0     4.4
-            'Standard Imaging A1SL'   	4.0     4.4
-            'Standard Imaging A2'       9.5     8.4
-            'Standard Imaging A12'      6.1     21.6
-            'Standard Imaging A12S'     6.1     7.5
-            'Standard Imaging A14'      4.0     1.5
-            'Standard Imaging A16'      2.4     1.27
-            'Standard Imaging A19'      6.1     21.6
-            'Standard Imaging A26'      3.3     1.78
-            'Standard Imaging A28'      5.8     6.4
+            'PTW 31014 PinPoint'        5.0
+            'PTW 31015 PinPoint'        5.0
+            'PTW 31016 PinPoint 3D'     2.9
+            'PTW 31010 SemiFlex'        6.5
+            'PTW 31013 SemiFlex'        16.25
+            'IBA CC01'                  3.6
+            'IBA CC04'                  3.6
+            'IBA CC08'                  4.0
+            'IBA CC13'                  5.8
+            'Standard Imaging A1'       4.4
+            'Standard Imaging A1SL'   	4.4
+            'Standard Imaging A2'       8.4
+            'Standard Imaging A12'      21.6
+            'Standard Imaging A12S'     7.5
+            'Standard Imaging A14'      1.5
+            'Standard Imaging A16'      1.27
+            'Standard Imaging A19'      21.6
+            'Standard Imaging A26'      1.78
+            'Standard Imaging A28'      6.4
         };
     
         % Start with raw profile
@@ -497,7 +497,8 @@ switch varargin{2}
     
         % If inputs were not provided or the chamber doesn't match the
         % above list, ask the user for the chamber radius, height
-        if nargin < 4 || ~ismember(varargin{3}, parameters(:,1)) 
+        if nargin < 4 || ~ismember(varargin{3}, parameters(:,1)) || ...
+                ~isnumeric(varargin{4}) || varargin{4} <= 0
             if exist('Event', 'file') == 2
                 Event(['The chamber is not in the list available for this ', ...
                     'convolution. Prompting user to provide values.']);
@@ -510,10 +511,9 @@ switch varargin{2}
             h = str2double(a{2});
             clear a;
         else
-            r = parameters{find(strcmp(varargin{3}, ...
-                parameters(:,1)), 1, 'first'), 2}/2;
+            r = varargin{4};
             h = parameters{find(strcmp(varargin{3}, ...
-                parameters(:,1)), 1, 'first'), 3};
+                parameters(:,1)), 1, 'first'), 2};
         end
         
         % Compute sigma
