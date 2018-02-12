@@ -81,6 +81,9 @@ set(handles.smooth, 'Value', handles.config.DEFAULT_SMOOTH);
 set(handles.center, 'Value', handles.config.DEFAULT_CENTER);
 set(handles.convolve, 'Value', handles.config.DEFAULT_CONVOLVE);
 
+% Reset chamber orientation
+ConvolveProfiles();
+
 % Reset default detector
 set(handles.detector, 'Value', handles.config.DEFAULT_DETECTOR);
 Event(sprintf('Detector set to %s (Rcav = %0.2f mm)', ...
