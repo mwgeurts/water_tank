@@ -21,7 +21,7 @@ function PlotOutputFactors(varargin)
 % In addition to plotting output factors, the application will attempt to
 % fit an analytical function first proposed by Sauer and Wilbert, 2007, 
 % "Measurement of output factors for small photon beams", Med. Phys. 34, 
-% 1983?1988. The fitting parameters and their confidence limits are
+% 1983-1988. The fitting parameters and their confidence limits are
 % displayed on the displayed figure. This fit uses the Curve Fitting
 % Toolbox fit() function; if not installed the function will still work but
 % not display a fit.
@@ -238,8 +238,13 @@ try
     for i = 1:size(data,1)
         data{i,3} = feval(model, eqsq(i));
     end
-catch
+catch err
     model = [];
+    if exist('Event', 'file') == 2
+        Event(getReport(err, 'basic', 'hyperlinks', 'off'), 'WARN');
+    else
+        warning(getReport(err, 'basic', 'hyperlinks', 'off'));
+    end
 end
 
 % Create new figure to display output factors

@@ -149,7 +149,7 @@ TABLE_SAVE_FORMAT   =   XLS
 
 % OUTPUT_FACTOR_DEF determines what depth is used when computing output 
 % factors. Available options are dmax or 10cm.
-OUTPUT_FACTOR_DEF   =   10cm
+OUTPUT_FACTOR_DEF   =   dmax
 
 % COMPRESS_REFERENCE is a boolean indicating whether (1) or not (0) to 
 % apply RLE compression when importing reference data.  

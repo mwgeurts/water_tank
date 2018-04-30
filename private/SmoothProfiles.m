@@ -69,7 +69,7 @@ switch varargin{2}
         profiles = varargin{1};
         
         % Check if MATLAB can find smooth (Curve Fitting Toolbox)
-        if exist('dicominfo', 'file') ~= 2
+        if exist('smooth', 'file') ~= 2
 
             % If not, throw an error
             if exist('Event', 'file') == 2
@@ -110,7 +110,7 @@ switch varargin{2}
         profiles = varargin{1};
         
         % Check if MATLAB can find smooth (Curve Fitting Toolbox)
-        if exist('dicominfo', 'file') ~= 2
+        if exist('smooth', 'file') ~= 2
 
             % If not, throw an error
             if exist('Event', 'file') == 2
@@ -153,7 +153,7 @@ switch varargin{2}
         profiles = varargin{1};
         
         % Check if MATLAB can find smooth (Curve Fitting Toolbox)
-        if exist('dicominfo', 'file') ~= 2
+        if exist('smooth', 'file') ~= 2
 
             % If not, throw an error
             if exist('Event', 'file') == 2

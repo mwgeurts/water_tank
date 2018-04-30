@@ -60,11 +60,12 @@ if exist('storedfile', 'var') == 0 || ~strcmp(storedfile, file)
         info.ImagePositionPatient(3) + ...
         single(info.GridFrameOffsetVector) - iso(2));
 
+                  
     % Normalize data to Dmax along CAX
     ref = ref ./ max(interp3(meshx, meshy, meshz, ref, ...
         info.ImagePositionPatient(2) + (0:single(info.Rows)-1) * ...
-        info.PixelSpacing(1) + iso(3), single(ones(1, info.Rows)) * iso(1), ...
-        single(ones(1, info.Rows)) * iso(2), '*linear', 0));
+        info.PixelSpacing(1), single(zeros(1, info.Rows)), ...
+        single(zeros(1, info.Rows)), '*linear', 0));
     
     % Persistently store name of current file
     storedfile = file;
@@ -73,9 +74,28 @@ end
 % Loop through each profile
 for i = 1:length(profile)
     
-    % Interpolate reference profile to same coordinates as profile
-    profile{i} = horzcat(profile{i}, interp3(meshx, meshy, meshz, ref, ...
-        profile{i}(:,3), profile{i}(:,1), profile{i}(:,2), '*linear', 0));
+    % Attempt to use GPU
+    try
+        
+        % Clear and initialize GPU memory.  If CUDA is not enabled, or if the
+        % Parallel Computing Toolbox is not installed, this will error, and the
+        % function will automatically revert to CPU computation via the catch
+        % statement
+        gpuDevice(1);
+    
+        % Interpolate reference profile to same coordinates as profile
+        profile{i} = horzcat(profile{i}, gather(interp3(gpuArray(meshx), ...
+            gpuArray(meshy), gpuArray(meshz), gpuArray(ref), ...
+            gpuArray(profile{i}(:,3)), gpuArray(profile{i}(:,1)), ...
+            gpuArray(profile{i}(:,2)), 'linear', 0)));
+     
+    % If GPU fails, revert to CPU computation
+    catch
+        
+        % Interpolate reference profile to same coordinates as profile
+        profile{i} = horzcat(profile{i}, interp3(meshx, meshy, meshz, ref, ...
+            profile{i}(:,3), profile{i}(:,1), profile{i}(:,2), '*linear', 0));
+    end
 end
 
 % Log completion

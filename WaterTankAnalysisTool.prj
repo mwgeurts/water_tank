@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="1547766195" file="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank/WaterTankAnalysisTool.prj" location="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank" name="WaterTankAnalysisTool" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="2179460327" file="/Users/mwgeurts/Documents/Delivery Systems/TrueBeam/Water Tank Analysis Project/water_tank/WaterTankAnalysisTool.prj" location="/Users/mwgeurts/Documents/Delivery Systems/TrueBeam/Water Tank Analysis Project/water_tank" name="WaterTankAnalysisTool" target="target.mlapps" target-name="Package App">
     <param.appname>WaterTankAnalysisTool</param.appname>
     <param.authnamewatermark>Mark Geurts</param.authnamewatermark>
     <param.email>mark.w.geurts@gmail.com</param.email>
@@ -9,7 +9,7 @@
     <param.summary>Water tank scan data to DICOM RT Dose comparison tool</param.summary>
     <param.description>The Water Tank Analysis Tool is a standalone GUI written in MATLAB that can be used to compare radiotherapy water tank scan data to DICOM RT Dose volumes exported from the treatment planning system. The tool includes basic processing steps including shifting data for effective point of measurement, centering, smoothing, normalization, detector convolution, and converting depth-ionization to depth-dose curves.</param.description>
     <param.screenshot />
-    <param.version>1.2.8</param.version>
+    <param.version>1.2.10</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Curve Fitting Toolbox</item>
@@ -26,7 +26,7 @@
       <item>10.1</item>
     </param.products.version>
     <param.platforms />
-    <param.output>/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank</param.output>
+    <param.output>/Users/mwgeurts/Documents/Delivery Systems/TrueBeam/Water Tank Analysis Project/water_tank</param.output>
     <param.guid>307e2822-78a4-4b5a-850d-05904290ed38</param.guid>
     <unset>
       <param.authnamewatermark />
@@ -45,7 +45,6 @@
       <file>${MATLAB_ROOT}/toolbox/local/userpath.m</file>
       <file>${PROJECT_ROOT}/Event.m</file>
       <file>${PROJECT_ROOT}/WaterTankAnalysis.fig</file>
-      <file>${PROJECT_ROOT}/gamma/CalcGamma.m</file>
       <file>${PROJECT_ROOT}/private/AddSubModulePaths.m</file>
       <file>${PROJECT_ROOT}/private/BrowseFile.m</file>
       <file>${PROJECT_ROOT}/private/CalcDepthStats.m</file>
@@ -65,6 +64,7 @@
       <file>${PROJECT_ROOT}/private/LoadVersionInfo.m</file>
       <file>${PROJECT_ROOT}/private/LorentzConvolve.m</file>
       <file>${PROJECT_ROOT}/private/NormConvolve.m</file>
+      <file>${PROJECT_ROOT}/private/ParabolicConvolve.m</file>
       <file>${PROJECT_ROOT}/private/ParseConfigOptions.m</file>
       <file>${PROJECT_ROOT}/private/ParseDV1Dcsv.m</file>
       <file>${PROJECT_ROOT}/private/ParseDetectorFile.m</file>
@@ -94,8 +94,11 @@
       <file>${PROJECT_ROOT}/snc_extract/ParseSNCprm.m</file>
       <file>${PROJECT_ROOT}/snc_extract/ParseSNCtxt.m</file>
       <file>${PROJECT_ROOT}/snc_extract/ParseSNCxml.m</file>
+      <file>${PROJECT_ROOT}/snc_extract/gamma/CalcGamma.m</file>
     </fileset.depfun>
     <fileset.resources>
+      <file>${PROJECT_ROOT}/config.txt</file>
+      <file>${PROJECT_ROOT}/detectors.txt</file>
       <file>${PROJECT_ROOT}/reference/TrueBeam/6 MV/100 cm/10 x 10.dcm</file>
       <file>${PROJECT_ROOT}/reference/TrueBeam/6 MV/100 cm/2 x 2.dcm</file>
       <file>${PROJECT_ROOT}/reference/TrueBeam/6 MV/100 cm/20 x 20.dcm</file>
@@ -105,7 +108,7 @@
     </fileset.resources>
     <fileset.package />
     <build-deliverables>
-      <file location="/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project" name="water_tank" optional="false">/Users/mwgeurts/Documents/TrueBeam/Water Tank Analysis Project/water_tank</file>
+      <file location="/Users/mwgeurts/Documents/Delivery Systems/TrueBeam/Water Tank Analysis Project" name="water_tank" optional="false">/Users/mwgeurts/Documents/Delivery Systems/TrueBeam/Water Tank Analysis Project/water_tank</file>
     </build-deliverables>
     <workflow />
     <matlab>
@@ -152,7 +155,7 @@
       <vista>false</vista>
       <linux>false</linux>
       <solaris>false</solaris>
-      <osver>10.13.3</osver>
+      <osver>10.13.4</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>maci64</arch>

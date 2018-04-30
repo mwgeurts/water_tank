@@ -296,8 +296,16 @@ for i = 1:length(profiles)
                             % Continue to next profile
                             break;
                         end
-                    catch
                         
+                    % Catch errors and log them
+                    catch err
+                        if exist('Event', 'file') == 2
+                            Event(getReport(err, 'basic', 'hyperlinks', ...
+                                'off'), 'WARN');
+                        else
+                            warning(getReport(err, 'basic', 'hyperlinks', ...
+                                'off'));
+                        end
                     end
                 end
 
