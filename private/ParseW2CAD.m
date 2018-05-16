@@ -8,7 +8,7 @@ function data = ParseW2CAD(path, names)
 %       loaded
 %
 % The following structure fields are returned upon successful completion:
-
+%
 %   profiles: cell array of profiles, where each cell contains a n x 4
 %       array of IEC X, IEC Y, IEC Z (depth), and signal.
 %
@@ -33,7 +33,7 @@ if ~iscell(names); names = cell({names}); end
 
 % Log start of file load and start timer
 if exist('Event', 'file') == 2
-    Event(['Loading W2CAD file ', strjoin(names, '\nLoading ASCII file ')]);
+    Event(['Loading W2CAD file ', strjoin(names, '\nLoading W2CAD file ')]);
     t = tic;
 end
 

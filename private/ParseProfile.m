@@ -29,6 +29,7 @@ function data = ParseProfile(varargin)
 % Specify options and order
 options = {
     'Eclipse w2CAD (.asc)'
+    'Eclipse Line Profile Export (.txt)'
     'OmniPro RFA300 ASCII BDS (.txt, .asc)'
     'OmniPro V6 RFB (.rfb)'
     'PTW MEPHYSTO ASCII (.mcc)'
@@ -399,6 +400,12 @@ switch options{varargin{2}}
             end
         end
      
+    % Eclipse Export
+    case 'Eclipse Line Profile Export (.txt)'
+        
+        % Execute ParseW2CAD
+        data = ParseEclipse('', varargin{1});
+        
     % Eclipse w2CAD
     case 'Eclipse w2CAD (.asc)'
         

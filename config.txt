@@ -15,7 +15,7 @@ DEFAULT_PATH        =   userpath
 
 % DEFAULT_DETECTOR should be set to the index of the detector that is 
 % selected by default when the application is loaded.
-DEFAULT_DETECTOR    =   9
+DEFAULT_DETECTOR    =   10
 
 % DEFAULT_EPOM is the index of the EPOM option that is selected when the 
 % application is loaded. See ShiftProfiles for a list of available options.
