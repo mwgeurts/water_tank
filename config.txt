@@ -88,19 +88,19 @@ SMOOTH_SPAN         =   15
 % Golay smoothing. This degree value must be less than the span above.
 SGOLAY_DEGREE       =   3
 
-% REFERENCE_ISOX, ISOY, and ISOZ are the IEC coordinates defining isocenter
-% within the reference RTDOSE files, in mm. If using a CT dataset created 
-% from CreateReferenceCT, this will most likely be 0,0,0
-REFERENCE_ISOX      =   0
-REFERENCE_ISOY      =   0
-REFERENCE_ISOZ      =   0
+% REFERENCE_ORIGINX, ORIGINY, and ORIGINZ are the IEC coordinates defining
+% the detector coordinate system origin within the reference RTDOSE files, 
+% in mm. If using a CT dataset created from CreateReferenceCT, this will 
+% most likely be 0,0,0 for 100 cm SSD. Note, these coordinates are 
+% overridden if a folder-specific value is present.
+REFERENCE_ORIGINX   =   0
+REFERENCE_ORIGINY   =   0
+REFERENCE_ORIGINZ   =   0
 
-% ASK_REFERENCE_ISO is a boolean indicating whether the user should be 
-% prompted to enter the isocenter each time a dataset is loaded (1) or if
-% the values defined above should be used automatically (0). Setting this 
-% flag to 1 is useful if different reference dose volumes have different 
-% isocenter positions.
-ASK_REFERENCE_ISO   =   0
+% ASK_REFERENCE_ORIGIN is a boolean indicating whether the user should be 
+% prompted to enter the origin each time a dataset is loaded (1) or if the
+% values defined above should be used automatically (0).
+ASK_REFERENCE_ORIGIN =   0
 
 % ASK_RCAV is a boolean indicating whether the user will be asked to 
 % confirm the chamber cavity radius when performing 0.5 or 0.6*Rcav EPOM 

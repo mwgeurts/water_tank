@@ -16,9 +16,9 @@ function ProcessReference(varargin)
 %       from the IEC axes (and diagonals, if set below)
 %   ALLOW_DIAGONAL: boolean indicating whether to include diagonal profiles
 %       in masked data
-%   REFERENCE_ISOX: DICOM IEC X position of isocenter, in mm
-%   REFERENCE_ISOY: DICOM IEC Y position of isocenter, in mm
-%   REFERENCE_ISOZ: DICOM IEC Z position of isocenter, in mm
+%   REFERENCE_ORIGINX: DICOM IEC X position of isocenter, in mm
+%   REFERENCE_ORIGINY: DICOM IEC Y position of isocenter, in mm
+%   REFERENCE_ORIGINZ: DICOM IEC Z position of isocenter, in mm
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
 % Copyright (C) 2017 University of Wisconsin Board of Regents
@@ -64,9 +64,9 @@ if nargin == 1 && isfield(varargin{1}, 'REFERENCE_PATH')
     % Store reference directory
     dest = config.REFERENCE_PATH;
     
-    % Store provided isocenter
-    iso = [config.REFERENCE_ISOX config.REFERENCE_ISOY ...
-        config.REFERENCE_ISOZ];
+    % Store provided origin
+    origin = [config.REFERENCE_ORIGINX config.REFERENCE_ORIGINY ...
+        config.REFERENCE_ORIGINZ];
 
 % Otherwise, declare default options
 else
@@ -80,8 +80,8 @@ else
     maskaxis = 1;
     diag = 1;
     
-    % Set default isocenter
-    iso = [0 0 0];
+    % Set default origin
+    origin = [0 0 0];
 end
 
 % Log start and start timer
@@ -157,6 +157,8 @@ for i = 1:length(list)
                  plan{size(plan,1),4}{j} = info.BeamSequence...
                      .(sprintf('Item_%i', j)).BeamName;
             end
+            
+            % Store isocenter and SSD
         end
     end
 end
@@ -231,11 +233,11 @@ for i = 1:size(dose, 1)
             % Calculate position meshgrids
             [meshx, meshy, meshz] = meshgrid(...
                 info.ImagePositionPatient(2) + (0:single(info.Rows)-1) * ...
-                info.PixelSpacing(1) + iso(3), ...
+                info.PixelSpacing(1) + origin(3), ...
                 info.ImagePositionPatient(1) + (0:single(info.Columns)-1) * ...
-                info.PixelSpacing(2) - iso(1), ...
+                info.PixelSpacing(2) - origin(1), ...
                 info.ImagePositionPatient(3) + ...
-                single(info.GridFrameOffsetVector) - iso(2));
+                single(info.GridFrameOffsetVector) - origin(2));
             
             % If diagonal profiles are allowed
             if diag == 1

@@ -73,11 +73,11 @@ config.DEFAULT_CENTER = str2double(config.DEFAULT_CENTER);
 config.DEFAULT_CONVOLVE = str2double(config.DEFAULT_CONVOLVE);
 config.DEFAULT_GAMMALOCAL = str2double(config.DEFAULT_GAMMALOCAL);
 
-% Parse isocenter values as doubles
-config.REFERENCE_ISOX = str2double(config.REFERENCE_ISOX);
-config.REFERENCE_ISOY = str2double(config.REFERENCE_ISOY);
-config.REFERENCE_ISOZ = str2double(config.REFERENCE_ISOZ);
-config.ASK_REFERENCE_ISO = str2double(config.ASK_REFERENCE_ISO);
+% Parse origin values as doubles
+config.REFERENCE_ORIGINX = str2double(config.REFERENCE_ORIGINX);
+config.REFERENCE_ORIGINY = str2double(config.REFERENCE_ORIGINY);
+config.REFERENCE_ORIGINZ = str2double(config.REFERENCE_ORIGINZ);
+config.ASK_REFERENCE_ORIGIN = str2double(config.ASK_REFERENCE_ORIGIN);
 
 % Parse Detector Rcav options
 config.ASK_RCAV = str2double(config.ASK_RCAV);
