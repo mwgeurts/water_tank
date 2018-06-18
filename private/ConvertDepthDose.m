@@ -104,8 +104,8 @@ switch varargin{2}
 
                     % Fit bremsstrahlung tail to linear model
                     b = fit(profiles{i}(1:lI,3), profiles{i}(1:lI,4), 'poly1', ...
-                        'Weights', max(profiles{i}(1:lI,4)) - ...
-                        profiles{i}(1:lI,4));
+                        'Weights', (max(profiles{i}(1:lI,4)) - ...
+                        profiles{i}(1:lI,4)) .^ 2);
                     b = coeffvalues(b);
                     Event(sprintf(['Bremsstrahlung modeled from ', ...
                         'linear fit = [%g %g]'], b));
@@ -133,7 +133,7 @@ switch varargin{2}
                 
                 % Calculate mean energy for each depth
                 Event('Calculating mean energy at depth per AAPM TG-25');
-                E = double(2.381 * R50 * (1 - profiles{i}(:,3)/Rp));
+                E = double(2.33 * R50 * (1 - profiles{i}(:,3)/Rp));
                 
                 % Apply TG-25 stopping power ratios
                 if varargin{2} == 2
