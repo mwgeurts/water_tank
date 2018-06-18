@@ -33,8 +33,12 @@ options = {
 % If no input arguments are provided
 if nargin == 0
     
-    % Return the options
-    profiles = options;
+    % Return the options (return only 'None' if smooth() is not available)
+    if exist('smooth', 'file') == 2
+        profiles = options;
+    else
+        profiles = {'None'};
+    end
     
     % Stop execution
     return;
