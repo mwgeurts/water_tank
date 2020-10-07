@@ -218,7 +218,11 @@ switch options{varargin{2}}
         % Execute ParseSNCxml
         data = ParseSNCxml('', varargin{1});
         
-        % Loop through profiles and generate selection menu
+        % Sort scans
+        [~, I] = sort(cellfun(@(s) s.MeasurementDate, data.Scans));
+        data.Scans = data.Scans(I);
+        
+        % Loop through profiles and generate selection menu (if < 1)
         str = cell(1, length(data.Scans));
         for i = 1:length(data.Scans)
             
@@ -228,15 +232,20 @@ switch options{varargin{2}}
         end
         
         % Open dialog box to allow user to select files
-        [sel, ok] = listdlg('PromptString','Select which profiles to load:',...
-                'SelectionMode', 'multiple', 'ListString',str, ...
-                'InitialValue', 1:length(str), 'Name', 'Select Profiles', ...
-                'ListSize', [400 300]);
-        
-        % If user clicked cancel, use defaults
-        if ok == 0
-            sel = 1:length(str);
-        end
+%         if length(data.Scans) > 1
+%             [sel, ok] = listdlg('PromptString','Select which profiles to load:',...
+%                     'SelectionMode', 'multiple', 'ListString',str, ...
+%                     'InitialValue', 1:length(str), 'Name', 'Select Profiles', ...
+%                     'ListSize', [400 300]);
+% 
+%             % If user clicked cancel, use defaults
+%             if ok == 0
+%                 sel = 1:length(str);
+%             end
+%         else
+%             sel = 1:length(str);
+%         end
+        sel = 1:length(str);
         
         % Create profiles array of selected results, converting to mm
         data.profiles = cell(1, length(sel));
@@ -254,9 +263,12 @@ switch options{varargin{2}}
         for i = 1:length(data.RadiationDevices)
             if strcmp(data.RadiationDevices{i}.UniqueId, ...
                     data.Scans{sel(1)}.RadiationDevice)
-                data.machine{1} = data.RadiationDevices{i}.Name;
+                data.machine{1} = char(data.RadiationDevices{i}.SerialNumber);
                 break;
             end
+        end
+        if isfield(data.Scans{sel(1)}, 'EnergyForDisplay')
+            data.Scans{sel(1)}.Energy = data.Scans{sel(1)}.EnergyForDisplay;
         end
         data.energy{1} = data.Scans{sel(1)}.Energy;
         data.ssd(1) = data.Scans{sel(1)}.SourceSurfaceDistance;
@@ -264,18 +276,18 @@ switch options{varargin{2}}
         % Set collimator size based on MLC (if set), otherwise Jaws,
         % otherwise assume symmetric field size based on X/Y
         if ~isnan(data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorX1)
-            data.colllimator(1,1:4) = ...
+            data.collimator(1,1:4) = ...
                 [data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorX1
                 data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorX2 
                 data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorY1 
                 data.Scans{sel(1)}.FieldSize.MultiLeafCollimatorY2];
         elseif ~isnan(data.Scans{sel(1)}.FieldSize.JawsX1)
-            data.colllimator(1,1:4) = [data.Scans{sel(1)}.FieldSize.JawsX1
+            data.collimator(1,1:4) = [data.Scans{sel(1)}.FieldSize.JawsX1
                 data.Scans{sel(1)}.FieldSize.JawsX2 
                 data.Scans{sel(1)}.FieldSize.JawsY1
                 data.Scans{sel(1)}.FieldSize.JawsY2];
         elseif ~isnan(data.Scans{sel(1)}.FieldSize.X)
-            data.colllimator(1,1:4) = [-data.Scans{sel(1)}.FieldSize.X/2 
+            data.collimator(1,1:4) = [-data.Scans{sel(1)}.FieldSize.X/2 
                 data.Scans{sel(1)}.FieldSize.X/2 
                 -data.Scans{sel(1)}.FieldSize.Y/2 
                 data.Scans{sel(1)}.FieldSize.Y/2];

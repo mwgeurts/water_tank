@@ -15,7 +15,7 @@ DEFAULT_PATH        =   userpath
 
 % DEFAULT_DETECTOR should be set to the index of the detector that is 
 % selected by default when the application is loaded.
-DEFAULT_DETECTOR    =   10
+DEFAULT_DETECTOR    =   30
 
 % DEFAULT_EPOM is the index of the EPOM option that is selected when the 
 % application is loaded. See ShiftProfiles for a list of available options.
@@ -53,8 +53,8 @@ DEFAULT_CONVOLVE    =   1
 DEFAULT_GAMMA       =   2%/1mm
 
 % DEFAULT_GAMMALOCAL is a boolean indicating whether to default to using a 
-% global (1) or local (0) Gamma evaluation.
-DEFAULT_GAMMALOCAL  =   0
+% global (0) or local (1) Gamma evaluation.
+DEFAULT_GAMMALOCAL  =   1
 
 % DEFAULT_MACHINE is the index of the default machine that is selected when
 % the application is loaded. This value should be 1 unless multiple machine
@@ -76,6 +76,10 @@ DEFAULT_SSD         =   1
 % to the default DEFAULT_MACHINE, DEFAULT_ENERGY, and DEFAULT_SSD values.
 DEFAULT_FIELDSIZE   =   1
 
+% FWXM_STAT sets the percentage of the maximum on which to calculate the 
+% field width. Use 0.5 for FWHM, or 0.25 for FWQM.
+FWXM_STAT           =   0.5
+
 % SMOOTH_SPAN is the span value applied when smoothing profiles. This value
 % should be odd. When performing a moving average or Savitzky-Golay 
 % smoothing, span is the number of adjacent datapoints that the average is 
@@ -95,7 +99,7 @@ SGOLAY_DEGREE       =   3
 % overridden if a folder-specific value is present.
 REFERENCE_ORIGINX   =   0
 REFERENCE_ORIGINY   =   0
-REFERENCE_ORIGINZ   =   0
+REFERENCE_ORIGINZ   =   175
 
 % ASK_REFERENCE_ORIGIN is a boolean indicating whether the user should be 
 % prompted to enter the origin each time a dataset is loaded (1) or if the
@@ -127,10 +131,15 @@ MATCH_FILENAME      =   1
 % Reducing this value will make matching more stringent.
 LEVENSHTEIN_THRESH  =   15
 
+% SMOOTH_REFERENCE is a boolean indicating whether (1) or not (0) to 
+% smooth reference profiles using the same smoothing filter. It is useful
+% with Monte Carlo reference datasets.
+SMOOTH_REFERENCE  =   1
+
 % CENTER_REFERENCE is a boolean indicating whether (1) or not (0) to center 
 % the reference profile in addition to the measured profile when a 
 % centering option is selected. Generally this should be left disabled (0).
-CENTER_REFERENCE    =   0
+CENTER_REFERENCE    =   1
 
 % BREM_METHOD is a string defining how the bremsstrahlung tail is defined 
 % for electron PDDs. The options are LINEAR_FIT or LAST_VALUE

@@ -261,7 +261,7 @@ for i = 1:length(profiles)
         Event(['Local RMS error = ', data{a+1,c}]);
         
         % Calculate Max error
-        data{a+2,c} = sprintf('%0.2f%%', max((profiles{i}(lI:uI,4) - ...
+        data{a+2,c} = sprintf('%0.2f%%', max(abs(profiles{i}(lI:uI,4) - ...
             profiles{i}(lI:uI,5)) ./ profiles{i}(lI:uI,5)) * 100);
         Event(['Local Max error = ', data{a+2,c}]);
         

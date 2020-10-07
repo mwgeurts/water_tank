@@ -6,7 +6,7 @@ function varargout = WaterTankAnalysis(varargin)
 % https://github.com/mwgeurts/water_tank/wiki.
 %
 % Author: Mark Geurts, mark.w.geurts@gmail.com
-% Copyright (C) 2017 University of Wisconsin Board of Regents
+% Copyright (C) 2020 University of Wisconsin Board of Regents
 %
 % This program is free software: you can redistribute it and/or modify it 
 % under the terms of the GNU General Public License as published by the  
@@ -65,7 +65,7 @@ warning('off','all');
 handles.output = hObject;
 
 % Set version handle
-handles.version = '1.2.11';
+handles.version = '1.2.12';
 set(handles.version_text, 'String', ['Version ', handles.version]);
 
 % Determine path of current application

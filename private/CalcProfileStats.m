@@ -26,10 +26,10 @@ data = {
     'TG-45 Flatness'
     'Varian Symmetry'
     'Area Symmetry'
-    'FWHM' 
-    'Reference FWHM' 
+    'FWXM' 
+    'Reference FWXM' 
     'Difference'
-    'FWHM Center'
+    'FWXM Center'
     'Local RMS Error'
     'Local Max Error'
     'Mean Gamma'
@@ -42,6 +42,19 @@ if nargin == 0
     return;
 else
     profiles = varargin{1};
+end
+
+% Adjust names for FWXM stat
+p = varargin{2};
+if p == 0.5
+    data{6} = 'FWHM';
+    data{7} = 'Reference FWHM';
+    data{9} = 'FWHM Center';
+    p = 0.25;
+elseif p == 0.25
+    data{6} = 'FWQM';
+    data{7} = 'Reference FWQM';
+    data{9} = 'FWQM Center';
 end
 
 % Initialize counter
@@ -88,27 +101,27 @@ for i = 1:length(profiles)
 
         % Find highest lower index just below half maximum
         lI = find(profiles{i}(1:I,4) < ...
-            0.5 * max(profiles{i}(:,4)), 1, 'last');
+            p * max(profiles{i}(:,4)), 1, 'last');
 
         % Find lowest upper index just above half maximum
         uI = find(profiles{i}(I:end,4) < ...
-            0.5 * max(profiles{i}(:,4)), 1, 'first');
+            p * max(profiles{i}(:,4)), 1, 'first');
 
         % Calculate FWHM and offset
         try
             % Interpolate to find lower half-maximum value
             l = interp1(profiles{i}(lI-1:lI+2,4), ...
-                x(lI-1:lI+2), 0.5 * max(profiles{i}(:,4)), 'linear');
+                x(lI-1:lI+2), p * max(profiles{i}(:,4)), 'linear');
 
             % Interpolate to find upper half-maximum value
             u = interp1(profiles{i}(I+uI-3:I+uI,4), ...
-                x(I+uI-3:I+uI), 0.5 * max(profiles{i}(:,4)), 'linear');
+                x(I+uI-3:I+uI), p * max(profiles{i}(:,4)), 'linear');
 
-            % Compute FWHM and offset
+            % Compute FWXM and offset
             fwhm = sprintf('%0.1f mm', sum(abs([l u])));
             offset = sprintf('%0.2f mm', (l+u)/2);
         catch
-            Event(sprintf('Profile %i FWHM could not be computed', i),... 
+            Event(sprintf('Profile %i FWXM could not be computed', i),... 
                 'WARN');
 
             % Set full range
@@ -149,37 +162,37 @@ for i = 1:length(profiles)
             (trapz(right(:,1), right(:,2))/abs(right(end,1)-right(1,1)) + ...
             trapz(left(:,1), left(:,2))/abs(left(end,1)-left(1,1))) * 200);
 
-        % Store FWHM
+        % Store FWXM
         data{6,c} = fwhm;
  
         % Find reference highest lower index just below half maximum
-        lI = find(profiles{i}(1:I,5) < 0.5 * ...
+        lI = find(profiles{i}(1:I,5) < p * ...
             max(profiles{i}(:,5)), 1, 'last');
 
         % Find reference lowest upper index just above half maximum
-        uI = find(profiles{i}(I:end,5) < 0.5 * ...
+        uI = find(profiles{i}(I:end,5) < p * ...
             max(profiles{i}(:,5)), 1, 'first');
 
         % Calculate reference FWHM
         try
             % Interpolate to find lower half-maximum value
             l = interp1(profiles{i}(lI-1:lI+2,5), ...
-                x(lI-1:lI+2), 0.5 * max(profiles{i}(:,5)), 'linear');
+                x(lI-1:lI+2), p * max(profiles{i}(:,5)), 'linear');
 
             % Interpolate to find upper half-maximum value
             u = interp1(profiles{i}(I+uI-3:I+uI,5), ...
-                x(I+uI-3:I+uI), 0.5 * max(profiles{i}(:,5)), 'linear');
+                x(I+uI-3:I+uI), p * max(profiles{i}(:,5)), 'linear');
 
-            % Compute FWHM and offset
+            % Compute FWXM and offset
             data{7,c} = sprintf('%0.1f mm', sum(abs([l u])));
             
-            % Compute FWHM difference
+            % Compute FWXM difference
             if ~strcmp(fwhm, 'N/A')
                 data{8,c} = sprintf('%0.2f mm', str2double(fwhm(1:end-3)) - ...
                     sum(abs([l u])));
             end
         catch
-            Event(sprintf('Profile %i Reference FWHM could not be computed', ...
+            Event(sprintf('Profile %i Reference FWXM could not be computed', ...
                 i), 'WARN');
 
             % Set FWHM as undefined
@@ -195,7 +208,7 @@ for i = 1:length(profiles)
             profiles{i}(range,5)) ./ profiles{i}(range,5)).^2)) * 100);
         
         % Calculate Max error
-        data{11,c} = sprintf('%0.2f%%', max((profiles{i}(range,4) - ...
+        data{11,c} = sprintf('%0.2f%%', max(abs(profiles{i}(range,4) - ...
             profiles{i}(range,5)) ./ profiles{i}(range,5)) * 100);
         
         % Calculate Mean Gamma

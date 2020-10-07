@@ -152,6 +152,7 @@ if iscell(name) || sum(name ~= 0)
             parts{i} = strrep(parts{i}, 'MeV', ' MeV');
             parts{i} = strrep(parts{i}, 'X', ' MV');
             parts{i} = strrep(parts{i}, 'E', ' MeV');
+            parts{i} = strrep(parts{i}, 'F', ' MV FFF');
             [x, y] = strnearest(parts{i}, ...
                 get(handles.energy, 'String'), 'case');
             if y < ld2
@@ -278,12 +279,20 @@ if iscell(name) || sum(name ~= 0)
         end
         ld2 = Inf;
         for i = 1:length(parts)
-            parts{i} = strrep(parts{i}, 'x', ' x ');
+            %parts{i} = strrep(parts{i}, 'x', ' x ');
             [x, y] = strnearest(parts{i}, ...
                 get(handles.fieldsize, 'String'), 'case');
             if y < ld2 && length(x) < 4
                 a2 = x;
                 ld2 = y;
+            end
+            if i > 1
+                [x, y] = strnearest([parts{i-1}, ' ', parts{i}], ...
+                    get(handles.fieldsize, 'String'), 'case');
+                if y <= ld2 && length(x) < 4
+                    a2 = x;
+                    ld2 = y;
+                end    
             end
         end
     else

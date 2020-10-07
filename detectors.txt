@@ -27,4 +27,7 @@ Standard Imaging A16    =   2.4
 Standard Imaging A19    =   6.1
 Standard Imaging A26    =   3.3
 Standard Imaging A28    =   5.8
+SNC 125c                =   4.75
+SNC 350p                =   0.0
+SNC 600c                =   6.1
 SNC IC Profiler         =   0.0

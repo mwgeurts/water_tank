@@ -73,6 +73,9 @@ config.DEFAULT_CENTER = str2double(config.DEFAULT_CENTER);
 config.DEFAULT_CONVOLVE = str2double(config.DEFAULT_CONVOLVE);
 config.DEFAULT_GAMMALOCAL = str2double(config.DEFAULT_GAMMALOCAL);
 
+% Parse stat options
+config.FWXM_STAT = str2double(config.FWXM_STAT);
+
 % Parse origin values as doubles
 config.REFERENCE_ORIGINX = str2double(config.REFERENCE_ORIGINX);
 config.REFERENCE_ORIGINY = str2double(config.REFERENCE_ORIGINY);
@@ -92,7 +95,8 @@ config.MATCH_FILENAME = str2double(config.MATCH_FILENAME);
 config.MATCH_HEADER = str2double(config.MATCH_HEADER);
 config.LEVENSHTEIN_THRESH = str2double(config.LEVENSHTEIN_THRESH);
 
-% Parse center reference flag
+% Parse reference processing flags
+config.SMOOTH_REFERENCE = str2double(config.CENTER_REFERENCE);
 config.CENTER_REFERENCE = str2double(config.CENTER_REFERENCE);
 
 % Parse compression options

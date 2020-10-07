@@ -45,7 +45,8 @@ if isfield(handles, 'processed') && ~isempty(handles.processed)
     handles = PlotProfiles(handles);
 
     % Execute CalcProfileStats()
-    set(handles.xystats, 'data', CalcProfileStats(handles.processed));
+    set(handles.xystats, 'data', CalcProfileStats(handles.processed, ...
+        handles.config.FWXM_STAT));
 
     % Execute CalcDepthStats()
     set(handles.zstats, 'data', CalcDepthStats(handles.reference{...

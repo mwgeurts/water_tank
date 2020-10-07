@@ -88,10 +88,17 @@ switch varargin{2}
         % Loop through each profile
         for i = 1:length(profiles)
             
-            % Smooth the measured data, limiting span
+            % Smooth data, limiting span
             profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
-                round((max(3, min(config.SMOOTH_SPAN, floor(0.02 * ...
+                round((max(3, min(config.SMOOTH_SPAN, floor(0.05 * ...
                 size(profiles{i},1))))-1)/2)*2+1, 'moving');
+            
+            % Smooth reference too if set
+            if config.SMOOTH_REFERENCE == 1 && size(profiles{i},2) > 4
+                profiles{i}(:,5) = smooth(profiles{i}(:,5), ...
+                    round((max(3, min(config.SMOOTH_SPAN, floor(0.05 * ...
+                    size(profiles{i},1))))-1)/2)*2+1, 'moving');
+            end
         end
         
     % Robust 2nd degree Polynomial Regression filter
@@ -133,6 +140,13 @@ switch varargin{2}
             profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
                 min(config.SMOOTH_SPAN/size(profiles{i},1), 0.02), ...
                 'rloess');
+            
+            % Smooth reference too if set
+            if config.SMOOTH_REFERENCE == 1 && size(profiles{i},2) > 4
+                 profiles{i}(:,5) = smooth(profiles{i}(:,5), ...
+                    min(config.SMOOTH_SPAN/size(profiles{i},1), 0.02), ...
+                    'rloess');
+            end
         end
         
     % Savitzky-Golay filter
@@ -177,5 +191,13 @@ switch varargin{2}
                 round((max(config.SGOLAY_DEGREE+1, min(config.SMOOTH_SPAN, ...
                 floor(0.02 * size(profiles{i},1))))-1)/2)*2+1, 'sgolay', ...
                 config.SGOLAY_DEGREE);
+            
+            % Smooth reference too if set
+            if config.SMOOTH_REFERENCE == 1 && size(profiles{i},2) > 4
+                profiles{i}(:,5) = smooth(profiles{i}(:,5), ...
+                    round((max(config.SGOLAY_DEGREE+1, min(config.SMOOTH_SPAN, ...
+                    floor(0.02 * size(profiles{i},1))))-1)/2)*2+1, 'sgolay', ...
+                    config.SGOLAY_DEGREE);
+            end
         end
 end
