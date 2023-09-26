@@ -1,7 +1,9 @@
 % REFERENCE_PATH should point to a folder containing the TPS DICOM RTDOSE 
 % files. The files should be stored within the following subfolder/file
-% name hierarchy: Machine -> Energy -> SSD -> Field Size.dcm
-REFERENCE_PATH      =   ./reference
+% name hierarchy: Machine -> Energy -> SSD -> Field Size.dcm. Note, setting
+% this value to "ASK" will prompt the user to select the folder when 
+% launched.
+REFERENCE_PATH      =   ASK
 
 % DETECTOR_FILE should point to the detector configuration text file. 
 % The file should be a text file where each line contains the detector name
@@ -134,7 +136,7 @@ LEVENSHTEIN_THRESH  =   15
 % SMOOTH_REFERENCE is a boolean indicating whether (1) or not (0) to 
 % smooth reference profiles using the same smoothing filter. It is useful
 % with Monte Carlo reference datasets.
-SMOOTH_REFERENCE  =   1
+SMOOTH_REFERENCE  =   0
 
 % CENTER_REFERENCE is a boolean indicating whether (1) or not (0) to center 
 % the reference profile in addition to the measured profile when a 

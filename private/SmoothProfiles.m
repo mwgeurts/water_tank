@@ -33,8 +33,8 @@ options = {
 % If no input arguments are provided
 if nargin == 0
     
-    % Return the options (return only 'None' if smooth() is not available)
-    if exist('smooth', 'file') == 2
+    % Return options (return only 'None' if smoothdata() is not available)
+    if exist('smoothdata', 'file') == 2
         profiles = options;
     else
         profiles = {'None'};
@@ -72,32 +72,19 @@ switch varargin{2}
         % Start with raw profile
         profiles = varargin{1};
         
-        % Check if MATLAB can find smooth (Curve Fitting Toolbox)
-        if exist('smooth', 'file') ~= 2
-
-            % If not, throw an error
-            if exist('Event', 'file') == 2
-                Event(['The Curve Fitting Toolbox cannot be found and is ', ...
-                    'required for moving average smoothing.'], 'ERROR');
-            else
-                error(['The Curve Fitting Toolbox cannot be found and is ', ...
-                    'required by moving average smoothing.']);
-            end
-        end
-        
         % Loop through each profile
         for i = 1:length(profiles)
             
             % Smooth data, limiting span
-            profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
+            profiles{i}(:,4) = smoothdata(profiles{i}(:,4), 'movmean', ...
                 round((max(3, min(config.SMOOTH_SPAN, floor(0.05 * ...
-                size(profiles{i},1))))-1)/2)*2+1, 'moving');
+                size(profiles{i},1))))-1)/2)*2+1);
             
             % Smooth reference too if set
             if config.SMOOTH_REFERENCE == 1 && size(profiles{i},2) > 4
-                profiles{i}(:,5) = smooth(profiles{i}(:,5), ...
+                profiles{i}(:,5) = smoothdata(profiles{i}(:,5), 'movmean', ...
                     round((max(3, min(config.SMOOTH_SPAN, floor(0.05 * ...
-                    size(profiles{i},1))))-1)/2)*2+1, 'moving');
+                    size(profiles{i},1))))-1)/2)*2+1);
             end
         end
         
@@ -120,32 +107,18 @@ switch varargin{2}
         % Start with raw profile
         profiles = varargin{1};
         
-        % Check if MATLAB can find smooth (Curve Fitting Toolbox)
-        if exist('smooth', 'file') ~= 2
-
-            % If not, throw an error
-            if exist('Event', 'file') == 2
-                Event(['The Curve Fitting Toolbox cannot be found and is ', ...
-                    'required for Robust Polynomial smoothing.'], 'ERROR');
-            else
-                error(['The Curve Fitting Toolbox cannot be found and is ', ...
-                    'required by Robust Polynomial smoothing.']);
-            end
-        end
         
         % Loop through each profile
         for i = 1:length(profiles)
 
             % Smooth the measured data
-            profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
-                min(config.SMOOTH_SPAN/size(profiles{i},1), 0.02), ...
-                'rloess');
+            profiles{i}(:,4) = smoothdata(profiles{i}(:,4), 'rloess', ...
+                min(config.SMOOTH_SPAN/size(profiles{i},1), 0.02));
             
             % Smooth reference too if set
             if config.SMOOTH_REFERENCE == 1 && size(profiles{i},2) > 4
-                 profiles{i}(:,5) = smooth(profiles{i}(:,5), ...
-                    min(config.SMOOTH_SPAN/size(profiles{i},1), 0.02), ...
-                    'rloess');
+                 profiles{i}(:,5) = smoothdata(profiles{i}(:,5), 'rloess', ...
+                    min(config.SMOOTH_SPAN/size(profiles{i},1), 0.02));
             end
         end
         
@@ -170,33 +143,20 @@ switch varargin{2}
         % Start with raw profile
         profiles = varargin{1};
         
-        % Check if MATLAB can find smooth (Curve Fitting Toolbox)
-        if exist('smooth', 'file') ~= 2
-
-            % If not, throw an error
-            if exist('Event', 'file') == 2
-                Event(['The Curve Fitting Toolbox cannot be found and is ', ...
-                    'required for Savitzky-Golay smoothing.'], 'ERROR');
-            else
-                error(['The Curve Fitting Toolbox cannot be found and is ', ...
-                    'required by Savitzky-Golay smoothing.']);
-            end
-        end
-        
         % Loop through each profile
         for i = 1:length(profiles)
             
             % Smooth the measured data
-            profiles{i}(:,4) = smooth(profiles{i}(:,4), ...
+            profiles{i}(:,4) = smoothdata(profiles{i}(:,4), 'sgolay', ...
                 round((max(config.SGOLAY_DEGREE+1, min(config.SMOOTH_SPAN, ...
-                floor(0.02 * size(profiles{i},1))))-1)/2)*2+1, 'sgolay', ...
+                floor(0.02 * size(profiles{i},1))))-1)/2)*2+1, 'Degree', ...
                 config.SGOLAY_DEGREE);
             
             % Smooth reference too if set
             if config.SMOOTH_REFERENCE == 1 && size(profiles{i},2) > 4
-                profiles{i}(:,5) = smooth(profiles{i}(:,5), ...
+                profiles{i}(:,5) = smoothdata(profiles{i}(:,5), 'sgolay', ...
                     round((max(config.SGOLAY_DEGREE+1, min(config.SMOOTH_SPAN, ...
-                    floor(0.02 * size(profiles{i},1))))-1)/2)*2+1, 'sgolay', ...
+                    floor(0.02 * size(profiles{i},1))))-1)/2)*2+1, 'Degree', ...
                     config.SGOLAY_DEGREE);
             end
         end
