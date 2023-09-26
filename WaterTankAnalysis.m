@@ -65,7 +65,7 @@ warning('off','all');
 handles.output = hObject;
 
 % Set version handle
-handles.version = '1.2.12';
+handles.version = '1.2.13';
 set(handles.version_text, 'String', ['Version ', handles.version]);
 
 % Determine path of current application
@@ -114,6 +114,12 @@ handles.config = ParseConfigOptions('config.txt');
 handles.detectors = ParseDetectorFile(handles.config.DETECTOR_FILE);
 
 % Load reference data
+% If path is set to ASK, prompt the user to select a path
+if strcmp(handles.config.REFERENCE_PATH, 'ASK')
+    handles.config.REFERENCE_PATH = uigetdir('', ...
+        'Select directory to scan for water tank reference RT DOSE files');
+    set(handles.importref,'Enable','off');
+end
 handles.reference = LoadReferenceData(handles.config.REFERENCE_PATH);
 
 % Execute InitializeMenus() to initialize dropdown menu options
