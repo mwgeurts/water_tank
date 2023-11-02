@@ -106,7 +106,7 @@ REFERENCE_ORIGINZ   =   0
 % ASK_REFERENCE_ORIGIN is a boolean indicating whether the user should be 
 % prompted to enter the origin each time a dataset is loaded (1) or if the
 % values defined above should be used automatically (0).
-ASK_REFERENCE_ORIGIN =   0
+ASK_REFERENCE_ORIGIN =   1
 
 % ASK_RCAV is a boolean indicating whether the user will be asked to 
 % confirm the chamber cavity radius when performing 0.5 or 0.6*Rcav EPOM 
