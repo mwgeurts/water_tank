@@ -15,6 +15,10 @@ DETECTOR_FILE       =   ./detectors.txt
 % which case the path will be set to the MATLAB-configured userpath.
 DEFAULT_PATH        =   userpath
 
+% FLIPXYAXES will flip the measurement axes relative to the reference dose
+% in the IEC X/Y direction if set to 1. The default is 0.
+FLIPXYAXES          =   0
+
 % DEFAULT_DETECTOR should be set to the index of the detector that is 
 % selected by default when the application is loaded.
 DEFAULT_DETECTOR    =   30

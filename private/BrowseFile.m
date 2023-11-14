@@ -71,6 +71,15 @@ if iscell(name) || sum(name ~= 0)
     handles.data = ParseProfile(fullfile(path, files), ...
         get(handles.format, 'Value'));
     
+    % Flip measured X/Y if config option is set
+    if handles.config.FLIPXYAXES == 1
+        Event('Flipping measured X/Y dimensions per config file setting');
+        for i = 1:length(handles.data.profiles)
+            handles.data.profiles{i}(:,1:2) = ...
+                handles.data.profiles{i}(:,2:-1:1);
+        end
+    end
+
     %% Match machine
     % If machines is specified in profiles, find best match
     if handles.config.MATCH_HEADER == 1 && isfield(handles.data, 'machine')

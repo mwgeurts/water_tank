@@ -1,3 +1,4 @@
 *.m~
+*.asv
 log.txt
 .DS_STORE

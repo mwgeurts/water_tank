@@ -76,6 +76,9 @@ config.DEFAULT_GAMMALOCAL = str2double(config.DEFAULT_GAMMALOCAL);
 % Parse stat options
 config.FWXM_STAT = str2double(config.FWXM_STAT);
 
+% Parse measurement options
+config.FLIPXYAXES = str2double(config.FLIPXYAXES);
+
 % Parse origin values as doubles
 config.REFERENCE_ORIGINX = str2double(config.REFERENCE_ORIGINX);
 config.REFERENCE_ORIGINY = str2double(config.REFERENCE_ORIGINY);

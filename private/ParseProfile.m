@@ -232,19 +232,19 @@ switch options{varargin{2}}
         end
         
         % Open dialog box to allow user to select files
-%         if length(data.Scans) > 1
-%             [sel, ok] = listdlg('PromptString','Select which profiles to load:',...
-%                     'SelectionMode', 'multiple', 'ListString',str, ...
-%                     'InitialValue', 1:length(str), 'Name', 'Select Profiles', ...
-%                     'ListSize', [400 300]);
-% 
-%             % If user clicked cancel, use defaults
-%             if ok == 0
-%                 sel = 1:length(str);
-%             end
-%         else
-%             sel = 1:length(str);
-%         end
+        if length(data.Scans) > 1
+            [sel, ok] = listdlg('PromptString','Select which profiles to load:',...
+                    'SelectionMode', 'multiple', 'ListString',str, ...
+                    'InitialValue', 1:length(str), 'Name', 'Select Profiles', ...
+                    'ListSize', [400 300]);
+
+            % If user clicked cancel, use defaults
+            if ok == 0
+                sel = 1:length(str);
+            end
+        else
+            sel = 1:length(str);
+        end
         sel = 1:length(str);
         
         % Create profiles array of selected results, converting to mm
@@ -489,7 +489,6 @@ switch options{varargin{2}}
                 data.(n{i}) = data.(n{i})(:,sel);
             end
         end
-
 end
 
 % Log number of profiles
