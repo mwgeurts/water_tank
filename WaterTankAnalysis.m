@@ -798,7 +798,7 @@ function flipaxes_Callback(hObject, ~, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % If data is loaded
-if ~isempty(handles.data.profiles)
+if ~isempty(handles.data)
     
     % Flip measured X/Y 
     Event('Flipping measured X/Y dimensions per UI checkbox');

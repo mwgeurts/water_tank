@@ -72,7 +72,7 @@ if iscell(name) || sum(name ~= 0)
         get(handles.format, 'Value'));
     
     % Flip measured X/Y if config option is set
-    if handles.flipaxes == 1
+    if get(handles.flipaxes, 'Value') == 1
         Event('Flipping measured X/Y dimensions per UI checkbox');
         for i = 1:length(handles.data.profiles)
             handles.data.profiles{i}(:,1:2) = ...
