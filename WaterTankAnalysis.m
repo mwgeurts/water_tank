@@ -23,7 +23,7 @@ function varargout = WaterTankAnalysis(varargin)
 
 % Edit the above text to modify the response to help WaterTankAnalysis
 
-% Last Modified by GUIDE v2.5 13-Dec-2017 10:59:45
+% Last Modified by GUIDE v2.5 04-Dec-2023 07:50:54
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 0;
@@ -65,7 +65,7 @@ warning('off','all');
 handles.output = hObject;
 
 % Set version handle
-handles.version = '1.2.15';
+handles.version = '1.2.16';
 set(handles.version_text, 'String', ['Version ', handles.version]);
 
 % Determine path of current application
@@ -124,6 +124,11 @@ handles.reference = LoadReferenceData(handles.config.REFERENCE_PATH);
 
 % Execute InitializeMenus() to initialize dropdown menu options
 handles = InitializeMenus(handles);
+
+% Set flip axes handle
+if handles.config.FLIPXYAXES == 1
+    set(handles.flipaxes, 'Value', 1);
+end
 
 % Execute ClearAllData to initialize data handles
 handles = ClearAllData(handles);
@@ -782,5 +787,33 @@ FitDepthModel(handles.processed, handles.reference{get(handles.machine, ...
     'Value')}.energies{get(handles.energy, 'Value')}.energy, ...
     handles.config);
     
+% Update handles structure
+guidata(hObject, handles);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function flipaxes_Callback(hObject, ~, handles)
+% hObject    handle to flipaxes (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% If data is loaded
+if ~isempty(handles.data.profiles)
+    
+    % Flip measured X/Y 
+    Event('Flipping measured X/Y dimensions per UI checkbox');
+    for i = 1:length(handles.data.profiles)
+        handles.data.profiles{i}(:,1:2) = ...
+            handles.data.profiles{i}(:,2:-1:1);
+    end
+
+    % Execute ProcessProfiles
+    handles = ProcessProfiles(handles);
+    
+    % Execute UpdateResults
+    handles = UpdateResults(handles);
+
+end
+
 % Update handles structure
 guidata(hObject, handles);
